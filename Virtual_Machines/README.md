@@ -1,12 +1,10 @@
 
 
 # Virtual_Machines module
-# ============
 
 Terraform generalized module to build one or more linux or windows virtual machines.  This could also be used to deploy other VMs Azure marketplace images.
 
 ## Requirements
-## -----------------------------------
 
 |-------------------|---------|
 | Name              | Version |
