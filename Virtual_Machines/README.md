@@ -35,14 +35,7 @@ A description of the settable variables for this module should go here, includin
 | private_ip_address | The Static IP Address which should be used. This is valid only when `private_ip_address_allocation` is set to `Static` | `string` | `None`  |   no     |
 | dns_servers | List of IP Addresses defining the DNS Servers which to use for the network interface | `list` | `None`  |   no     |
 | enable_av_set | Enable or disable virtual machine availability set | `bool` | `None`  |   no     |
-| enable_feature | Used to manage turning some features on / off | `map` | `default = {` |    yes     |
-|                |                                               |       |  `"yes"    = true` |            |
-    `"y"      = true`
-    `"true"   = true`
-    `"no"     = false`
-    `"n"      = false`
-    `"false"  = false`
-  `}`
+| enable_feature | Used to manage turning some features on / off | `map` | `default = {`<br> `  "yes"    = true`<br>`  "y"      = true`<br> `  "true"   = true`<br> `  "no"     = false`<br>`  "n"      = false`<br>`  "false"  = false`<br> `}`  |   yes     |
 
 
 ## Dependencies
