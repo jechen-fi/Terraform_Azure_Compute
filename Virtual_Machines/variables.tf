@@ -115,7 +115,7 @@ variable "identity" {
 }
 
 variable "admin_ssh_key" {
-  description = "Admin ssh key map variable to setup auth through ssh keys"
+  description = "Admin ssh key map variable to setup auth to VM via ssh keys"
   type = map
   default = null
   sensitive = true

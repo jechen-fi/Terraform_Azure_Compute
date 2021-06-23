@@ -32,20 +32,22 @@ Terraform generalized module to build one or more linux or windows virtual machi
 | private_ip_address_allocation_type | Private IP Address Allocation method to be used. Accepted values are 'Dynamic' or 'Static'. | `map` | `"Dynamic"`  |   yes     |
 | private_ip_address | The Static IP Address which should be used. This is valid only when `private_ip_address_allocation` is set to `Static` | `string` | `None`  |   no     |
 | dns_servers | List of IP Addresses defining the DNS Servers which to use for the network interface | `list` | `None`  |   no     |
-| enable_av_set | Enable or disable virtual machine availability set | `bool` | `None`  |   no     |
+| enable_av_set | Enable or disable virtual machine availability set | `bool` | `false`  |   no     |
 | enable_feature | Used to manage turning some features on / off | `map` | `default = {` <br> &nbsp;&nbsp;`"yes" = true` <br> &nbsp;&nbsp;`"y" = true` <br> &nbsp;&nbsp;`"true" = true` <br> &nbsp;&nbsp;`"no" = false` <br> &nbsp;&nbsp;`"n"  = false` <br> &nbsp;&nbsp;`"false" = false` <br> `}`  |   yes     |
-| enable_public_ip_address | Enable or disable a public ip address for the VM? Defaults to False | `bool` | `false`  |   yes     |
-| priority | Specifies the priority of this VM.  Accepted values are 'Regular' or 'Spot' - A change will force a new resource to be created | `string` | `Regular`  |   yes     |
+| enable_public_ip_address | Enable or disable a public ip address for the VM? Defaults to False | `bool` | `false`  | yes |
+| priority | Specifies the priority of this VM.  Accepted values are 'Regular' or 'Spot' - A change will force a new resource to be created | `string` | `"Regular"`  |   yes     |
 | identity | A block supporting both "type (Required)" and "identity_ids (Optional) - the "type" of managed identity which should be assigned to the virtual machine, includes accepted values 'SystemAssigned, UserAssigned' - For identify_ids, it should be a list of user managed identity IDs assigned to the VM | `map` | `null`  |   yes     |
+| admin_ssh_key | Either this or `admin_password` must be specified for authentication. Block supporting the following:<ul><li>`public_key` - (Required) The Public Key which should be used for authentication, which needs to be at least 2048-bit and in ssh-rsa format. Changing this forces a new resource to be created.<\li><li>`username` - (Required) The Username for which this Public SSH Key should be configured. Changing this forces a new resource to be created.<\li><\ul> | `map` | `null`<br>`or, use format:`<br>`admin_ssh_key {`<br>&nbsp;&nbsp;`username   = "adminuser"`<br>&nbsp;&nbsp;`public_key = file("/full_path/to/pubkey/id_rsa.pub")`<br>`}`  |    no     |
+| admin_password |  Either this or admin_ssh_key must be specified for authentication.  The Password for the local-administrator account on this Virtual Machine.  When `admin_password` is specified, `disable_password_authentication` must be set to false. Changing this forces a new resource to be created. | `string` | `None`  |    no     |
+| certsecret | A block with url = secret URL of a Key Vault cert | `object` | `null`<br>`or, use format:`<br>`{`<br>&nbsp;&nbsp;`url = "https://secret/url"`<br>`}`
+  }  | yes |
 
 
 ## Dependencies
 
-A list of other modules needed for this module and/or details in regards to parameters that may need to be set for other modules and/or variables that are used from other modules.  Depedencies may also be visible via the way they are being used in the terraform code themselve - for ex. depends_on line in module – depends_on = [module.required_module_name]
-
-| Module Name       | Description of module and why its required | Link to module's repo |
-|-------------------|--------------------------------------------|:---------------------:|
-| None              | N/A                                        | N/A                   |
+| Module Name       | Description of module and why it is required | Link to module's repo |
+|-------------------|----------------------------------------------|:---------------------:|
+| None              | N/A                                          | N/A                   |
 
 
 ## Example call to module
