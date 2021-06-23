@@ -6,9 +6,11 @@ Terraform generalized module to build one or more linux or windows virtual machi
 
 ## Requirements
 
-| Name              | Version |
-|-------------------|---------|
-| null              | n/a     |
+| Name (providers)   | Version  |
+|--------------------|----------|
+| azurerm            |  2.46.0  |
+| tls                |  3.1.0   |
+| random             |  3.1.0   |
 
 
 ## Inputs / Variables
@@ -17,7 +19,15 @@ A description of the settable variables for this module should go here, includin
 
 | Name              | Description                              | Type    | Default Value   | Required |
 |-------------------|------------------------------------------|---------|-----------------|:--------:|
-| test              | Example test variable that does a, b, c… | `string`| `”valid_test”`  |   no     |
+| resource_group_name | Resource group name that holds VM, VM NIC, and related resources | `string` | `None`  |   yes     |
+| resource_group_vnet | Resource group name for the VM's virtual network | `string` | `None`  |   yes     |
+| virtual_network_name | Virtual network name that the VM, NIC & related resources live on | `string` | `None`  |   yes     |
+| subnet_name | Subnet name within the virtual network that resources will live on | `string` | `None`  |   yes     |
+| log_analytics_workspace_name | Log Analytics workspace name, if one is used for logs | `string` | `null`  |   yes     |
+| vm_storage_account | Base vm storage account to store logs | `string` | `null`  |   yes     |
+| virtual_machine_name | Virtual machine name provided by pipeline | `string` | `None`  |   yes     |
+| virtual_machine_size | SKU for the Virtual Machine | `string` | `"Standard_A2_v2"` |   yes     |
+| instances_count | Number of virtual machines to deploy | `number` | `1`  |   yes     |
 
 
 ## Dependencies

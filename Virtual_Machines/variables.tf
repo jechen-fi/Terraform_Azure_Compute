@@ -1,22 +1,23 @@
 variable "resource_group_name" {
-  description = "A container that holds related resources for an Azure solution"
+  description = "Resource group name that holds VM, VM NIC, and related resources"
 }
 
 variable "resource_group_vnet" {
-  description = "Resource group for the virtual network"
+  description = "Resource group name for the VM's virtual network"
   type = string
 }
 
 variable "virtual_network_name" {
-  description = "The name of the virtual network"
+  description = "Virtual network name that the VM, NIC & related resources live on"
+  type = string
 }
 
 variable "subnet_name" {
-  description = "The name of the subnet to use in VM scale set"
+  description = "Subnet name within the virtual network that resources will live on"
 }
 
 variable "log_analytics_workspace_name" {
-  description = "The name of log analytics workspace name"
+  description = "Log Analytics workspace name, if one is used for logs"
   default     = null
 }
 
@@ -25,12 +26,12 @@ variable "vm_storage_account" {
 }
 
 variable "virtual_machine_name" {
-  description = "The name of the virtual machine."
+  description = "Virtual machine name provided by user or root main.tf that calls module"
   default     = ""
 }
 
 variable "virtual_machine_size" {
-  description = "The Virtual Machine SKU for the Virtual Machine, Default is Standard_A2_V2"
+  description = "Virtual Machine SKU for the Virtual Machine"
   default     = "Standard_A2_v2"
 }
 
@@ -106,7 +107,7 @@ variable "identity" {
   description = "Type of Managed Identity which should be assigned to the virtual machine. Possible values are SystemAssigned, UserAssigned, and SystemAssigned, UserAssigned"
   type = map
   # type (required) = string
-  # identity_ids (optional) = string
+  # identity_ids (optional) = string 
   default = null  
 }
 
