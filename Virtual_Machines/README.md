@@ -8,7 +8,7 @@ Terraform generalized module to build one or more linux or windows virtual machi
 
 | Name (providers)   | Version  |
 |--------------------|----------|
-| azurerm            |  2.46.0  |
+| azurerm            |  2.64.0  |
 | tls                |  3.1.0   |
 | random             |  3.1.0   |
 
@@ -41,19 +41,158 @@ Terraform generalized module to build one or more linux or windows virtual machi
 
 ## Dependencies
 
-A list of other modules needed for this module in Terraform that should go here and/or details in regards to parameters that may need to be set for other modules and/or variables that are used from other modules.  These depencies should also be visible via the way they are being supplied in the terraform code themselves in the Example section below (ex. depends_on line in module – depends_on = [module.required_module_name]
+A list of other modules needed for this module and/or details in regards to parameters that may need to be set for other modules and/or variables that are used from other modules.  Depedencies may also be visible via the way they are being used in the terraform code themselve - for ex. depends_on line in module – depends_on = [module.required_module_name]
+
+| Module Name       | Description of module and why its required | Link to module's repo |
+|-------------------|--------------------------------------------|:---------------------:|
+| None              | N/A                                        | N/A                   |
 
 
-## Example call to module (main.tf section that calls it, terraform init command with params, and terraform plan/apply command with params)
+## Example call to module
 
-Include an example of how to use your module (for instance, provide the main.tf lines from the root calling main.tf as well as the variables that need passing in.  Provide a terraform init example for it and a terraform plan/apply example for it with the required command line variables.  This should be easy to understand and use for someone to run the code
+### main.tf
+```HCL
+terraform {
+  backend "azurerm" {}
+}
 
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "=2.64.0"
+    }
+  }
+}
+provider "azurerm" {
+  features {}
+}
+
+module "virtual-machine" {
+  # version = github.com/FisherInvestments/tf_arm_virtualmachines?ref=development
+  # tags = 0.0.1
+  source                       = "./modules/tf_arm_virtualmachines"
+  # Resource Group, location, VNet and Subnet details
+  boot_diag                    = local.boot_diag
+  resource_group_name          = var.rg_name
+  resource_group_vnet          = var.vnet_rg_name
+  virtual_network_name         = var.vnet_name
+  subnet_name                  = var.subnet_name
+  virtual_machine_name         = lower(var.vm_hostname)
+  # (Optional) To enable Azure Monitoring and install log analytics agents
+  log_analytics_workspace_name = var.log_analytics_workspace_name
+  vm_storage_account           = var.vm_storage_account
+  # This module support multiple Pre-Defined Linux and Windows Distributions.
+  # Linux images: ubuntu1804, ubuntu2004, centos7, centos8, coreos, rhel7, rhel8
+  # Windows Images: windows2016dc, windows2019dc, windows2016dccore
+  # MSSQL 2017 images: mssql2017exp, mssql2017dev, mssql2017std, mssql2017ent
+  # MSSQL 2019 images: mssql2019dev, mssql2019std, mssql2019ent
+  # MSSQL 2019 Linux OS Images:
+  # SQL RHEL8 images: mssql2019ent-rhel8, mssql2019std-rhel8, mssql2019dev-rhel8
+  # SQL Ubuntu images: mssql2019ent-ubuntu1804, mssql2019std-ubuntu1804, mssql2019dev-ubuntu1804
+  # Bring your own License (BOYL) images: mssql2019ent-byol, mssql2019std-byol
+  os_distribution               = var.os_distribution
+  virtual_machine_size          = var.vm_sizes[var.vm_size]
+  admin_username                = var.local_account
+  admin_password                = var.local_account_cred
+  # generate_admin_ssh_key     = false
+  # admin_ssh_key_data         = "~/.ssh/id_rsa.pub"
+  instances_count               = var.resource_count
+  enable_av_set                 = var.enable_availability_set[var.enable_av_set]
+  # Network Seurity group port allow definitions for each Virtual Machine
+  # NSG association to be added automatically for all network interfaces.
+  # SSH port 22 and 3389 is exposed to the Internet recommended for only testing. 
+  # For production environments, recommended to use a VPN or private connection.
+  nsg_inbound_rules = [
+    {
+      name                   = "ssh"
+      destination_port_range = "22"
+      source_address_prefix  = "*"
+    },
+  ]
+
+  # Use the block below to add TAG's to your Azure resources (Required)
+  # ProjectName and Env are already declared above, to use them here, create a varible. 
+  tags = {
+    applicationName  = "Cloud Infrastructure Virtual Machine"
+    environment      = "Development"
+    applicationOwner = "~AzureSupport@fi.com"
+    businessUnit     = "IT Infrastructure Engineering"
+    costCenter       = "[Cost Center number for Infra Eng here]"
+    dataClass        = "Non-Restricted"
+    disasterRecovery = "Non-Critical"
+    serviceClass     = "Bronze"
+    supportOwner     = "~AzureSupport@fi.com"
+  }
+}
+```
+### terraform init:
+```PowerShell
+# PowerShell example below
+# below line ensures your PowerShell (PS) command history is disabled so it will not save powershell commands below (including  secrets) to a text file on your local system
+Set-PSReadlineOption -HistorySaveStyle SaveNothing
+# set environment variable with storage account (SA) ARM access key secret
+$env:ARM_ACCESS_KEY = '[storage account access key for below SA to write tfstate backend]'
+# Terraform init command
+terraform init -backend-config="resource_group_name=[resource group name for below storage account]" \
+  -backend-config="storage_account_name=[storage account name where tfstate will be stored]" \
+  -backend-config="container_name=[container name within the storage account]" \
+  -backend-config="key=[tfstate_unique_name].terraform.tfstate"
+# Run below powershell command after your init to clear active window history to protect secret
+Clear-History
+```
+```Shell
+# Linux Bash example below
+# Below lines run 'history -c' to ensure shell history is not saved on linux command line
+export ARM_ACCESS_KEY="[storage account access key for below SA to write tfstate backend]" && history -c
+terraform init -backend-config="resource_group_name=[resource group name for below storage account]" \
+  -backend-config="storage_account_name=[storage account name where tfstate will be stored]" \
+  -backend-config="container_name=[container name within the storage account]" \
+  -backend-config="key=[tfstate_unique_name].terraform.tfstate" && history -c
+```
+### terraform workspace and validate
+```PowerShell
+# PowerShell to create new workspace or select existing one before running apply/plan
+(terraform workspace new "[workspace_name]") -or (terraform workspace select "workspace_name")
+```
+```Shell
+# Linux Bash to create new workspace or select existing one before running apply/plan
+terraform workspace new "[workspace_name]" 2> /dev/null || terraform workspace select "workspace_name" 2> /dev/null
+```
+```
+# PowerShell or Bash to run in same directory where root main.tf is run to validate code
+terraform validate
+```
+### terraform plan/apply
+```Shell
+terraform plan -var "rg_name=[main RG where VM will reside]" -var "vnet_name=[VM NIC virtual network name]" \
+  -var "vnet_rg_name=[vnet rg name]" -var "subnet_name=[subnet within vnet for VM NIC]" \
+  -var "vm_storage_account=[vm storage account for logs]" -var "vm_size=[small / medium /large]" \
+  -var "os_distribution=[centos7 / centos8 / rhel7 / rhel8 / ubuntu18 / ubuntu20 / win2019 / win2016]" \
+  -var "vm_hostname=[VM hostname ex. app-function-env]" \
+  -var "enable_av_set=[Enable vm availability set - no / yes]" \
+  -var "resource_count=[Number of VMs to build - 1]" \
+  -var "local_account=[local account name to create on VM]" \
+  -var "local_account_cred=[local account login pwd]" -auto-approve && history -c
+```
+```PowerShell
+Set-PSReadlineOption -HistorySaveStyle SaveNothing
+(terraform plan -var "rg_name=[main RG where VM will reside]" -var "vnet_name=[VM NIC virtual network name]" \
+  -var "vnet_rg_name=[vnet rg name]" -var "subnet_name=[subnet within vnet for VM NIC]" \
+  -var "vm_storage_account=[vm storage account for logs]" -var "vm_size=[small / medium /large]" \
+  -var "os_distribution=[centos7 / centos8 / rhel7 / rhel8 / ubuntu18 / ubuntu20 / win2019 / win2016]" \
+  -var "vm_hostname=[VM hostname ex. app-function-env]" \
+  -var "enable_av_set=[Enable vm availability set - no / yes]" \
+  -var "resource_count=[Number of VMs to build - 1]" \
+  -var "local_account=[local account name to create on VM]" \
+  -var "local_account_cred=[local account login pwd]" -auto-approve) -and (Clear-History)
+```
 
 ## License / Use information
 
-Fisher Investments internal, BSD, MIT License, Apache 2.0, etc.(see https://opensource.org/licenses)
+Fisher Investments internal
 
 
 ## Author Information
 
-An optional section for the Terraform module author(s) / authoring team to include contact information for them, or a similar web url.
+Cloud Infra Team - ~CloudInfrastructure@fi.com
