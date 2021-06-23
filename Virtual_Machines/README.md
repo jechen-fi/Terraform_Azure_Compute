@@ -31,11 +31,14 @@ A description of the settable variables for this module should go here, includin
 | enable_ip_forwarding | Enable IP Forwarding or not? Defaults to False | `boolean` | `false`  |   yes     |
 | enable_accelerated_networking | Enable Accelerated Networking or not? Defaults to False | `bool` | `false`  |   yes     |
 | ultrassd | Enable support for use of the UltraSSD_LRS storage account type or not? Defaults to False | `map` | `{` <br> &nbsp;&nbsp;`"required" = false`<br>` }`  |   yes     |
-| private_ip_address_allocation_type | Private IP Address Allocation method to be used. Values can be Dynamic or Static. | `map` | `"Dynamic"`  |   yes     |
+| private_ip_address_allocation_type | Private IP Address Allocation method to be used. Accepted values are 'Dynamic' or 'Static'. | `map` | `"Dynamic"`  |   yes     |
 | private_ip_address | The Static IP Address which should be used. This is valid only when `private_ip_address_allocation` is set to `Static` | `string` | `None`  |   no     |
 | dns_servers | List of IP Addresses defining the DNS Servers which to use for the network interface | `list` | `None`  |   no     |
 | enable_av_set | Enable or disable virtual machine availability set | `bool` | `None`  |   no     |
 | enable_feature | Used to manage turning some features on / off | `map` | `default = {` <br> &nbsp;&nbsp;`"yes" = true` <br> &nbsp;&nbsp;`"y" = true` <br> &nbsp;&nbsp;`"true" = true` <br> &nbsp;&nbsp;`"no" = false` <br> &nbsp;&nbsp;`"n"  = false` <br> &nbsp;&nbsp;`"false" = false` <br> `}`  |   yes     |
+| enable_public_ip_address | Enable or disable a public ip address for the VM? Defaults to False | `bool` | `false`  |   yes     |
+| priority | Specifies the priority of this VM.  Accepted values are 'Regular' or 'Spot' - A change will force a new resource to be created | `string` | `Regular`  |   yes     |
+| identity | A block supporting both "type(Required)" and "identity_ids(Optional) - the "type" of managed identity which should be assigned to the virtual machine, includes accepted values 'SystemAssigned, UserAssigned' - For identify_ids, it should be a list of user managed identity IDs assigned to the VM | `map` | `null`  |   yes     |
 
 
 ## Dependencies
