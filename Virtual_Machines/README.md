@@ -15,8 +15,6 @@ Terraform generalized module to build one or more linux or windows virtual machi
 
 ## Inputs / Variables
 
-A description of the settable variables for this module should go here, including those that are in variables.tf, locals.tf, .tfvars, or those to be passed in from the command line, and it should be noted which ones are required parameters for the module to run and whether or not a default value is provided. Any variables that are read from other modules and/or the main.tf that calls this module would be mentioned here as well.  Please use the Table example below for these.  This is modeled after the terraform-docs tool, in case we decide to use it in the future.
-
 | Name              | Description                              | Type    | Default Value   | Required |
 |-------------------|------------------------------------------|---------|-----------------|:--------:|
 | resource_group_name | Resource group name that holds VM, VM NIC, and related resources | `string` | `None`  |   yes     |
