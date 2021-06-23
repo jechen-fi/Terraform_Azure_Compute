@@ -30,7 +30,7 @@ A description of the settable variables for this module should go here, includin
 | instances_count | Number of virtual machines to deploy | `number` | `1`  |   yes     |
 | enable_ip_forwarding | Enable IP Forwarding or not? Defaults to False | `boolean` | `false`  |   yes     |
 | enable_accelerated_networking | Enable Accelerated Networking or not? Defaults to False | `bool` | `false`  |   yes     |
-| ultrassd | Enable support for use of the UltraSSD_LRS storage account type or not? Defaults to False | `map` | `{ "required" = false }`  |   yes     |
+| ultrassd | Enable support for use of the UltraSSD_LRS storage account type or not? Defaults to False | `map` | `{` <br> &nbsp;&nbsp;`"required" = false`<br>` }`  |   yes     |
 | private_ip_address_allocation_type | Private IP Address Allocation method to be used. Values can be Dynamic or Static. | `map` | `"Dynamic"`  |   yes     |
 | private_ip_address | The Static IP Address which should be used. This is valid only when `private_ip_address_allocation` is set to `Static` | `string` | `None`  |   no     |
 | dns_servers | List of IP Addresses defining the DNS Servers which to use for the network interface | `list` | `None`  |   no     |
