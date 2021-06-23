@@ -41,12 +41,12 @@ variable "instances_count" {
 }
 
 variable "enable_ip_forwarding" {
-  description = "Should IP Forwarding be enabled? Defaults to false"
+  description = "Enable IP Forwarding or not? Defaults to False."
   default     = false
 }
 
 variable "enable_accelerated_networking" {
-  description = "Should Accelerated Networking be enabled? Defaults to false."
+  description = "Enable Accelerated Networking or not?? Defaults to false."
   default     = false
 }
 
@@ -59,18 +59,21 @@ variable "ultrassd" {
 }
 
 variable "private_ip_address_allocation_type" {
-  description = "The allocation method used for the Private IP Address. Possible values are Dynamic and Static."
+  description = "Private IP Address Allocation method used. Values should be Dynamic or Static."
   default     = "Dynamic"
+  type = string
 }
 
 variable "private_ip_address" {
-  description = "The Static IP Address which should be used. This is valid only when `private_ip_address_allocation` is set to `Static` "
+  description = "The Static IP Address which should be used. This is valid only when `private_ip_address_allocation` is set to `Static`"
+  type = string
   default     = null
 }
 
 variable "dns_servers" {
-  description = "List of dns servers to use for network interface"
+  description = "A List of dns servers to use for network interface"
   default = null
+  type = list
 #  default     = []
 }
 

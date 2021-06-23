@@ -28,6 +28,21 @@ A description of the settable variables for this module should go here, includin
 | virtual_machine_name | Virtual machine name provided by pipeline | `string` | `None`  |   yes     |
 | virtual_machine_size | SKU for the Virtual Machine | `string` | `"Standard_A2_v2"` |   yes     |
 | instances_count | Number of virtual machines to deploy | `number` | `1`  |   yes     |
+| enable_ip_forwarding | Enable IP Forwarding or not? Defaults to False | `boolean` | `false`  |   yes     |
+| enable_accelerated_networking | Enable Accelerated Networking or not? Defaults to False | `bool` | `false`  |   yes     |
+| ultrassd | Enable support for use of the UltraSSD_LRS storage account type or not? Defaults to False | `map` | `{ "required" = false }`  |   yes     |
+| private_ip_address_allocation_type | Private IP Address Allocation method to be used. Values can be Dynamic or Static. | `map` | `"Dynamic"`  |   yes     |
+| private_ip_address | The Static IP Address which should be used. This is valid only when `private_ip_address_allocation` is set to `Static` | `string` | `None`  |   no     |
+| dns_servers | List of IP Addresses defining the DNS Servers which to use for the network interface | `list` | `None`  |   no     |
+| enable_av_set | Enable or disable virtual machine availability set | `bool` | `None`  |   no     |
+| enable_feature | Used to manage turning some features on / off | `map` | `default = {
+    "yes"    = true
+    "y"      = true
+    "true"   = true
+    "no"     = false
+    "n"      = false
+    "false"  = false
+  }`  |   yes     |
 
 
 ## Dependencies
