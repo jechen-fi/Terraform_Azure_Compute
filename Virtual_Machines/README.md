@@ -38,7 +38,7 @@ A description of the settable variables for this module should go here, includin
 | enable_feature | Used to manage turning some features on / off | `map` | `default = {` <br> &nbsp;&nbsp;`"yes" = true` <br> &nbsp;&nbsp;`"y" = true` <br> &nbsp;&nbsp;`"true" = true` <br> &nbsp;&nbsp;`"no" = false` <br> &nbsp;&nbsp;`"n"  = false` <br> &nbsp;&nbsp;`"false" = false` <br> `}`  |   yes     |
 | enable_public_ip_address | Enable or disable a public ip address for the VM? Defaults to False | `bool` | `false`  |   yes     |
 | priority | Specifies the priority of this VM.  Accepted values are 'Regular' or 'Spot' - A change will force a new resource to be created | `string` | `Regular`  |   yes     |
-| identity | A block supporting both "type(Required)" and "identity_ids(Optional) - the "type" of managed identity which should be assigned to the virtual machine, includes accepted values 'SystemAssigned, UserAssigned' - For identify_ids, it should be a list of user managed identity IDs assigned to the VM | `map` | `null`  |   yes     |
+| identity | A block supporting both "type (Required)" and "identity_ids (Optional) - the "type" of managed identity which should be assigned to the virtual machine, includes accepted values 'SystemAssigned, UserAssigned' - For identify_ids, it should be a list of user managed identity IDs assigned to the VM | `map` | `null`  |   yes     |
 
 
 ## Dependencies
