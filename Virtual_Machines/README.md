@@ -164,18 +164,8 @@ terraform workspace new "[workspace_name]" 2> /dev/null || terraform workspace s
 terraform validate
 ```
 ### terraform plan/apply
-```Shell
-terraform plan -var "rg_name=[main RG where VM will reside]" -var "vnet_name=[VM NIC virtual network name]" \
-  -var "vnet_rg_name=[vnet rg name]" -var "subnet_name=[subnet within vnet for VM NIC]" \
-  -var "vm_storage_account=[vm storage account for logs]" -var "vm_size=[small / medium /large]" \
-  -var "os_distribution=[centos7 / centos8 / rhel7 / rhel8 / ubuntu18 / ubuntu20 / win2019 / win2016]" \
-  -var "vm_hostname=[VM hostname ex. app-function-env]" \
-  -var "enable_av_set=[Enable vm availability set - no / yes]" \
-  -var "resource_count=[Number of VMs to build - 1]" \
-  -var "local_account=[local account name to create on VM]" \
-  -var "local_account_cred=[local account login pwd]" -auto-approve && history -c
-```
 ```PowerShell
+# PowerShell to run terraform plan / apply line
 Set-PSReadlineOption -HistorySaveStyle SaveNothing
 (terraform plan -var "rg_name=[main RG where VM will reside]" -var "vnet_name=[VM NIC virtual network name]" \
   -var "vnet_rg_name=[vnet rg name]" -var "subnet_name=[subnet within vnet for VM NIC]" \
@@ -187,6 +177,19 @@ Set-PSReadlineOption -HistorySaveStyle SaveNothing
   -var "local_account=[local account name to create on VM]" \
   -var "local_account_cred=[local account login pwd]" -auto-approve) -and (Clear-History)
 ```
+```Shell
+# Linux Bash to run terraform plan / apply line
+terraform plan -var "rg_name=[main RG where VM will reside]" -var "vnet_name=[VM NIC virtual network name]" \
+  -var "vnet_rg_name=[vnet rg name]" -var "subnet_name=[subnet within vnet for VM NIC]" \
+  -var "vm_storage_account=[vm storage account for logs]" -var "vm_size=[small / medium /large]" \
+  -var "os_distribution=[centos7 / centos8 / rhel7 / rhel8 / ubuntu18 / ubuntu20 / win2019 / win2016]" \
+  -var "vm_hostname=[VM hostname ex. app-function-env]" \
+  -var "enable_av_set=[Enable vm availability set - no / yes]" \
+  -var "resource_count=[Number of VMs to build - 1]" \
+  -var "local_account=[local account name to create on VM]" \
+  -var "local_account_cred=[local account login pwd]" -auto-approve && history -c
+```
+
 
 ## License / Use information
 
