@@ -131,9 +131,10 @@ variable "certsecret" {
 }
 
 variable "secret" {
-  description = "Block with info for one or more cert blocks or for a KV which all secrets should be sourced"
+  description = "Block with info for one or more certsecret blocks defined above and the ID for a Key Vault from which all secrets should be sourced"
   type = object({
     key_vault_id = string
+    certificate = map
   })
   default = null
   sensitive = true
