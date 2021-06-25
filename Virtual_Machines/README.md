@@ -44,6 +44,15 @@ Terraform generalized module to build one or more linux or windows virtual machi
 | secret | Block with info for one or more certsecret blocks defined above and the ID for a Key Vault from which all secrets should be sourced | `object` | `null`<br>`or, use format:`<br>`{`<br>&nbsp;&nbsp;`key_vault_id = string`<br>&nbsp;&nbsp;`certificate = map`<br>`}`  | no |
 
 
+## Outputs
+| Name              | Description                              | Sensitive |
+|-------------------|------------------------------------------|-----------|
+| vm_info_linux | Output for linux virtual machines | Yes |
+| vm_info_windows | Output for windows virtual machines | Yes |
+| admin_ssh_key_private | The generated private key data in PEM format" | Yes |
+| admin_ssh_key_public | The generated public key data in PEM format | No |
+| vm_availability_set_id | The resource ID of Virtual Machine availability set | No |
+
 ## Dependencies
 
 | Module Name       | Description of module and why it is required | Link to module's repo |
