@@ -166,6 +166,7 @@ resource "azurerm_linux_virtual_machine" "main" {
   virtual_machine_scale_set_id     = var.vm_scale_set
   zone                             = var.zone
   priority                         = var.priority
+  # custom_data                      = base64encode(data.template_file.linux-vm-cloud-init.rendered)
   
   dynamic "additional_capabilities" {
     for_each = var.ultrassd[*]
