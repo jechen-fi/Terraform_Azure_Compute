@@ -134,7 +134,9 @@ variable "secret" {
   description = "Block with info for one or more certsecret blocks defined above and the ID for a Key Vault from which all secrets should be sourced"
   type = object({
     key_vault_id = string
-    certificate = map
+    certificate = object({
+      url = string
+    })
   })
   default = null
   sensitive = true
