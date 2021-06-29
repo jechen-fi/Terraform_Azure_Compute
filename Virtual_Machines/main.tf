@@ -144,7 +144,7 @@ resource "azurerm_availability_set" "aset" {
 #---------------------------------------
 # Linux Virtual machine
 #---------------------------------------
-resource "azurerm_linux_virtual_machine" "main" {
+resource "azurerm_linux_virtual_machine" "linuxvm" {
   count                            = local.os_type == "linux" ? var.instances_count : 0
   name                             = var.instances_count == "1" ? format("%s%02d", lower(var.virtual_machine_name), 1) : format("%s%02d", lower(var.virtual_machine_name), count.index + 1)
   #name                             = var.instances_count == "1" ? join("", [var.virtual_machine_name, "01"]) : format("%s%s", lower(replace(var.virtual_machine_name, "/[[:^alnum:]]/", "")), count.index + 1)
@@ -241,7 +241,7 @@ resource "azurerm_linux_virtual_machine" "main" {
 #---------------------------------------
 # Windows Virtual machine
 #---------------------------------------
-resource "azurerm_windows_virtual_machine" "main" {
+resource "azurerm_windows_virtual_machine" "winvm" {
   count                      = local.os_type == "windows" ? var.instances_count : 0
   name                       = var.instances_count == "1" ? format("%s%02d", lower(var.virtual_machine_name), 1) : format("%s%02d", lower(var.virtual_machine_name), count.index + 1)
   #name                       = var.instances_count == 1 ? var.virtual_machine_name : format("%s%s", lower(replace(var.virtual_machine_name, "/[[:^alnum:]]/", "")), count.index + 1)
