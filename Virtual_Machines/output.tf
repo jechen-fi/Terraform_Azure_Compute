@@ -1,14 +1,12 @@
 output "vm_info_linux" {
-  value = local.os_type == "linux" ? azurerm_linux_virtual_machine.main : null
+  value = local.os_type == "linux" ? azurerm_linux_virtual_machine.linuxvm : null
   description = "Output for linux virtual machines"
-  depends_on = []
   sensitive = true
 }
 
 output "vm_info_windows" {
-  value = local.os_type == "windows" ? azurerm_windows_virtual_machine.main : null
+  value = local.os_type == "windows" ? azurerm_windows_virtual_machine.winvm : null
   description = "Output for windows virtual machines"
-  depends_on = []
   sensitive = true
 }
 
