@@ -64,22 +64,30 @@ Terraform generalized module to build one or more linux or windows virtual machi
 
 ### main.tf
 ```HCL
-terraform {
-  backend "azurerm" {}
-}
-
+# Recommend placing below lines would normally be placed in version.tf file instead of main.tf
+#############################version.tf####################################
 terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "=2.64.0"
+      version = "= 2.64.0"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = "= 3.1.0"
+    }
+    null = {
+      source  = "hashicorp/null"
+      version = "= 3.1.0"
     }
   }
+  required_version = ">= 0.14.1, < 1.0.0"
 }
+
 provider "azurerm" {
   features {}
 }
-
+#############################version.tf####################################
 module "virtual-machine" {
   # version = github.com/FisherInvestments/tf_arm_virtualmachines?ref=development
   # tags = 0.0.1
