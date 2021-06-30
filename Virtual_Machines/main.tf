@@ -113,7 +113,7 @@ resource "azurerm_availability_set" "aset" {
 }
 
 data "template_file" "linux-vm-cloud-init" {
-  template = file("~/custom_data.sh")
+  template = file("./custom_data.sh")
 }
 # ---------------------------------------------------------------
 # Network security group for Virtual Machine Network Interface
