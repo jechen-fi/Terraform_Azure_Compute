@@ -33,8 +33,7 @@ Terraform generalized module to build one or more linux or windows virtual machi
 | enable_public_ip_address | Enable or disable a public ip address for the VM? Defaults to False | `bool` | `false` | yes | no |
 | priority | Specifies the priority of this VM.  Accepted values are 'Regular' or 'Spot' - A change will force a new resource to be created | `string` | `"Regular"` | yes | no |
 | identity | A block supporting both "type (Required)" and "identity_ids (Optional) - the "type" of managed identity which should be assigned to the virtual machine, includes accepted values 'SystemAssigned, UserAssigned' - For identify_ids, it should be a list of user managed identity IDs assigned to the VM | `map` | `null`  | yes | no |
-| certsecret | A block with url = secret URL of a Key Vault cert | `object` | `null`<br>`or, use format:`<br>`{`<br>&nbsp;&nbsp;`url = "https://secret/url"`<br>`}`
-| yes | yes |
+| certsecret | A block with url = secret URL of a Key Vault cert | `object` | `null`<br>`or, use format:`<br>`{`<br>&nbsp;&nbsp;`url = "https://secret/url"`<br>`}` | yes | yes |
 | boot_diag | A block that will determine whether or not to turn on boot diagnostics and proper settings | `map` | `{`<br>&nbsp;&nbsp;`storage_account_uri = [https:// uri for the primary/secondary endpoint for the Azure storage account used to store boot diagnostics, including console output and screenshots from the hypervisor]`<br>`}` | yes | no |
 | plan | Specifies the priority of this VM.  Accepted values are 'Regular' or 'Spot' - A change will force a new resource to be created | `string` | `"Regular"` | yes | no |
 | private_ip_address | The Static IP Address which should be used. This is valid only when `private_ip_address_allocation` is set to `Static` | `string` | `None` | no | no |
