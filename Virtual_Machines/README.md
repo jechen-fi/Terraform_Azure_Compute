@@ -15,7 +15,7 @@ Terraform generalized module to build one or more linux or windows virtual machi
 ## Inputs / Variables
 
 | Name              | Description                              | Type    | Default Value   | Required | Sensitive |
-|-------------------|------------------------------------------|---------|-----------------|:--------:|           |
+|-------------------|------------------------------------------|---------|-----------------|:--------:| --------- |
 | resource_group_name | Resource group name that holds VM, VM NIC, and related resources | `string` | `None`  | yes | no |
 | resource_group_vnet | Resource group name for the VM's virtual network | `string` | `None`  | yes | no |
 | virtual_network_name | Virtual network name that the VM, NIC & related resources live on | `string` | `None`  | yes | no |
