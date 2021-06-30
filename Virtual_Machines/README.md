@@ -4,44 +4,45 @@ Terraform generalized module to build one or more linux or windows virtual machi
 
 ## Requirements
 
-| Name (providers)   | Version  |
-|--------------------|----------|
-| azurerm            |  2.64.0  |
-| tls                |  3.1.0   |
-| random             |  3.1.0   |
+| Name (providers)   | Version            |
+|--------------------|--------------------|
+| azurerm            |  2.64.0            |
+| tls                |  3.1.0             |
+| random             |  3.1.0             |
+| terraform          | >= 0.14.1, < 1.0.0 |
 
 
 ## Inputs / Variables
 
-| Name              | Description                              | Type    | Default Value   | Required |
-|-------------------|------------------------------------------|---------|-----------------|:--------:|
-| resource_group_name | Resource group name that holds VM, VM NIC, and related resources | `string` | `None`  | yes |
-| resource_group_vnet | Resource group name for the VM's virtual network | `string` | `None`  | yes |
-| virtual_network_name | Virtual network name that the VM, NIC & related resources live on | `string` | `None`  | yes |
-| subnet_name | Subnet name within the virtual network that resources will live on | `string` | `None`  | yes |
-| log_analytics_workspace_name | Log Analytics workspace name, if one is used for logs | `string` | `null`  | yes |
-| vm_storage_account | Base vm storage account to store logs | `string` | `null`  | yes |
-| virtual_machine_name | Virtual machine name provided by pipeline | `string` | `None`  | yes |
-| virtual_machine_size | SKU for the Virtual Machine | `string` | `"Standard_A2_v2"` | yes |
-| instances_count | Number of virtual machines to deploy | `number` | `1`  | yes |
-| enable_ip_forwarding | Enable IP Forwarding or not? Defaults to False | `boolean` | `false`  | yes |
-| enable_accelerated_networking | Enable Accelerated Networking or not? Defaults to False | `bool` | `false` | yes |
-| ultrassd | Enable support for use of the UltraSSD_LRS storage account type or not? Defaults to False | `map` | `{` <br> &nbsp;&nbsp;`"required" = false`<br>` }` | yes |
-| private_ip_address_allocation_type | Private IP Address Allocation method to be used. Accepted values are 'Dynamic' or 'Static'. | `map` | `"Dynamic"` | yes |
-| enable_feature | Used to manage turning some features on / off | `map` | `default = {` <br> &nbsp;&nbsp;`"yes" = true` <br> &nbsp;&nbsp;`"y" = true` <br> &nbsp;&nbsp;`"true" = true` <br> &nbsp;&nbsp;`"no" = false` <br> &nbsp;&nbsp;`"n"  = false` <br> &nbsp;&nbsp;`"false" = false` <br> `}` | yes |
-| enable_public_ip_address | Enable or disable a public ip address for the VM? Defaults to False | `bool` | `false` | yes |
-| priority | Specifies the priority of this VM.  Accepted values are 'Regular' or 'Spot' - A change will force a new resource to be created | `string` | `"Regular"` | yes |
-| identity | A block supporting both "type (Required)" and "identity_ids (Optional) - the "type" of managed identity which should be assigned to the virtual machine, includes accepted values 'SystemAssigned, UserAssigned' - For identify_ids, it should be a list of user managed identity IDs assigned to the VM | `map` | `null`  | yes |
+| Name              | Description                              | Type    | Default Value   | Required | Sensitive |
+|-------------------|------------------------------------------|---------|-----------------|:--------:|           |
+| resource_group_name | Resource group name that holds VM, VM NIC, and related resources | `string` | `None`  | yes | no |
+| resource_group_vnet | Resource group name for the VM's virtual network | `string` | `None`  | yes | no |
+| virtual_network_name | Virtual network name that the VM, NIC & related resources live on | `string` | `None`  | yes | no |
+| subnet_name | Subnet name within the virtual network that resources will live on | `string` | `None`  | yes | no |
+| log_analytics_workspace_name | Log Analytics workspace name, if one is used for logs | `string` | `null`  | yes | no |
+| vm_storage_account | Base vm storage account to store logs | `string` | `null`  | yes | no |
+| virtual_machine_name | Virtual machine name provided by pipeline | `string` | `None`  | yes | no |
+| virtual_machine_size | SKU for the Virtual Machine | `string` | `"Standard_A2_v2"` | yes | no |
+| instances_count | Number of virtual machines to deploy | `number` | `1`  | yes | no |
+| enable_ip_forwarding | Enable IP Forwarding or not? Defaults to False | `boolean` | `false` | yes | no |
+| enable_accelerated_networking | Enable Accelerated Networking or not? Defaults to False | `bool` | `false` | yes | no |
+| ultrassd | Enable support for use of the UltraSSD_LRS storage account type or not? Defaults to False | `map` | `{` <br> &nbsp;&nbsp;`"required" = false`<br>` }` | yes | no |
+| private_ip_address_allocation_type | Private IP Address Allocation method to be used. Accepted values are 'Dynamic' or 'Static'. | `map` | `"Dynamic"` | yes | no |
+| enable_feature | Used to manage turning some features on / off | `map` | `default = {` <br> &nbsp;&nbsp;`"yes" = true` <br> &nbsp;&nbsp;`"y" = true` <br> &nbsp;&nbsp;`"true" = true` <br> &nbsp;&nbsp;`"no" = false` <br> &nbsp;&nbsp;`"n"  = false` <br> &nbsp;&nbsp;`"false" = false` <br> `}` | yes | no |
+| enable_public_ip_address | Enable or disable a public ip address for the VM? Defaults to False | `bool` | `false` | yes | no |
+| priority | Specifies the priority of this VM.  Accepted values are 'Regular' or 'Spot' - A change will force a new resource to be created | `string` | `"Regular"` | yes | no |
+| identity | A block supporting both "type (Required)" and "identity_ids (Optional) - the "type" of managed identity which should be assigned to the virtual machine, includes accepted values 'SystemAssigned, UserAssigned' - For identify_ids, it should be a list of user managed identity IDs assigned to the VM | `map` | `null`  | yes | no |
 | certsecret | A block with url = secret URL of a Key Vault cert | `object` | `null`<br>`or, use format:`<br>`{`<br>&nbsp;&nbsp;`url = "https://secret/url"`<br>`}`
-  }  | yes |
-| boot_diag | A block that will determine whether or not to turn on boot diagnostics and proper settings | `map` | `{`<br>&nbsp;&nbsp;`storage_account_uri = [https:// uri for the primary/secondary endpoint for the Azure storage account used to store boot diagnostics, including console output and screenshots from the hypervisor]`<br>`}` | yes |
-| plan | Specifies the priority of this VM.  Accepted values are 'Regular' or 'Spot' - A change will force a new resource to be created | `string` | `"Regular"` | yes |
-| private_ip_address | The Static IP Address which should be used. This is valid only when `private_ip_address_allocation` is set to `Static` | `string` | `None` | no |
-| dns_servers | List of IP Addresses defining the DNS Servers which to use for the network interface | `list` | `None`  | no |
-| enable_av_set | Enable or disable virtual machine availability set | `bool` | `false`  | no |
-| admin_ssh_key | Either this or `admin_password` must be specified for authentication. Block supporting the following:<ul><li>`public_key` - (Required) The Public Key which should be used for authentication, which needs to be at least 2048-bit and in ssh-rsa format. Changing this forces a new resource to be created.<\li><li>`username` - (Required) The Username for which this Public SSH Key should be configured. Changing this forces a new resource to be created.<\li><\ul> | `map` | `null`<br>`or, use format:`<br>`admin_ssh_key {`<br>&nbsp;&nbsp;`username   = "adminuser"`<br>&nbsp;&nbsp;`public_key = file("/full_path/to/pubkey/id_rsa.pub")`<br>`}` | no |
-| admin_password |  Either this or admin_ssh_key must be specified for authentication.  The Password for the local-administrator account on this Virtual Machine.  When `admin_password` is specified, `disable_password_authentication` must be set to false. Changing this forces a new resource to be created. | `string` | `None`  | no |
-| secret | Block with info for one or more certsecret blocks defined above and the ID for a Key Vault from which all secrets should be sourced | `object` | `null`<br>`or, use format:`<br>`{`<br>&nbsp;&nbsp;`key_vault_id = string`<br>&nbsp;&nbsp;`certificate = map`<br>`}`  | no |
+  }  | yes | yes |
+| boot_diag | A block that will determine whether or not to turn on boot diagnostics and proper settings | `map` | `{`<br>&nbsp;&nbsp;`storage_account_uri = [https:// uri for the primary/secondary endpoint for the Azure storage account used to store boot diagnostics, including console output and screenshots from the hypervisor]`<br>`}` | yes | no |
+| plan | Specifies the priority of this VM.  Accepted values are 'Regular' or 'Spot' - A change will force a new resource to be created | `string` | `"Regular"` | yes | no |
+| private_ip_address | The Static IP Address which should be used. This is valid only when `private_ip_address_allocation` is set to `Static` | `string` | `None` | no | no |
+| dns_servers | List of IP Addresses defining the DNS Servers which to use for the network interface | `list` | `None`  | no | no |
+| enable_av_set | Enable or disable virtual machine availability set | `bool` | `false`  | no | no |
+| admin_ssh_key | Either this or `admin_password` must be specified for authentication. Block supporting the following:<ul><li>`public_key` - (Required) The Public Key which should be used for authentication, which needs to be at least 2048-bit and in ssh-rsa format. Changing this forces a new resource to be created.<\li><li>`username` - (Required) The Username for which this Public SSH Key should be configured. Changing this forces a new resource to be created.<\li><\ul> | `map` | `null`<br>`or, use format:`<br>`admin_ssh_key {`<br>&nbsp;&nbsp;`username   = "adminuser"`<br>&nbsp;&nbsp;`public_key = file("/full_path/to/pubkey/id_rsa.pub")`<br>`}` | no | yes |
+| admin_password |  Either this or admin_ssh_key must be specified for authentication.  The Password for the local-administrator account on this Virtual Machine.  When `admin_password` is specified, `disable_password_authentication` must be set to false. Changing this forces a new resource to be created. | `string` | `None`  | no | yes |
+| secret | Block with info for one or more certsecret blocks defined above and the ID for a Key Vault from which all secrets should be sourced | `object` | `null`<br>`or, use format:`<br>`{`<br>&nbsp;&nbsp;`key_vault_id = string`<br>&nbsp;&nbsp;`certificate = map`<br>`}`  | no | yes |
 
 
 ## Outputs
