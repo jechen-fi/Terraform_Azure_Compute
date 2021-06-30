@@ -112,9 +112,6 @@ resource "azurerm_availability_set" "aset" {
   tags                         = merge({ "ResourceName" = lower("avail-${var.virtual_machine_name}-${data.azurerm_resource_group.rg.location}") }, var.tags, )
 }
 
-data "template_file" "linux-vm-cloud-init" {
-  template = file("./custom_data.sh")
-}
 # ---------------------------------------------------------------
 # Network security group for Virtual Machine Network Interface
 # ---------------------------------------------------------------
@@ -170,7 +167,7 @@ resource "azurerm_linux_virtual_machine" "linuxvm" {
   virtual_machine_scale_set_id     = var.vm_scale_set
   zone                             = var.zone
   priority                         = var.priority
-  custom_data                      = base64encode(data.template_file.linux-vm-cloud-init.rendered)
+  custom_data                      = base64encode(var.custom_data_file)
   
   dynamic "additional_capabilities" {
     for_each = var.ultrassd[*]

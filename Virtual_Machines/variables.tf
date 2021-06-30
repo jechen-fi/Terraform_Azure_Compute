@@ -1,3 +1,8 @@
+variable "custom_data_file" {
+  description = "Custom data file for running through cloud-init - passed in through TF root main.tf that calls this module"
+  default = null
+}
+
 variable "resource_group_name" {
   description = "Resource group name that holds VM, VM NIC, and related resources"
 }
