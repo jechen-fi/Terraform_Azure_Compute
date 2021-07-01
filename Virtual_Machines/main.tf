@@ -167,7 +167,10 @@ resource "azurerm_linux_virtual_machine" "linuxvm" {
   virtual_machine_scale_set_id     = var.vm_scale_set
   zone                             = var.zone
   priority                         = var.priority
-  custom_data                      = base64encode(var.custom_data_file)
+  custom_data                      = base64encode(<<-EOT
+                                                    #!/bin/bash
+                                                    echo Test custom data here - the time is now $(date -R)! > tee /tmp/custom_data.out
+                                                    EOT)
   
   dynamic "additional_capabilities" {
     for_each = var.ultrassd[*]
