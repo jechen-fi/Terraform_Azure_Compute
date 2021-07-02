@@ -169,7 +169,7 @@ resource "azurerm_linux_virtual_machine" "linuxvm" {
   priority                         = var.priority
   custom_data                      = base64encode(<<-EOT
                                                   #!/bin/bash
-                                                  echo Test custom data here - the time is now $(date -R)! > tee /tmp/custom_data.out
+                                                  /bin/echo Test custom data here - the time is now $(/bin/date -R)! | /bin/tee /tmp/custom.out
                                                   EOT
                                                   )
   
