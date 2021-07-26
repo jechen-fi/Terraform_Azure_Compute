@@ -118,6 +118,7 @@ variable "identity" {
   type = map
   default =  {
     type = "SystemAssigned"
+    identity_ids = null
   }
 }
 
