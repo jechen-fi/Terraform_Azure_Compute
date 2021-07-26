@@ -169,7 +169,22 @@ resource "azurerm_linux_virtual_machine" "linuxvm" {
   priority                         = var.priority
   custom_data                      = base64encode(<<-EOT
                                                   #!/bin/bash
-                                                  /bin/echo Test custom data here - the time is now $(/bin/date -R)! | /bin/tee /tmp/custom.out
+                                                  st_cont=rhelbootstrapsbx
+                                                  sub_id=SUB-ENGCORE-SBX
+                                                  st_acct=corebootstrapsbx
+                                                  tf_vers=0.15.5
+                                                  blob_name=build_ghsh_run.sh
+                                                  echo -e "[azure-cli]
+                                                  name=Azure CLI
+                                                  baseurl=https://packages.microsoft.com/yumrepos/azure-cli
+                                                  enabled=1
+                                                  gpgcheck=1
+                                                  gpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/azure-cli.repo
+                                                  yum -y install curl azure-cli wget
+                                                  az login --identity
+                                                  az storage blob download --container-name ${st_cont} --account-name ${st_acct} --name ${blob_name} --file ./${blob_name} --auth-mode login --subscription ${sub_id}
+                                                  chmod +x ./${blob_name}
+                                                  ./${blob_name} ${tf_vers}
                                                   EOT
                                                   )
   
