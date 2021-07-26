@@ -115,7 +115,10 @@ variable "priority" {
 
 variable "identity" {
   description = "Type of Managed Identity which should be assigned to the virtual machine. Possible values are SystemAssigned, UserAssigned, and SystemAssigned, UserAssigned"
-  type = object
+  type = object({
+    type = string
+    identity_ids = list
+  })
   default =  {
     type = "SystemAssigned"
     identity_ids = null
