@@ -174,17 +174,17 @@ resource "azurerm_linux_virtual_machine" "linuxvm" {
                                                   st_acct=corebootstrapsbx
                                                   tf_vers=0.15.5
                                                   blob_name=build_ghsh_run.sh
-                                                  echo -e "[azure-cli]
+                                                  echo -e '[azure-cli]
                                                   name=Azure CLI
                                                   baseurl=https://packages.microsoft.com/yumrepos/azure-cli
                                                   enabled=1
                                                   gpgcheck=1
-                                                  gpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/azure-cli.repo
+                                                  gpgkey=https://packages.microsoft.com/keys/microsoft.asc' > /etc/yum.repos.d/azure-cli.repo
                                                   yum -y install curl azure-cli wget
                                                   az login --identity
-                                                  az storage blob download --container-name ${st_cont} --account-name ${st_acct} --name ${blob_name} --file ./${blob_name} --auth-mode login --subscription ${sub_id}
-                                                  chmod +x ./${blob_name}
-                                                  ./${blob_name} ${tf_vers}
+                                                  az storage blob download --container-name $st_cont --account-name $st_acct --name $blob_name --file /tmp/$blob_name --auth-mode login --subscription $sub_id
+                                                  chmod +x /tmp/$blob_name
+                                                  /tmp/$blob_name $tf_vers
                                                   EOT
                                                   )
   
