@@ -116,9 +116,11 @@ variable "priority" {
 variable "identity" {
   description = "Type of Managed Identity which should be assigned to the virtual machine. Possible values are SystemAssigned, UserAssigned, and SystemAssigned, UserAssigned"
   type = map
-  # type (required) = string
-  # identity_ids (optional) = string 
-  default = null  
+  default = 
+    identity {
+      type = SystemAssigned
+    }
+  }
 }
 
 variable "admin_ssh_key" {
