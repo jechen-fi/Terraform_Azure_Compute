@@ -116,10 +116,8 @@ variable "priority" {
 variable "identity" {
   description = "Type of Managed Identity which should be assigned to the virtual machine. Possible values are SystemAssigned, UserAssigned, and SystemAssigned, UserAssigned"
   type = map
-  default = 
-    identity {
-      type = SystemAssigned
-    }
+  default =  {
+    type = SystemAssigned
   }
 }
 
