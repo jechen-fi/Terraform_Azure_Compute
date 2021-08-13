@@ -7,7 +7,7 @@ output "vm_info_linux" {
 output "vm_info_windows" {
   value = local.os_type == "windows" ? azurerm_windows_virtual_machine.winvm : null
   description = "Output for windows virtual machines"
-  sensitive = true
+#  sensitive = true
 }
 
 output "admin_ssh_key_public" {
