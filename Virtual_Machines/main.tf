@@ -293,6 +293,13 @@ resource "azurerm_windows_virtual_machine" "winvm" {
     storage_account_type = var.os_disk["windows"]["storage_account_type"]
     caching              = var.os_disk["windows"]["caching"]
   }
+  dynamic "identity" {
+    for_each = var.win_vm_identity[*]
+    content {
+      type             = lookup(win_vm_identity.value, "type", null)
+      identity_ids     = lookup(win_vm_identity.value, "identity_ids", null)
+    }
+  }
 }
 #--------------------------------------------------------------
 # Azure Log Analytics Workspace Agent Installation for windows
