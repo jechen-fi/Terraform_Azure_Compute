@@ -120,7 +120,7 @@ variable "identity" {
     identity_ids = list(string)
   })
   default =  {
-    type = "SystemAssigned"
+    type = null
     identity_ids = null
   }
 }
