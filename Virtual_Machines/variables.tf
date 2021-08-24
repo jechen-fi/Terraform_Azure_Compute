@@ -121,7 +121,7 @@ variable "identity" {
   })
   default =  {
     type = "UserAssigned"
-    identity_ids = ["core-ghr-dev"]
+    identity_ids = ["/subscriptions/5efbbb60-3241-492e-a125-47d13e025aa2/resourceGroups/core-shrdsvcvm-dev/providers/Microsoft.ManagedIdentity/userAssignedIdentities/core-ghr-dev"]
   }
 }
 
