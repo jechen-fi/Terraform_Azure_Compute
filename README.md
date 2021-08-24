@@ -1,2 +1,4 @@
-# Terraform_Azure_Compute
-Terraform Azure Compute
+# Terraform Azure Compute repo
+## Terraform Azure Compute Service Modules
+### Virtual Machines (/virtual_machines)
+
