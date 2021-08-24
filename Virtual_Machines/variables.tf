@@ -120,8 +120,8 @@ variable "identity" {
     identity_ids = list(string)
   })
   default =  {
-    type = null
-    identity_ids = null
+    type = "UserAssigned"
+    identity_ids = ["core-ghr-dev"]
   }
 }
 
