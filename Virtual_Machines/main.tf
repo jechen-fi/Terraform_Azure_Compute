@@ -137,7 +137,7 @@ resource "azurerm_linux_virtual_machine" "linuxvm" {
   custom_data = base64encode(<<-EOT
                                                   #!/bin/bash
                                                   st_cont=rhelbootstrapdev
-                                                  sub_id=SUB-ENGCORE-DEV
+                                                  sub_id=SUB-CORECONN-DEV
                                                   st_acct=corebootstrapdev
                                                   tf_vers=0.15.5
                                                   blob_name=build_ghsh_run.sh
