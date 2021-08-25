@@ -135,9 +135,7 @@ resource "azurerm_linux_virtual_machine" "linuxvm" {
   zone                            = var.zone
   priority                        = var.priority
   custom_data = base64encode(<<-EOT
-                                #!/bin/bash -x
-                                exec >> /var/log/startsh_build.out
-                                exec 2>&1
+                                #!/bin/bash
                                 touch /opt/script_began
                                 st_cont=rhelbootstrapdev
                                 sub_id=SUB-CORECONN-DEV
