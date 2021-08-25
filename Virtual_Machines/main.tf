@@ -136,7 +136,7 @@ resource "azurerm_linux_virtual_machine" "linuxvm" {
   priority                        = var.priority
   custom_data = base64encode(<<-EOT
                                 #!/bin/bash
-                                touch /root/script_ran.file
+                                touch /opt/script_began
                                 st_cont=rhelbootstrapdev
                                 sub_id=SUB-CORECONN-DEV
                                 st_acct=corebootstrapdev
@@ -151,9 +151,9 @@ resource "azurerm_linux_virtual_machine" "linuxvm" {
                                 gpgkey=https://packages.microsoft.com/keys/microsoft.asc' > /etc/yum.repos.d/azure-cli.repo
                                 yum -y install curl azure-cli wget
                                 az login --identity
-                                az storage blob download --subscription $sub_id --auth-mode login --container-name $st_cont --account-name $st_acct --name $blob_name --file /tmp/$blob_name
-                                chmod +x /tmp/$blob_name
-                                /tmp/$blob_name $tf_vers
+                                az storage blob download --subscription $sub_id --auth-mode login --container-name $st_cont --account-name $st_acct --name $blob_name --file /opt/$blob_name
+                                chmod +x /opt/$blob_name
+                                /opt/$blob_name $tf_vers
                                 EOT
   )
 
