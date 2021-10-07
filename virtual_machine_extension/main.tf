@@ -16,7 +16,6 @@ resource "azurerm_virtual_machine_extension" "vmextension" {
     }
 SETTINGS
   tags                       = var.tags
-  protected_settings         = var.protected_settings
   protected_settings         = <<PROTECTED_SETTINGS
     {
        "managedIdentity": ${var.managed_identity}
