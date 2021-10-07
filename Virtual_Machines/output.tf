@@ -10,6 +10,12 @@ output "vm_info_windows" {
   #  sensitive = true
 }
 
+output "vm_windows_id" {
+  value       = local.os_type == "windows" ? azurerm_windows_virtual_machine.winvm.id : null
+  description = "Output VM ID for windows virtual machine"
+  #  sensitive = true
+}
+
 output "admin_ssh_key_public" {
   description = "The generated public key data in PEM format"
   value       = var.generate_admin_ssh_key == true && local.os_type == "linux" ? tls_private_key.rsa[0].public_key_openssh : null
