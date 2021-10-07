@@ -42,7 +42,7 @@ Terraform generalized module to build one or more linux or windows virtual machi
 | admin_ssh_key | Either this or `admin_password` must be specified for authentication. Block supporting the following:<ul><li>`public_key` - (Required) The Public Key which should be used for authentication, which needs to be at least 2048-bit and in ssh-rsa format. Changing this forces a new resource to be created.<\li><li>`username` - (Required) The Username for which this Public SSH Key should be configured. Changing this forces a new resource to be created.<\li><\ul> | `map` | `null`<br>`or, use format:`<br>`admin_ssh_key {`<br>&nbsp;&nbsp;`username   = "adminuser"`<br>&nbsp;&nbsp;`public_key = file("/full_path/to/pubkey/id_rsa.pub")`<br>`}` | no | yes |
 | admin_password |  Either this or admin_ssh_key must be specified for authentication.  The Password for the local-administrator account on this Virtual Machine.  When `admin_password` is specified, `disable_password_authentication` must be set to false. Changing this forces a new resource to be created. | `string` | `None`  | no | yes |
 | secret | Block with info for one or more certsecret blocks defined above and the ID for a Key Vault from which all secrets should be sourced | `object` | `null`<br>`or, use format:`<br>`{`<br>&nbsp;&nbsp;`key_vault_id = string`<br>&nbsp;&nbsp;`certificate = map`<br>`}`  | no | yes |
-
+| tags | Tags to be assigned to the Azure resource in Azure | `object` or `map` | `null` | yes | no |
 
 ## Outputs
 | Name              | Description                              | Sensitive |

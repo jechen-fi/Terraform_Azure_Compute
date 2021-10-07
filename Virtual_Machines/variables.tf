@@ -11,12 +11,12 @@ variable "resource_group_name" {
 
 variable "resource_group_vnet" {
   description = "Resource group name for the VM's virtual network"
-  type = string
+  type        = string
 }
 
 variable "virtual_network_name" {
   description = "Virtual network name that the VM, NIC & related resources live on"
-  type = string
+  type        = string
 }
 
 variable "subnet_name" {
@@ -59,7 +59,7 @@ variable "enable_accelerated_networking" {
 
 variable "ultrassd" {
   description = "Ability to enable additional capabilities for the VM to enable the support for use of the UltraSSD_LRS storage account type"
-  type = map
+  type        = map(any)
   default = {
     "required" = false
   }
@@ -68,38 +68,38 @@ variable "ultrassd" {
 variable "private_ip_address_allocation_type" {
   description = "Private IP Address Allocation method used. Values should be Dynamic or Static."
   default     = "Dynamic"
-  type = string
+  type        = string
 }
 
 variable "private_ip_address" {
   description = "The Static IP Address which should be used. This is valid only when `private_ip_address_allocation` is set to `Static`"
-  type = string
+  type        = string
   default     = null
 }
 
 variable "dns_servers" {
   description = "A List of dns servers to use for network interface"
-  default = null
-  type = list
-#  default     = []
+  default     = null
+  type        = list(any)
+  #  default     = []
 }
 
 variable "enable_av_set" {
   description = "Enable or disable virtual machine availability set"
-  default = "false"
+  default     = "false"
 }
 
 variable "enable_feature" {
   description = "Manages turning other features on / off"
-  type = map
+  type        = map(any)
   default = {
-    "yes"    = true
-    "y"      = true
-    "true"   = true
-    "no"     = false
-    "n"      = false
-    "false"  = false
-  }  
+    "yes"   = true
+    "y"     = true
+    "true"  = true
+    "no"    = false
+    "n"     = false
+    "false" = false
+  }
 }
 
 variable "enable_public_ip_address" {
@@ -109,32 +109,32 @@ variable "enable_public_ip_address" {
 
 variable "priority" {
   description = "Specifies the priority of this VM.  Possible values are 'Regular' or 'Spot' - a change will force a new resource to be created"
-  type = string
-  default = "Regular"
+  type        = string
+  default     = "Regular"
 }
 
 variable "identity" {
   description = "Type of Managed Identity which should be assigned to the virtual machine. Possible values are SystemAssigned, UserAssigned, and SystemAssigned, UserAssigned"
   type = object({
-    type = string
+    type         = string
     identity_ids = list(string)
   })
-  default =  {
-    type = null
+  default = {
+    type         = null
     identity_ids = null
   }
 }
 
 variable "win_vm_identity" {
   description = "Type of Managed Identity which should be assigned to the virtual machine. Possible values are SystemAssigned, UserAssigned, and SystemAssigned, UserAssigned"
-  default = null
+  default     = null
 }
 
 variable "admin_ssh_key" {
   description = "Admin ssh key map variable to setup auth to VM via ssh keys"
-  type = map
-  default = null
-  sensitive = true
+  type        = map(any)
+  default     = null
+  sensitive   = true
 }
 
 variable "certsecret" {
@@ -142,7 +142,7 @@ variable "certsecret" {
   type = object({
     url = string
   })
-  default = null
+  default   = null
   sensitive = true
 }
 
@@ -154,20 +154,20 @@ variable "secret" {
       url = string
     })
   })
-  default = null
+  default   = null
   sensitive = true
 }
 
 variable "boot_diag" {
   description = "Whether or not to turn on boot diagnostics and proper settings"
-  type = map
-  default = null
+  type        = map(any)
+  default     = null
 }
 
 variable "plan" {
   description = "Whether or not to turn on boot diagnostics and proper settings"
-  type = map
-  default = null
+  type        = map(any)
+  default     = null
 }
 
 variable "os_distribution" {
@@ -193,7 +193,7 @@ variable "os_distribution_list" {
       "version"   = "latest"
       "os_type"   = "linux"
     },
-    
+
     ubuntu18 = {
       "publisher" = "Canonical"
       "offer"     = "UbuntuServer"
@@ -217,7 +217,7 @@ variable "os_distribution_list" {
       "version"   = "latest"
       "os_type"   = "linux"
     },
-    
+
     rhel7 = {
       "publisher" = "RedHat"
       "offer"     = "RHEL"
@@ -225,7 +225,7 @@ variable "os_distribution_list" {
       "version"   = "latest"
       "os_type"   = "linux"
     },
-    
+
     rhel8 = {
       "publisher" = "RedHat"
       "offer"     = "RHEL"
@@ -263,7 +263,7 @@ variable "os_distribution_list" {
       offer     = "sql2019-rhel8"
       sku       = "sqldev"
       version   = "latest"
-      "os_type"   = "linux"
+      "os_type" = "linux"
     },
 
     mssql2019ent-ubuntu1804 = {
@@ -271,7 +271,7 @@ variable "os_distribution_list" {
       offer     = "sql2019-ubuntu1804"
       sku       = "enterprise"
       version   = "latest"
-      "os_type"   = "linux"
+      "os_type" = "linux"
     },
 
     mssql2019std-ubuntu1804 = {
@@ -279,7 +279,7 @@ variable "os_distribution_list" {
       offer     = "sql2019-ubuntu1804"
       sku       = "standard"
       version   = "latest"
-      "os_type"   = "linux"
+      "os_type" = "linux"
     },
 
     mssql2019dev-ubuntu1804 = {
@@ -287,7 +287,7 @@ variable "os_distribution_list" {
       offer     = "sql2019-ubuntu1804"
       sku       = "sqldev"
       version   = "latest"
-      "os_type"   = "linux"
+      "os_type" = "linux"
     },
 
     win2016 = {
@@ -295,7 +295,7 @@ variable "os_distribution_list" {
       offer     = "WindowsServer"
       sku       = "2016-Datacenter"
       version   = "latest"
-      "os_type"   = "windows"
+      "os_type" = "windows"
     },
 
     windows2016 = {
@@ -303,7 +303,7 @@ variable "os_distribution_list" {
       offer     = "WindowsServer"
       sku       = "2016-Datacenter"
       version   = "latest"
-      "os_type"   = "windows"
+      "os_type" = "windows"
     },
 
     win2019 = {
@@ -311,7 +311,7 @@ variable "os_distribution_list" {
       offer     = "WindowsServer"
       sku       = "2019-Datacenter"
       version   = "latest"
-     "os_type"   = "windows"
+      "os_type" = "windows"
     },
 
     windows2019 = {
@@ -319,7 +319,7 @@ variable "os_distribution_list" {
       offer     = "WindowsServer"
       sku       = "2019-Datacenter"
       version   = "latest"
-    "os_type"   = "windows"
+      "os_type" = "windows"
     },
 
     windows2016dccore = {
@@ -327,7 +327,7 @@ variable "os_distribution_list" {
       offer     = "WindowsServer"
       sku       = "2016-Datacenter-Server-Core"
       version   = "latest"
-      "os_type"   = "windows"
+      "os_type" = "windows"
     },
 
     mssql2017exp = {
@@ -335,7 +335,7 @@ variable "os_distribution_list" {
       offer     = "SQL2017-WS2019"
       sku       = "express"
       version   = "latest"
-      "os_type"   = "windows"
+      "os_type" = "windows"
     },
 
     mssql2017dev = {
@@ -343,7 +343,7 @@ variable "os_distribution_list" {
       offer     = "SQL2017-WS2019"
       sku       = "sqldev"
       version   = "latest"
-      "os_type"   = "windows"
+      "os_type" = "windows"
     },
 
     mssql2017std = {
@@ -351,7 +351,7 @@ variable "os_distribution_list" {
       offer     = "SQL2017-WS2019"
       sku       = "standard"
       version   = "latest"
-      "os_type"   = "windows"
+      "os_type" = "windows"
     },
 
     mssql2017ent = {
@@ -359,7 +359,7 @@ variable "os_distribution_list" {
       offer     = "SQL2017-WS2019"
       sku       = "enterprise"
       version   = "latest"
-      "os_type"   = "windows"
+      "os_type" = "windows"
     },
 
     mssql2019std = {
@@ -367,7 +367,7 @@ variable "os_distribution_list" {
       offer     = "sql2019-ws2019"
       sku       = "standard"
       version   = "latest"
-      "os_type"   = "windows"
+      "os_type" = "windows"
     },
 
     mssql2019dev = {
@@ -375,7 +375,7 @@ variable "os_distribution_list" {
       offer     = "sql2019-ws2019"
       sku       = "sqldev"
       version   = "latest"
-      "os_type"   = "windows"
+      "os_type" = "windows"
     },
 
     mssql2019ent = {
@@ -383,7 +383,7 @@ variable "os_distribution_list" {
       offer     = "sql2019-ws2019"
       sku       = "enterprise"
       version   = "latest"
-      "os_type"   = "windows"
+      "os_type" = "windows"
     },
 
     mssql2019ent-byol = {
@@ -391,7 +391,7 @@ variable "os_distribution_list" {
       offer     = "sql2019-ws2019-byol"
       sku       = "enterprise"
       version   = "latest"
-      "os_type"   = "windows"
+      "os_type" = "windows"
     },
 
     mssql2019std-byol = {
@@ -399,14 +399,14 @@ variable "os_distribution_list" {
       offer     = "sql2019-ws2019-byol"
       sku       = "standard"
       version   = "latest"
-      "os_type"   = "windows"
+      "os_type" = "windows"
     },
   }
 }
 
 variable "encryption_at_host_enabled" {
   description = "Variable to determine if all disks, including temp, attached to the VM should be encrypted by enabling 'Encryption at Host'"
-  default = "false"
+  default     = "false"
 }
 
 # variable "os_disk_storage_account_type" {
@@ -416,30 +416,30 @@ variable "encryption_at_host_enabled" {
 
 variable "os_disk" {
   type = map(object({
-    name                       = string
-    disk_size_gb               = string
-    storage_account_type       = string
-    caching                    = string
-    disk_encryption_set_id     = string
-    write_accelerator_enabled  = bool
+    name                      = string
+    disk_size_gb              = string
+    storage_account_type      = string
+    caching                   = string
+    disk_encryption_set_id    = string
+    write_accelerator_enabled = bool
   }))
 
   default = {
     linux = {
-      name                       = null
-      disk_size_gb               = null
-      storage_account_type       = "StandardSSD_LRS"
-      caching                    = "ReadWrite"
-      disk_encryption_set_id     = null
-      write_accelerator_enabled  = null
+      name                      = null
+      disk_size_gb              = null
+      storage_account_type      = "StandardSSD_LRS"
+      caching                   = "ReadWrite"
+      disk_encryption_set_id    = null
+      write_accelerator_enabled = null
     },
     windows = {
-      name                       = null
-      disk_size_gb               = null
-      storage_account_type       = "StandardSSD_LRS"
-      caching                    = "ReadWrite"
-      disk_encryption_set_id     = null
-      write_accelerator_enabled  = null
+      name                      = null
+      disk_size_gb              = null
+      storage_account_type      = "StandardSSD_LRS"
+      caching                   = "ReadWrite"
+      disk_encryption_set_id    = null
+      write_accelerator_enabled = null
     },
   }
 }
@@ -483,12 +483,12 @@ variable "dedicated_host_id" {
 
 variable "vm_scale_set" {
   description = "Specifies the Orchestrated Virtual Machine Scale Set that this Virtual Machine should be created within. Changing this forces a new resource to be created."
-  default = null
+  default     = null
 }
 
 variable "zone" {
   description = "Optional - the Zone in which this VM should be created.  Changing this forces a new resource to be created."
-  default = null
+  default     = null
 }
 
 variable "source_image_id" {
@@ -515,16 +515,16 @@ variable "tags" {
 
 locals {
 
-#    os_flavor = {
-#      ubuntu20 = "linux"
-#      ubuntu18 = "linux"
-#      centos7  = "linux"
-#      centos8  = "linux"
-#      coreos   = "linux"
-#      win2016  = "windows"
-#      win2019  = "windows"
-#    }
-  
+  #    os_flavor = {
+  #      ubuntu20 = "linux"
+  #      ubuntu18 = "linux"
+  #      centos7  = "linux"
+  #      centos8  = "linux"
+  #      coreos   = "linux"
+  #      win2016  = "windows"
+  #      win2019  = "windows"
+  #    }
+
   os_type = var.os_distribution_list[var.os_distribution]["os_type"]
 
   nsg_inbound_rules = { for idx, security_rule in var.nsg_inbound_rules : security_rule.name => {
