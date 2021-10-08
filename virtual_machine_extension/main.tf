@@ -12,13 +12,11 @@ resource "azurerm_virtual_machine_extension" "vmextension" {
   settings                   = <<SETTINGS
     {  
        "fileUris": ["${var.script_uri}"],   
-       "commandToExecute": "${var.command_run_script}"
+       "commandToExecute": "powershell -ExecutionPolicy Unrestricted -File helloworld.ps1"
     }
 SETTINGS
   tags                       = var.tags
   protected_settings         = <<PROTECTED_SETTINGS
-    {
-       "managedIdentity": ${var.managed_identity}
-    }
+    { "managedIdentity": "clientId": "0dff075c-ebd9-4a3f-9976-5380ba73d67e" }
 PROTECTED_SETTINGS
 }
