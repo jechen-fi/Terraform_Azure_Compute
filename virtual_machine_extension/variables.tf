@@ -17,13 +17,13 @@ variable "command_run_script" {
 variable "extension_type" {
   description = "Required. Type of virtual machine extension"
   type        = string
-  default     = "CustomScript"
+  default     = "CustomScriptExtension"
 }
 
 variable "extension_type_version" {
   description = "Required. Version of the virtual machine extension type."
   type        = string
-  default     = "2.1.3"
+  default     = "1.10"
 }
 
 variable "managed_identity" {
@@ -44,7 +44,7 @@ variable "name_vmextension" {
 variable "publisher" {
   description = "Required. Publisher for the virtual machine extension being used."
   type        = string
-  default     = "Microsoft.Azure.Extensions"
+  default     = "Microsoft.Compute"
 }
 
 variable "script_uri" {
