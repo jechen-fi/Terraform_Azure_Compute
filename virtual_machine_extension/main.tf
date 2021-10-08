@@ -21,7 +21,7 @@ SETTINGS
        "storageAccountName": "${var.script_storage_account}",
        "storageAccountKey": "${var.script_storage_account_key}",
        "fileUris": [
-         "${var.script_uri}"
+         "${var.script_uris}"
        ]
     }
 PROTECTED_SETTINGS
