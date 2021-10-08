@@ -17,6 +17,8 @@ resource "azurerm_virtual_machine_extension" "vmextension" {
 SETTINGS
   tags                       = var.tags
   protected_settings         = <<PROTECTED_SETTINGS
-    { "managedIdentity": "clientId": "0dff075c-ebd9-4a3f-9976-5380ba73d67e" }
+    { 
+       "managedIdentity": { "clientId": "0dff075c-ebd9-4a3f-9976-5380ba73d67e" }
+    }
 PROTECTED_SETTINGS
 }
