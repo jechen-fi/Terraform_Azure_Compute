@@ -1,7 +1,7 @@
 variable "auto_upgrade" {
   description = "Optional. Value to determine whether to automatically run / upgrade to use of the latest extension available. Value needs to be true/false."
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "azure_vm_id" {
