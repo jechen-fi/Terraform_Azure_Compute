@@ -48,7 +48,7 @@ variable "publisher" {
 }
 
 variable "script_uris" {
-  description = "Required. Command to run script that will be downloaded or pulled down."
+  description = "Required. URI or URI(s) for blob storage to access the virtual machine extension script."
   default     = null
 }
 
