@@ -18,12 +18,12 @@ SETTINGS
   protected_settings         = <<PROTECTED_SETTINGS
     {
        "commandToExecute": "powershell -ExecutionPolicy Unrestricted -File helloworld.ps1",
-       "storageAccountName": "${var.script_storage_account}",
-       "storageAccountKey": "${var.script_storage_account_key}",
+       "managedIdentity": { "objectId": "${var.managed_identity}" },
        "fileUris": [
          "${var.script_uris}"
        ]
     }
 PROTECTED_SETTINGS
-# "managedIdentity": { "clientId": "0dff075c-ebd9-4a3f-9976-5380ba73d67e" },
+#       "storageAccountName": "${var.script_storage_account}",
+#       "storageAccountKey": "${var.script_storage_account_key}",
 }
