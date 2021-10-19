@@ -260,11 +260,24 @@ resource "azurerm_windows_virtual_machine" "winvm" {
     storage_account_type = var.os_disk["windows"]["storage_account_type"]
     caching              = var.os_disk["windows"]["caching"]
   }
-  dynamic "identity" {
-    for_each = var.win_vm_identity[*]
+  dynamic "additional_capabilities" {
+    for_each = var.ultrassd[*]
     content {
-      type         = lookup(win_vm_identity.value, "type", null)
-      identity_ids = lookup(win_vm_identity.value, "identity_ids", null)
+      ultra_ssd_enabled = lookup(additional_capabilities.value, "required", null)
+    }
+  }
+  dynamic "boot_diagnostics" {
+    for_each = var.boot_diag[*]
+    content {
+      # below ensures boot diag is stored in a managed storage account
+      storage_account_uri = lookup(boot_diagnostics.value, "storage_uri", null)
+    }
+  }
+  dynamic "identity" {
+    for_each = var.identity[*]
+    content {
+      type         = lookup(identity.value, "type", null)
+      identity_ids = lookup(identity.value, "identity_ids", null)
     }
   }
 }
