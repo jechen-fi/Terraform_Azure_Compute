@@ -116,7 +116,7 @@ resource "azurerm_availability_set" "aset" {
 #---------------------------------------
 resource "azurerm_linux_virtual_machine" "linuxvm" {
   count                           = local.os_type == "linux" ? var.instances_count : 0
-  name                            = var.instances_count == "1" ? format("%s%02d", lower(var.virtual_machine_name), 1) : format("%s%02d", lower(var.virtual_machine_name), count.index + 1)
+  name                            = try(var.instances_count == "1" ? format("%s%02d", lower(var.virtual_machine_name), 1) : format("%s%02d", lower(var.virtual_machine_name), count.index + 1), var.instances_count == "1" ? format("%s%02d%s%s", lower(var.virtual_machine_name_prepend), 1, "-", var.application_env) : format("%s%02d%s%s", lower(var.virtual_machine_name_prepend), count.index + 1, "-", var.application_env))
   resource_group_name             = data.azurerm_resource_group.rg.name
   location                        = data.azurerm_resource_group.rg.location
   size                            = var.virtual_machine_size

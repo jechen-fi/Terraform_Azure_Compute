@@ -5,6 +5,12 @@ variable "custom_data_file" {
 }
 */
 
+variable "application_env" {
+  description = ""
+  type        = string
+  default     = null
+}
+
 variable "resource_group_name" {
   description = "Resource group name that holds VM, VM NIC, and related resources"
 }
@@ -34,7 +40,12 @@ variable "vm_storage_account" {
 
 variable "virtual_machine_name" {
   description = "Virtual machine name provided by user or root main.tf that calls module"
-  default     = ""
+  default     = null
+}
+
+variable "virtual_machine_name_prepend" {
+  description = "Prepend to the VM's hostname - a string that follows the [app-function] name convention without the [-env] portion at the end, which will be added in module"
+  default     = null
 }
 
 variable "virtual_machine_size" {
