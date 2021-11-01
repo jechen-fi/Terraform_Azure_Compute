@@ -11,14 +11,19 @@ resource "azurerm_virtual_machine_extension" "vmextension" {
   auto_upgrade_minor_version = var.auto_upgrade
   settings                   = <<SETTINGS
     {  
-       "fileUris": ["${var.script_uri}"],   
-       "commandToExecute": "${var.command_run_script}"
+       "timestamp": "100000000"
     }
 SETTINGS
   tags                       = var.tags
   protected_settings         = <<PROTECTED_SETTINGS
     {
-       "managedIdentity": ${var.managed_identity}
+       "commandToExecute": "powershell -ExecutionPolicy Unrestricted -File helloworld.ps1",
+       "managedIdentity": { "objectId": "${var.managed_identity}" },
+       "fileUris": [
+         "${var.script_uris}"
+       ]
     }
 PROTECTED_SETTINGS
+#       "storageAccountName": "${var.script_storage_account}",
+#       "storageAccountKey": "${var.script_storage_account_key}",
 }

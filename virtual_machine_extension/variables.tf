@@ -47,8 +47,21 @@ variable "publisher" {
   default     = "Microsoft.Compute"
 }
 
-variable "script_uri" {
-  description = "Required. Command to run script that will be downloaded or pulled down."
+variable "script_uris" {
+  description = "Required. URI or URI(s) for blob storage to access the virtual machine extension script."
+  default     = null
+}
+
+variable "script_storage_account" {
+  description = "Storage account where the script resides. This should be passed into the module."
+  type        = string
+  sensitive   = true
+  default     = null
+}
+
+variable "script_storage_account_key" {
+  description = "Storage account access key associated with the script. This should be passed into the module."
+  sensitive   = true
   default     = null
 }
 
