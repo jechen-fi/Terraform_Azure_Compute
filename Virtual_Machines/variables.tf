@@ -53,10 +53,10 @@ variable "virtual_machine_size" {
   default     = "Standard_A2_v2"
 }
 
-variable "instances_count" {
-  description = "The number of Virtual Machines required."
-  default     = 1
-}
+# variable "instances_count" {
+#   description = "The number of Virtual Machines required."
+#   default     = 1
+# }
 
 variable "enable_ip_forwarding" {
   description = "Enable IP Forwarding or not? Defaults to False."
@@ -526,15 +526,7 @@ variable "tags" {
 
 locals {
 
-  #    os_flavor = {
-  #      ubuntu20 = "linux"
-  #      ubuntu18 = "linux"
-  #      centos7  = "linux"
-  #      centos8  = "linux"
-  #      coreos   = "linux"
-  #      win2016  = "windows"
-  #      win2019  = "windows"
-  #    }
+  virtual_machine_name = try(lower(var.virtual_machine_name), lower(format("%s%s%s", var.virtual_machine_name_prepend, "-", var.application_env)))
 
   os_type = var.os_distribution_list[var.os_distribution]["os_type"]
 
