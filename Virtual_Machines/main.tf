@@ -68,13 +68,14 @@ resource "azurerm_public_ip" "pip" {
 # Network Interface for Virtual Machine
 #---------------------------------------
 resource "azurerm_network_interface" "nic" {
-  name                            = format("nic-%s", local.virtual_machine_name)
+  name                            = "nic-${local.virtual_machine_name}"
   resource_group_name             = data.azurerm_resource_group.rg.name
   location                        = data.azurerm_resource_group.rg.location
   dns_servers                     = var.dns_servers
   enable_ip_forwarding            = var.enable_ip_forwarding
   enable_accelerated_networking   = var.enable_accelerated_networking
-  tags                            = merge({ "ResourceName" = "nic-${format("%s", replace(local.virtual_machine_name, "/[[:^alnum:]]/", "")}") }, var.tags, )
+  tags                            = merge({ "ResourceName" = "nic-${replace(local.virtual_machine_name, "/[[:^alnum:]]/", "")}" }, var.tags, )
+# tags                            = merge({ "ResourceName" = "nic-${replace(local.virtual_machine_name, "/[[:^alnum:]]/", "")}" }, var.tags, )
   ip_configuration {
     name                          = format("ipconfig-%s", lower(local.virtual_machine_name))
     primary                       = true
