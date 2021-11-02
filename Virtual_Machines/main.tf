@@ -68,6 +68,7 @@ resource "azurerm_public_ip" "pip" {
 # Network Interface for Virtual Machine
 #---------------------------------------
 resource "azurerm_network_interface" "nic" {
+  count                           = 1
   name                            = "nic-${local.virtual_machine_name}"
   resource_group_name             = data.azurerm_resource_group.rg.name
   location                        = data.azurerm_resource_group.rg.location
@@ -81,7 +82,7 @@ resource "azurerm_network_interface" "nic" {
     primary                       = true
     subnet_id                     = data.azurerm_subnet.snet.id
     private_ip_address            = var.private_ip_address_allocation_type == "Static" ? concat(var.private_ip_address, [""]) : null
-    public_ip_address_id          = tobool(var.enable_feature[var.enable_public_ip_address]) ? concat(azurerm_public_ip.pip.0.id, [""]) : null
+    public_ip_address_id          = tobool(var.enable_feature[var.enable_public_ip_address]) ? concat(azurerm_public_ip.pip.id, [""]) : null
     private_ip_address_allocation = var.private_ip_address_allocation_type
   }
 }
@@ -109,12 +110,12 @@ resource "azurerm_linux_virtual_machine" "linuxvm" {
   admin_username                  = var.admin_username
   admin_password                  = var.admin_password
   disable_password_authentication = var.disable_password_authentication
-  network_interface_ids           = [concat(azurerm_network_interface.nic.id, [""])]
+  network_interface_ids           = [element(concat(azurerm_network_interface.nic.*.id, [""]), count.index)]
   source_image_id                 = var.source_image_id != null ? var.source_image_id : null
   provision_vm_agent              = true
   allow_extension_operations      = true
   dedicated_host_id               = var.dedicated_host_id
-  availability_set_id             = var.enable_feature[var.enable_av_set] ? concat(azurerm_availability_set.aset.0.id, [""]) : null
+  availability_set_id             = var.enable_feature[var.enable_av_set] ? concat(azurerm_availability_set.aset.id, [""]) : null
   encryption_at_host_enabled      = var.encryption_at_host_enabled
   tags                            = merge({ "ResourceName" = local.virtual_machine_name }, var.tags, )
   virtual_machine_scale_set_id    = var.vm_scale_set
@@ -225,13 +226,13 @@ resource "azurerm_windows_virtual_machine" "winvm" {
   size                       = var.virtual_machine_size
   admin_username             = var.admin_username
   admin_password             = var.admin_password
-  network_interface_ids      = [concat(azurerm_network_interface.nic.*.id, [""])]
+  network_interface_ids      = [element(concat(azurerm_network_interface.nic.*.id, [""]), count.index)]
   source_image_id            = var.source_image_id != null ? var.source_image_id : null
   provision_vm_agent         = true
   allow_extension_operations = true
   dedicated_host_id          = var.dedicated_host_id
   license_type               = var.license_type
-  availability_set_id        = var.enable_feature[var.enable_av_set] ? concat(azurerm_availability_set.aset.0.id, [""]) : null
+  availability_set_id        = var.enable_feature[var.enable_av_set] ? concat(azurerm_availability_set.aset.id, [""]) : null
   tags                       = merge({ "ResourceName" = local.virtual_machine_name }, var.tags, )
   dynamic "source_image_reference" {
     for_each = var.os_distribution_list[var.os_distribution][*]
