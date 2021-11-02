@@ -1,4 +1,4 @@
-# Virtual_Machines module
+# Virtual Machines Extension module
 
 Terraform generalized module to add a virtual machine extension to one or more linux or windows virtual machines.
 
