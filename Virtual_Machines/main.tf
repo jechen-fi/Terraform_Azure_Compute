@@ -8,7 +8,7 @@ resource "tls_private_key" "rsa" {
 }
 
 #----------------------------------------------------------
-# Resource Group, VNet, Subnet selection & Random Resources
+# Gather data for Resource Group, VNet, Subnet selection & Random Resources
 #----------------------------------------------------------
 data "azurerm_resource_group" "rg" {
   name = var.resource_group_name
@@ -41,26 +41,12 @@ data "azurerm_storage_account" "storeacc" {
   resource_group_name = data.azurerm_resource_group.rg.name
 }
 
-# resource "random_password" "passwd" {
-#   count       = var.disable_password_authentication != true || local.os_type == "windows" && var.admin_password == null ? 1 : 0
-#   length      = 24
-#   min_upper   = 4
-#   min_lower   = 2
-#   min_numeric = 4
-#   special     = false
-
-#   keepers = {
-#     admin_password = local.os_type
-#   }
-# }
-
 resource "random_string" "str" {
-  count   = tobool(var.enable_feature[var.enable_public_ip_address]) ? var.instances_count : 0
   length  = 6
   special = false
   upper   = false
   keepers = {
-    domain_name_label = var.virtual_machine_name
+    domain_name_label = local.virtual_machine_name
   }
 }
 
@@ -68,46 +54,45 @@ resource "random_string" "str" {
 # Public IP for Virtual Machine
 #-----------------------------------
 resource "azurerm_public_ip" "pip" {
-  count               = var.enable_feature[var.enable_public_ip_address] ? var.instances_count : 0
-  name                = lower("pip-vm-${var.virtual_machine_name}-${data.azurerm_resource_group.rg.location}-0${count.index + 1}")
+  count               = var.enable_feature[var.enable_public_ip_address] ? 1 : 0
+  name                = "pip-vm-${local.virtual_machine_name}-${data.azurerm_resource_group.rg.location}"
   location            = data.azurerm_resource_group.rg.location
   resource_group_name = data.azurerm_resource_group.rg.name
   allocation_method   = "Static"
   sku                 = "Standard"
-  domain_name_label   = format("%s%s", lower(replace(var.virtual_machine_name, "/[[:^alnum:]]/", "")), random_string.str[count.index].result)
-  tags                = merge({ "ResourceName" = lower("pip-vm-${var.virtual_machine_name}-${data.azurerm_resource_group.rg.location}-0${count.index + 1}") }, var.tags, )
+  domain_name_label   = format("%s%s", replace(local.virtual_machine_name, "/[[:^alnum:]]/", ""), random_string.str.result)
+  tags                = merge({ "ResourceName" = lower("pip-vm-${local.virtual_machine_name}-${data.azurerm_resource_group.rg.location}") }, var.tags, )
 }
 
 #---------------------------------------
 # Network Interface for Virtual Machine
 #---------------------------------------
 resource "azurerm_network_interface" "nic" {
-  count                         = var.instances_count
-  name                          = var.instances_count == "1" ? format("nic-%s%02d", lower(var.virtual_machine_name), 1) : format("nic-%s%02d", lower(var.virtual_machine_name), count.index + 1)
-  resource_group_name           = data.azurerm_resource_group.rg.name
-  location                      = data.azurerm_resource_group.rg.location
-  dns_servers                   = var.dns_servers
-  enable_ip_forwarding          = var.enable_ip_forwarding
-  enable_accelerated_networking = var.enable_accelerated_networking
-  tags                          = merge({ "ResourceName" = var.instances_count == 1 ? lower("nic-${format("%s%02d", lower(replace(var.virtual_machine_name, "/[[:^alnum:]]/", "")), 1)}") : lower("nic-${format("%s%02d", lower(replace(var.virtual_machine_name, "/[[:^alnum:]]/", "")), count.index + 1)}") }, var.tags, )
+  name                            = format("nic-%s", local.virtual_machine_name)
+  resource_group_name             = data.azurerm_resource_group.rg.name
+  location                        = data.azurerm_resource_group.rg.location
+  dns_servers                     = var.dns_servers
+  enable_ip_forwarding            = var.enable_ip_forwarding
+  enable_accelerated_networking   = var.enable_accelerated_networking
+  tags                            = merge({ "ResourceName" = "nic-${format("%s", replace(local.virtual_machine_name, "/[[:^alnum:]]/", "")}") }, var.tags, )
   ip_configuration {
-    name                          = var.instances_count == "1" ? format("ipconfig-%s%02d", lower(var.virtual_machine_name), 1) : format("ipconfig-%s%02d", lower(var.virtual_machine_name), count.index + 1)
+    name                          = format("ipconfig-%s", lower(local.virtual_machine_name))
     primary                       = true
     subnet_id                     = data.azurerm_subnet.snet.id
-    private_ip_address            = var.private_ip_address_allocation_type == "Static" ? element(concat(var.private_ip_address, [""]), count.index) : null
-    public_ip_address_id          = tobool(var.enable_feature[var.enable_public_ip_address]) ? element(concat(azurerm_public_ip.pip.*.id, [""]), count.index) : null
+    private_ip_address            = var.private_ip_address_allocation_type == "Static" ? concat(var.private_ip_address, [""])) : null
+    public_ip_address_id          = tobool(var.enable_feature[var.enable_public_ip_address]) ? concat(azurerm_public_ip.pip.id, [""])) : null
     private_ip_address_allocation = var.private_ip_address_allocation_type
   }
 }
 resource "azurerm_availability_set" "aset" {
-  count                        = tobool(var.enable_feature[var.enable_av_set]) ? 1 : 0
-  name                         = lower("avail-${var.virtual_machine_name}-${data.azurerm_resource_group.rg.location}")
-  resource_group_name          = data.azurerm_resource_group.rg.name
-  location                     = data.azurerm_resource_group.rg.location
-  platform_fault_domain_count  = 2
-  platform_update_domain_count = 2
-  managed                      = true
-  tags                         = merge({ "ResourceName" = lower("avail-${var.virtual_machine_name}-${data.azurerm_resource_group.rg.location}") }, var.tags, )
+  count                           = tobool(var.enable_feature[var.enable_av_set]) ? 1 : 0
+  name                            = "avail-${local.virtual_machine_name}-${data.azurerm_resource_group.rg.location}"
+  resource_group_name             = data.azurerm_resource_group.rg.name
+  location                        = data.azurerm_resource_group.rg.location
+  platform_fault_domain_count     = 2
+  platform_update_domain_count    = 2
+  managed                         = true
+  tags                            = merge({ "ResourceName" = lower("avail-${local.virtual_machine_name}-${data.azurerm_resource_group.rg.location}") }, var.tags, )
 }
 
 
@@ -115,47 +100,47 @@ resource "azurerm_availability_set" "aset" {
 # Linux Virtual machine
 #---------------------------------------
 resource "azurerm_linux_virtual_machine" "linuxvm" {
-  count                           = local.os_type == "linux" ? var.instances_count : 0
-  name                            = try(var.instances_count == "1" ? format("%s%02d", lower(var.virtual_machine_name), 1) : format("%s%02d", lower(var.virtual_machine_name), count.index + 1), var.instances_count == "1" ? format("%s%02d%s%s", lower(var.virtual_machine_name_prepend), 1, "-", var.application_env) : format("%s%02d%s%s", lower(var.virtual_machine_name_prepend), count.index + 1, "-", var.application_env))
+  count                           = local.os_type == "linux" ? 1 : 0
+  name                            = local.virtual_machine_name
   resource_group_name             = data.azurerm_resource_group.rg.name
   location                        = data.azurerm_resource_group.rg.location
   size                            = var.virtual_machine_size
   admin_username                  = var.admin_username
   admin_password                  = var.admin_password
   disable_password_authentication = var.disable_password_authentication
-  network_interface_ids           = [element(concat(azurerm_network_interface.nic.*.id, [""]), count.index)]
+  network_interface_ids           = [concat(azurerm_network_interface.nic.id, [""])]
   source_image_id                 = var.source_image_id != null ? var.source_image_id : null
   provision_vm_agent              = true
   allow_extension_operations      = true
   dedicated_host_id               = var.dedicated_host_id
-  availability_set_id             = tobool(var.enable_feature[var.enable_av_set]) ? element(concat(azurerm_availability_set.aset.*.id, [""]), 0) : null
+  availability_set_id             = var.enable_feature[var.enable_av_set]) ? concat(azurerm_availability_set.aset.id, [""]) : null
   encryption_at_host_enabled      = var.encryption_at_host_enabled
-  tags                            = merge({ "ResourceName" = var.instances_count == 1 ? format("%s%02d", lower(var.virtual_machine_name), 1) : format("%s%02d", lower(var.virtual_machine_name), count.index + 1) }, var.tags, )
+  tags                            = merge({ "ResourceName" = local.virtual_machine_name }, var.tags, )
   virtual_machine_scale_set_id    = var.vm_scale_set
   zone                            = var.zone
   priority                        = var.priority
-  custom_data = base64encode(<<-EOT
-                                #!/bin/bash
-                                touch /opt/script_began
-                                st_cont=rhelbootstrapdev
-                                sub_id=SUB-CORECONN-DEV
-                                st_acct=corebootstrapdev
-                                tf_vers=0.15.5
-                                blob_name=build_ghsh_run.sh
-                                rpm --import https://packages.microsoft.com/keys/microsoft.asc
-                                echo -e '[azure-cli]
-                                name=Azure CLI
-                                baseurl=https://packages.microsoft.com/yumrepos/azure-cli
-                                enabled=1
-                                gpgcheck=1
-                                gpgkey=https://packages.microsoft.com/keys/microsoft.asc' > /etc/yum.repos.d/azure-cli.repo
-                                yum -y install curl azure-cli wget
-                                az login --identity
-                                az storage blob download --subscription $sub_id --auth-mode login --container-name $st_cont --account-name $st_acct --name $blob_name --file /opt/$blob_name
-                                chmod +x /opt/$blob_name
-                                /opt/$blob_name $tf_vers
-                                EOT
-  )
+  custom_data                     = base64encode(<<-EOT
+                                      #!/bin/bash
+                                      touch /opt/script_began
+                                      st_cont=rhelbootstrapdev
+                                      sub_id=SUB-CORECONN-DEV
+                                      st_acct=corebootstrapdev
+                                      tf_vers=0.15.5
+                                      blob_name=build_ghsh_run.sh
+                                      rpm --import https://packages.microsoft.com/keys/microsoft.asc
+                                      echo -e '[azure-cli]
+                                      name=Azure CLI
+                                      baseurl=https://packages.microsoft.com/yumrepos/azure-cli
+                                      enabled=1
+                                      gpgcheck=1
+                                      gpgkey=https://packages.microsoft.com/keys/microsoft.asc' > /etc/yum.repos.d/azure-cli.repo
+                                      yum -y install curl azure-cli wget
+                                      az login --identity
+                                      az storage blob download --subscription $sub_id --auth-mode login --container-name $st_cont --account-name $st_acct --name $blob_name --file /opt/$blob_name
+                                      chmod +x /opt/$blob_name
+                                      /opt/$blob_name $tf_vers
+                                    EOT
+)
 
   dynamic "additional_capabilities" {
     for_each = var.ultrassd[*]
@@ -231,22 +216,22 @@ resource "azurerm_linux_virtual_machine" "linuxvm" {
 # Windows Virtual machine
 #---------------------------------------
 resource "azurerm_windows_virtual_machine" "winvm" {
-  count                      = local.os_type == "windows" ? var.instances_count : 0
-  name                       = var.instances_count == "1" ? format("%s%02d", lower(var.virtual_machine_name), 1) : format("%s%02d", lower(var.virtual_machine_name), count.index + 1)
-  computer_name              = var.instances_count == "1" ? format("%s%02d", lower(var.virtual_machine_name), 1) : format("%s%02d", lower(var.virtual_machine_name), count.index + 1)
+  count                      = local.os_type == "windows" ? 1 : 0
+  name                       = local.virtual_machine_name
+  computer_name              = local.virtual_machine_name
   resource_group_name        = data.azurerm_resource_group.rg.name
   location                   = data.azurerm_resource_group.rg.location
   size                       = var.virtual_machine_size
   admin_username             = var.admin_username
   admin_password             = var.admin_password
-  network_interface_ids      = [element(concat(azurerm_network_interface.nic.*.id, [""]), count.index)]
+  network_interface_ids      = [concat(azurerm_network_interface.nic.*.id, [""])]
   source_image_id            = var.source_image_id != null ? var.source_image_id : null
   provision_vm_agent         = true
   allow_extension_operations = true
   dedicated_host_id          = var.dedicated_host_id
   license_type               = var.license_type
-  availability_set_id        = tobool(var.enable_feature[var.enable_av_set]) ? element(concat(azurerm_availability_set.aset.*.id, [""]), 0) : null
-  tags                       = merge({ "ResourceName" = var.instances_count == 1 ? format("%s%02d", lower(var.virtual_machine_name), 1) : format("%s%02d", lower(var.virtual_machine_name), count.index + 1) }, var.tags, )
+  availability_set_id        = var.enable_feature[var.enable_av_set]) ? concat(azurerm_availability_set.aset.id, [""]) : null
+  tags                       = merge({ "ResourceName" = local.virtual_machine_name }, var.tags, )
   dynamic "source_image_reference" {
     for_each = var.os_distribution_list[var.os_distribution][*]
     content {
@@ -330,7 +315,7 @@ resource "azurerm_windows_virtual_machine" "winvm" {
 #--------------------------------------
 # resource "azurerm_monitor_diagnostic_setting" "nsg" {
 #   count                      = var.log_analytics_workspace_name != null && var.vm_storage_account != null ? 1 : 0
-#   name                       = lower("nsg-${var.virtual_machine_name}-diag")
+#   name                       = lower("nsg-${local.virtual_machine_name}-diag")
 #   target_resource_id         = azurerm_network_security_group.nsg.id
 #   storage_account_id         = data.azurerm_storage_account.storeacc.0.id
 #   log_analytics_workspace_id = data.azurerm_log_analytics_workspace.logws.0.id
