@@ -114,7 +114,7 @@ resource "azurerm_linux_virtual_machine" "linuxvm" {
   provision_vm_agent              = true
   allow_extension_operations      = true
   dedicated_host_id               = var.dedicated_host_id
-  availability_set_id             = var.enable_feature[var.enable_av_set]) ? concat(azurerm_availability_set.aset.id, [""]) : null
+  availability_set_id             = var.enable_feature[var.enable_av_set] ? concat(azurerm_availability_set.aset.id, [""]) : null
   encryption_at_host_enabled      = var.encryption_at_host_enabled
   tags                            = merge({ "ResourceName" = local.virtual_machine_name }, var.tags, )
   virtual_machine_scale_set_id    = var.vm_scale_set
@@ -231,7 +231,7 @@ resource "azurerm_windows_virtual_machine" "winvm" {
   allow_extension_operations = true
   dedicated_host_id          = var.dedicated_host_id
   license_type               = var.license_type
-  availability_set_id        = var.enable_feature[var.enable_av_set]) ? concat(azurerm_availability_set.aset.id, [""]) : null
+  availability_set_id        = var.enable_feature[var.enable_av_set] ? concat(azurerm_availability_set.aset.id, [""]) : null
   tags                       = merge({ "ResourceName" = local.virtual_machine_name }, var.tags, )
   dynamic "source_image_reference" {
     for_each = var.os_distribution_list[var.os_distribution][*]
