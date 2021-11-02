@@ -80,7 +80,7 @@ resource "azurerm_network_interface" "nic" {
     name                          = format("ipconfig-%s", lower(local.virtual_machine_name))
     primary                       = true
     subnet_id                     = data.azurerm_subnet.snet.id
-    private_ip_address            = var.private_ip_address_allocation_type == "Static" ? concat(var.private_ip_address, [""])) : null
+    private_ip_address            = var.private_ip_address_allocation_type == "Static" ? concat(var.private_ip_address, [""]) : null
     public_ip_address_id          = tobool(var.enable_feature[var.enable_public_ip_address]) ? concat(azurerm_public_ip.pip.id, [""])) : null
     private_ip_address_allocation = var.private_ip_address_allocation_type
   }
