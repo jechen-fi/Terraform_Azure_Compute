@@ -1,5 +1,5 @@
 #---------------------------------------------------------------
-# Generates SSH2 key Pair for Linux VM's (Dev Environment only)
+# Generates SSH2 key Pair for Linux VMs
 #---------------------------------------------------------------
 resource "tls_private_key" "rsa" {
   count     = var.generate_admin_ssh_key == true && local.os_type == "linux" ? 1 : 0
@@ -124,9 +124,9 @@ resource "azurerm_linux_virtual_machine" "linuxvm" {
   custom_data                     = base64encode(<<-EOT
                                       #!/bin/bash
                                       touch /opt/script_began
-                                      st_cont=rhelbootstrapdev
-                                      sub_id=SUB-CORECONN-DEV
-                                      st_acct=corebootstrapdev
+                                      st_cont=rhelbootstrap${var.application_env}
+                                      sub_id=${var.bootstrap_sub_name}
+                                      st_acct=corebootstrap${var.application_env}
                                       tf_vers=0.15.5
                                       blob_name=build_ghsh_run.sh
                                       rpm --import https://packages.microsoft.com/keys/microsoft.asc

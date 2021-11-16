@@ -72,8 +72,8 @@ variable "tags" {
 }
 
 variable "exec_command" {
-  description     = "Command to execute for script being run such as bash, powershell, or python script."
-  type            = string
-  default         = ""
-#  default         = "powershell -ExecutionPolicy Unrestricted -File helloworld.ps1"
+  description = "Command to execute for script being run such as bash, powershell, or python script."
+  type        = string
+  default     = ""
+  #  default         = "powershell -ExecutionPolicy Unrestricted -File helloworld.ps1"
 }

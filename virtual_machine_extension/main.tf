@@ -17,13 +17,13 @@ SETTINGS
   tags                       = var.tags
   protected_settings         = <<PROTECTED_SETTINGS
     {
-       "commandToExecute": "powershell -ExecutionPolicy Unrestricted -File helloworld.ps1",
+       "commandToExecute": "${var.exec_command}",
        "managedIdentity": { "objectId": "${var.managed_identity}" },
        "fileUris": [
          "${var.script_uris}"
        ]
     }
 PROTECTED_SETTINGS
-#       "storageAccountName": "${var.script_storage_account}",
-#       "storageAccountKey": "${var.script_storage_account_key}",
+  #       "storageAccountName": "${var.script_storage_account}",
+  #       "storageAccountKey": "${var.script_storage_account_key}",
 }

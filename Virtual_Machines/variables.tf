@@ -29,13 +29,19 @@ variable "subnet_name" {
   description = "Subnet name within the virtual network that resources will live on"
 }
 
+variable "bootstrap_sub_name" {
+  type = string
+  description = "Subscription name for the bootstrap storage account"
+}
+
 variable "log_analytics_workspace_name" {
   description = "Log Analytics workspace name, if one is used for logs"
   default     = null
 }
 
 variable "vm_storage_account" {
-  description = "Base vm storage account to store logs"
+  description = "Base VM storage account to store logs"
+  type        = string
 }
 
 variable "virtual_machine_name" {
@@ -130,10 +136,11 @@ variable "identity" {
     type         = string
     identity_ids = list(string)
   })
-  default = {
-    type         = null
-    identity_ids = null
-  }
+  default = null
+  # {
+  #   type         = null
+  #   identity_ids = null
+  # }
 }
 
 variable "win_vm_identity" {
