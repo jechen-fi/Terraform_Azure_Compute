@@ -30,8 +30,9 @@ variable "subnet_name" {
 }
 
 variable "bootstrap_sub_name" {
-  type = string
+  type        = string
   description = "Subscription name for the bootstrap storage account"
+  default     = null
 }
 
 variable "log_analytics_workspace_name" {
