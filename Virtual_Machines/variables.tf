@@ -32,7 +32,7 @@ variable "subnet_name" {
 variable "bootstrap_sub_name" {
   type        = string
   description = "Subscription name for the bootstrap storage account"
-  default     = null
+  default     = ""
 }
 
 variable "log_analytics_workspace_name" {
@@ -41,8 +41,9 @@ variable "log_analytics_workspace_name" {
 }
 
 variable "vm_storage_account" {
-  description = "Base VM storage account to store logs"
+  description = "VM storage account to store logs - log analytics use only"
   type        = string
+   default    = null
 }
 
 variable "virtual_machine_name" {
