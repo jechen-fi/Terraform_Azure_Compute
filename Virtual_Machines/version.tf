@@ -12,6 +12,4 @@ terraform {
   required_version = ">= 0.14.1"
 }
 
-provider "azurerm" {
-  features {}
-}
+
