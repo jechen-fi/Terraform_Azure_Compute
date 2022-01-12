@@ -123,24 +123,24 @@ resource "azurerm_linux_virtual_machine" "linuxvm" {
   priority                        = var.priority
   custom_data                     = base64encode(<<-EOT
                                       #!/bin/bash
-                                      touch /opt/script_began
-                                      st_cont=rhelbootstrap${var.application_env}
-                                      sub_id=${var.bootstrap_sub_name}
-                                      st_acct=corebootstrap${var.application_env}
-                                      tf_vers=0.15.5
-                                      blob_name=build_ghsh_run.sh
-                                      rpm --import https://packages.microsoft.com/keys/microsoft.asc
-                                      echo -e '[azure-cli]
-                                      name=Azure CLI
-                                      baseurl=https://packages.microsoft.com/yumrepos/azure-cli
-                                      enabled=1
-                                      gpgcheck=1
-                                      gpgkey=https://packages.microsoft.com/keys/microsoft.asc' > /etc/yum.repos.d/azure-cli.repo
-                                      yum -y install curl azure-cli wget
-                                      az login --identity
-                                      az storage blob download --subscription $sub_id --auth-mode login --container-name $st_cont --account-name $st_acct --name $blob_name --file /opt/$blob_name
-                                      chmod +x /opt/$blob_name
-                                      /opt/$blob_name $tf_vers
+                                      echo touch /opt/script_began
+                                      echo st_cont=rhelbootstrap${var.application_env}
+                                      echo sub_id=${var.bootstrap_sub_name}
+                                      echo st_acct=corebootstrap${var.application_env}
+                                      echo tf_vers=0.15.5
+                                      echo blob_name=build_ghsh_run.sh
+                                      echo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+                                      echo echo -e '[azure-cli]
+                                      echo name=Azure CLI
+                                      echo baseurl=https://packages.microsoft.com/yumrepos/azure-cli
+                                      echo enabled=1
+                                      echo gpgcheck=1
+                                      echo gpgkey=https://packages.microsoft.com/keys/microsoft.asc' > /etc/yum.repos.d/azure-cli.repo
+                                      echo yum -y install curl azure-cli wget
+                                      echo az login --identity
+                                      echo az storage blob download --subscription $sub_id --auth-mode login --container-name $st_cont --account-name $st_acct --name $blob_name --file /opt/$blob_name
+                                      echo chmod +x /opt/$blob_name
+                                      echo /opt/$blob_name $tf_vers
                                     EOT
 )
 
