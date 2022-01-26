@@ -55,13 +55,13 @@ resource "random_string" "str" {
 #-----------------------------------
 resource "azurerm_public_ip" "pip" {
   count               = var.enable_feature[var.enable_public_ip_address] ? 1 : 0
-  name                = "pip-vm-${local.virtual_machine_name}-${data.azurerm_resource_group.rg.location}"
-  location            = data.azurerm_resource_group.rg.location
+  name                = "pip-vm-${local.virtual_machine_name}-${var.rg_location}"
+  location            = var.rg_location
   resource_group_name = data.azurerm_resource_group.rg.name
   allocation_method   = "Static"
   sku                 = "Standard"
   domain_name_label   = format("%s%s", replace(local.virtual_machine_name, "/[[:^alnum:]]/", ""), random_string.str.result)
-  tags                = merge({ "ResourceName" = lower("pip-vm-${local.virtual_machine_name}-${data.azurerm_resource_group.rg.location}") }, var.tags, )
+  tags                = merge({ "ResourceName" = lower("pip-vm-${local.virtual_machine_name}-${var.rg_location}") }, var.tags, )
 }
 
 #---------------------------------------
@@ -71,7 +71,7 @@ resource "azurerm_network_interface" "nic" {
   count                           = 1
   name                            = "nic-${local.virtual_machine_name}"
   resource_group_name             = data.azurerm_resource_group.rg.name
-  location                        = data.azurerm_resource_group.rg.location
+  location                        = var.rg_location
   dns_servers                     = var.dns_servers
   enable_ip_forwarding            = var.enable_ip_forwarding
   enable_accelerated_networking   = var.enable_accelerated_networking
@@ -88,13 +88,13 @@ resource "azurerm_network_interface" "nic" {
 }
 resource "azurerm_availability_set" "aset" {
   count                           = tobool(var.enable_feature[var.enable_av_set]) ? 1 : 0
-  name                            = "avail-${local.virtual_machine_name}-${data.azurerm_resource_group.rg.location}"
+  name                            = "avail-${local.virtual_machine_name}-${var.rg_location}"
   resource_group_name             = data.azurerm_resource_group.rg.name
-  location                        = data.azurerm_resource_group.rg.location
+  location                        = var.rg_location
   platform_fault_domain_count     = 2
   platform_update_domain_count    = 2
   managed                         = true
-  tags                            = merge({ "ResourceName" = lower("avail-${local.virtual_machine_name}-${data.azurerm_resource_group.rg.location}") }, var.tags, )
+  tags                            = merge({ "ResourceName" = lower("avail-${local.virtual_machine_name}-${var.rg_location}") }, var.tags, )
 }
 
 
@@ -105,7 +105,7 @@ resource "azurerm_linux_virtual_machine" "linuxvm" {
   count                           = local.os_type == "linux" ? 1 : 0
   name                            = local.virtual_machine_name
   resource_group_name             = data.azurerm_resource_group.rg.name
-  location                        = data.azurerm_resource_group.rg.location
+  location                        = var.rg_location
   size                            = var.virtual_machine_size
   admin_username                  = var.admin_username
   admin_password                  = var.admin_password
@@ -222,7 +222,7 @@ resource "azurerm_windows_virtual_machine" "winvm" {
   name                       = local.virtual_machine_name
   computer_name              = local.virtual_machine_name
   resource_group_name        = data.azurerm_resource_group.rg.name
-  location                   = data.azurerm_resource_group.rg.location
+  location                   = var.rg_location
   size                       = var.virtual_machine_size
   admin_username             = var.admin_username
   admin_password             = var.admin_password
