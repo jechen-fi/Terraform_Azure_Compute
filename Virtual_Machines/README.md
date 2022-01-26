@@ -33,6 +33,7 @@ Terraform generalized module to build one or more linux or windows virtual machi
 | enable_public_ip_address | Enable or disable a public ip address for the VM? Defaults to False | `bool` | `false` | yes | no |
 | priority | Specifies the priority of this VM.  Accepted values are 'Regular' or 'Spot' - A change will force a new resource to be created | `string` | `"Regular"` | yes | no |
 | identity | A block supporting both "type (Required)" and "identity_ids (Optional) - the "type" of managed identity which should be assigned to the virtual machine, includes accepted values 'SystemAssigned, UserAssigned' - For identify_ids, it should be a list of user managed identity IDs assigned to the VM | `map` | `null`  | yes | no |
+| rg_location | Location where the VM will need to live based on the location of the resource group.  This should be used instead of a data to avoid ARM attempting to rebuild the resource due to a guid changing on the resource group or something similar | `string` | `westus2`  | no | no |
 | certsecret | A block with url = secret URL of a Key Vault cert | `object` | `null`<br>`or, use format:`<br>`{`<br>&nbsp;&nbsp;`url = "https://secret/url"`<br>`}` | yes | yes |
 | boot_diag | A block that will determine whether or not to turn on boot diagnostics and proper settings | `map` | `{`<br>&nbsp;&nbsp;`storage_account_uri = [https:// uri for the primary/secondary endpoint for the Azure storage account used to store boot diagnostics, including console output and screenshots from the hypervisor]`<br>`}` | yes | no |
 | plan | Specifies the priority of this VM.  Accepted values are 'Regular' or 'Spot' - A change will force a new resource to be created | `string` | `"Regular"` | yes | no |
@@ -90,9 +91,8 @@ provider "azurerm" {
 #############################version.tf####################################
 module "virtual-machine" {
   # version = github.com/FisherInvestments/tf_arm_virtualmachines?ref=development
-  # tags = 0.0.1
+  # tags = v1.1.0
   source                       = "./modules/tf_arm_virtualmachines"
-  # Resource Group, location, VNet and Subnet details
   boot_diag                    = local.boot_diag
   resource_group_name          = var.rg_name
   resource_group_vnet          = var.vnet_rg_name
@@ -102,37 +102,14 @@ module "virtual-machine" {
   # (Optional) To enable Azure Monitoring and install log analytics agents
   log_analytics_workspace_name = var.log_analytics_workspace_name
   vm_storage_account           = var.vm_storage_account
-  # This module support multiple Pre-Defined Linux and Windows Distributions.
-  # Linux images: ubuntu1804, ubuntu2004, centos7, centos8, coreos, rhel7, rhel8
-  # Windows Images: windows2016dc, windows2019dc, windows2016dccore
-  # MSSQL 2017 images: mssql2017exp, mssql2017dev, mssql2017std, mssql2017ent
-  # MSSQL 2019 images: mssql2019dev, mssql2019std, mssql2019ent
-  # MSSQL 2019 Linux OS Images:
-  # SQL RHEL8 images: mssql2019ent-rhel8, mssql2019std-rhel8, mssql2019dev-rhel8
-  # SQL Ubuntu images: mssql2019ent-ubuntu1804, mssql2019std-ubuntu1804, mssql2019dev-ubuntu1804
-  # Bring your own License (BOYL) images: mssql2019ent-byol, mssql2019std-byol
   os_distribution               = var.os_distribution
   virtual_machine_size          = var.vm_sizes[var.vm_size]
   admin_username                = var.local_account
   admin_password                = var.local_account_cred
-  # generate_admin_ssh_key     = false
-  # admin_ssh_key_data         = "~/.ssh/id_rsa.pub"
   instances_count               = var.resource_count
   enable_av_set                 = var.enable_availability_set[var.enable_av_set]
-  # Network Seurity group port allow definitions for each Virtual Machine
-  # NSG association to be added automatically for all network interfaces.
-  # SSH port 22 and 3389 is exposed to the Internet recommended for only testing. 
-  # For production environments, recommended to use a VPN or private connection.
-  nsg_inbound_rules = [
-    {
-      name                   = "ssh"
-      destination_port_range = "22"
-      source_address_prefix  = "*"
-    },
-  ]
 
-  # Use the block below to add TAG's to your Azure resources (Required)
-  # ProjectName and Env are already declared above, to use them here, create a varible. 
+
   tags = {
     applicationName  = "Cloud Infrastructure Virtual Machine"
     environment      = "Development"

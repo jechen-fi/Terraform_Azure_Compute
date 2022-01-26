@@ -491,6 +491,12 @@ variable "admin_password" {
   sensitive   = true
 }
 
+variable "rg_location" {
+  description = "Location of the resource group and the VM that can be passed in to override the default."
+  default     = "westus2"
+  type        = "string"
+}
+
 variable "nsg_inbound_rules" {
   description = "List of network rules to apply to network interface."
   default     = []
