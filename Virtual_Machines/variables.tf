@@ -494,7 +494,7 @@ variable "admin_password" {
 variable "rg_location" {
   description = "Location of the resource group and the VM that can be passed in to override the default."
   default     = "westus2"
-  type        = "string"
+  type        = string
 }
 
 variable "nsg_inbound_rules" {
