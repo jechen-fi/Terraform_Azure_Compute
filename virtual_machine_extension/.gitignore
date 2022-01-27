@@ -5,8 +5,12 @@
 *.tfstate
 *.tfstate.*
 
+# Terraform lock version files
+*.terraform.lock.*
+
 # Crash log files
 crash.log
+debug.log
 
 # Ignore any .tfvars files that are generated automatically for each Terraform run. Most
 # .tfvars files are managed as part of configuration and so should be included in
@@ -14,15 +18,15 @@ crash.log
 #
 # example.tfvars
 
-# Terraform lock files
-.terraform.lock.*
-
 # Ignore override files as they are usually used to override resources locally and so
 # are not checked in
 override.tf
 override.tf.json
 *_override.tf
 *_override.tf.json
+
+# Debug log for terraform
+debug.log
 
 # Include override files you do wish to add to version control using negated pattern
 #
