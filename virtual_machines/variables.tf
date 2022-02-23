@@ -539,15 +539,8 @@ variable "tags" {
   default     = null
 }
 
-locals {
-
-  virtual_machine_name = try(lower(var.virtual_machine_name), lower(format("%s%s%s", var.virtual_machine_name_prepend, "-", var.application_env)))
-
-  os_type = var.os_distribution_list[var.os_distribution]["os_type"]
-
-  nsg_inbound_rules = { for idx, security_rule in var.nsg_inbound_rules : security_rule.name => {
-    idx : idx,
-    security_rule : security_rule,
-    }
-  }
+variable "subscription_id" {
+  description = "Subscription for which sub the virtual machine images should be found in (ex. image gallery sub)."
+  type        = string
+  default     = ""
 }
