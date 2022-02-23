@@ -12,4 +12,8 @@ terraform {
   required_version = ">= 0.15.5"
 }
 
-
+provider "azurerm" {
+  features {}
+  subscription_id = local.subscription_id
+  alias           = "image-sub"
+}
