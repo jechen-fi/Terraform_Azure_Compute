@@ -197,7 +197,6 @@ variable "os_distribution" {
 
 variable "os_distribution_list" {
   description = "Pre-defined Azure Linux VM images list"
-  type = map(object(any))
 
   default = {
     ubuntu20 = {

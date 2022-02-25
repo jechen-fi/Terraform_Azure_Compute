@@ -77,7 +77,6 @@ resource "azurerm_linux_virtual_machine" "linuxvm" {
   admin_password                  = var.admin_password
   disable_password_authentication = var.disable_password_authentication
   network_interface_ids           = [element(concat(azurerm_network_interface.nic.*.id, [""]), count.index)]
-  source_image_id                 = var.source_image_id != null ? var.source_image_id : null
   provision_vm_agent              = true
   allow_extension_operations      = true
   dedicated_host_id               = var.dedicated_host_id

@@ -8,10 +8,10 @@ data "azurerm_resource_group" "rg" {
 }
 
 data "azurerm_shared_image" "search" {
-  name                = var.server_image
+  name                = var.server_image_name
   gallery_name        = var.compute_gallery_name
   resource_group_name = data.azurerm_resource_group.rg.name
-  provider            = image-sub
+  provider            = azurerm.image-sub
 }
 
 data "azurerm_resource_group" "vnet_rg" {
