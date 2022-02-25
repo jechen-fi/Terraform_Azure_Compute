@@ -191,91 +191,84 @@ variable "plan" {
 }
 
 variable "os_distribution" {
-  default     = "ubuntu18"
+  default     = "none"
   description = "Variable to pick an OS flavor. Possible values include: ubuntu18, centos7, centos8, win2019, win2016, etc."
 }
 
 variable "os_distribution_list" {
   description = "Pre-defined Azure Linux VM images list"
-  type = map(object({
-    publisher = string
-    offer     = string
-    sku       = string
-    version   = string
-    os_type   = string
-  }))
 
   default = {
     ubuntu20 = {
-      "publisher" = "Canonical"
-      "offer"     = "0001-com-ubuntu-server-focal"
-      "sku"       = "20_04-lts-gen2"
-      "version"   = "latest"
-      "os_type"   = "linux"
+      publisher = "Canonical"
+      offer     = "0001-com-ubuntu-server-focal"
+      sku       = "20_04-lts-gen2"
+      version   = "latest"
+      os_type   = "linux"
     },
 
     ubuntu18 = {
-      "publisher" = "Canonical"
-      "offer"     = "UbuntuServer"
-      "sku"       = "18_04-lts-gen2"
-      "version"   = "latest"
-      "os_type"   = "linux"
+      publisher = "Canonical"
+      offer     = "UbuntuServer"
+      sku       = "18_04-lts-gen2"
+      version   = "latest"
+      os_type   = "linux"
     },
 
     centos7 = {
-      "publisher" = "OpenLogic"
-      "offer"     = "CentOS-LVM"
-      "sku"       = "7-lvm-gen2"
-      "version"   = "latest"
-      "os_type"   = "linux"
+      publisher = "OpenLogic"
+      offer     = "CentOS-LVM"
+      sku       = "7-lvm-gen2"
+      version   = "latest"
+      os_type   = "linux"
     },
 
     centos8 = {
-      "publisher" = "OpenLogic"
-      "offer"     = "CentOS-LVM"
-      "sku"       = "8-lvm-gen2"
-      "version"   = "latest"
-      "os_type"   = "linux"
+      publisher = "OpenLogic"
+      offer     = "CentOS-LVM"
+      sku       = "8-lvm-gen2"
+      version   = "latest"
+      os_type   = "linux"
     },
 
     rhel7 = {
-      "publisher" = "RedHat"
-      "offer"     = "RHEL"
-      "sku"       = "7lvm-gen2"
-      "version"   = "latest"
-      "os_type"   = "linux"
+      publisher = "RedHat"
+      offer     = "RHEL"
+      sku       = "7lvm-gen2"
+      version   = "latest"
+      os_type   = "linux"
     },
 
     rhel8 = {
-      "publisher" = "RedHat"
-      "offer"     = "RHEL"
-      "sku"       = "8-lvm-gen2"
-      "version"   = "latest"
-      "os_type"   = "linux"
+      publisher = "RedHat"
+      offer     = "RHEL"
+      sku       = "8-lvm-gen2"
+      version   = "latest"
+      os_type   = "linux"
     },
 
     coreos = {
-      "publisher" = "CoreOS"
-      "offer"     = "CoreOS"
-      "sku"       = "Stable"
-      "version"   = "latest"
-      "os_type"   = "linux"
+      publisher = "CoreOS"
+      offer     = "CoreOS"
+      sku       = "Stable"
+      version   = "latest"
+      os_type   = "linux"
     },
 
     mssql2019ent-rhel8 = {
-      "publisher" = "MicrosoftSQLServer"
-      "offer"     = "sql2019-rhel8"
-      "sku"       = "enterprise"
-      "version"   = "latest"
-      "os_type"   = "linux"
+      publisher = "MicrosoftSQLServer"
+      offer     = "sql2019-rhel8"
+      sku       = "enterprise"
+      version   = "latest"
+      os_type   = "linux"
     },
 
     mssql2019std-rhel8 = {
-      "publisher" = "MicrosoftSQLServer"
-      "offer"     = "sql2019-rhel8"
-      "sku"       = "standard"
-      "version"   = "latest"
-      "os_type"   = "linux"
+      publisher = "MicrosoftSQLServer"
+      offer     = "sql2019-rhel8"
+      sku       = "standard"
+      version   = "latest"
+      os_type   = "linux"
     },
 
     mssql2019dev-rhel8 = {
@@ -283,7 +276,7 @@ variable "os_distribution_list" {
       offer     = "sql2019-rhel8"
       sku       = "sqldev"
       version   = "latest"
-      "os_type" = "linux"
+      os_type   = "linux"
     },
 
     mssql2019ent-ubuntu1804 = {
@@ -291,7 +284,7 @@ variable "os_distribution_list" {
       offer     = "sql2019-ubuntu1804"
       sku       = "enterprise"
       version   = "latest"
-      "os_type" = "linux"
+      os_type   = "linux"
     },
 
     mssql2019std-ubuntu1804 = {
@@ -299,7 +292,7 @@ variable "os_distribution_list" {
       offer     = "sql2019-ubuntu1804"
       sku       = "standard"
       version   = "latest"
-      "os_type" = "linux"
+      os_type   = "linux"
     },
 
     mssql2019dev-ubuntu1804 = {
@@ -307,7 +300,7 @@ variable "os_distribution_list" {
       offer     = "sql2019-ubuntu1804"
       sku       = "sqldev"
       version   = "latest"
-      "os_type" = "linux"
+      os_type   = "linux"
     },
 
     win2016 = {
@@ -315,7 +308,7 @@ variable "os_distribution_list" {
       offer     = "WindowsServer"
       sku       = "2016-Datacenter"
       version   = "latest"
-      "os_type" = "windows"
+      os_type   = "windows"
     },
 
     windows2016 = {
@@ -323,7 +316,7 @@ variable "os_distribution_list" {
       offer     = "WindowsServer"
       sku       = "2016-Datacenter"
       version   = "latest"
-      "os_type" = "windows"
+      os_type   = "windows"
     },
 
     win2019 = {
@@ -331,7 +324,7 @@ variable "os_distribution_list" {
       offer     = "WindowsServer"
       sku       = "2019-Datacenter"
       version   = "latest"
-      "os_type" = "windows"
+      os_type   = "windows"
     },
 
     windows2019 = {
@@ -339,7 +332,7 @@ variable "os_distribution_list" {
       offer     = "WindowsServer"
       sku       = "2019-Datacenter"
       version   = "latest"
-      "os_type" = "windows"
+      os_type   = "windows"
     },
 
     windows2016dccore = {
@@ -347,7 +340,7 @@ variable "os_distribution_list" {
       offer     = "WindowsServer"
       sku       = "2016-Datacenter-Server-Core"
       version   = "latest"
-      "os_type" = "windows"
+      os_type   = "windows"
     },
 
     mssql2017exp = {
@@ -355,7 +348,7 @@ variable "os_distribution_list" {
       offer     = "SQL2017-WS2019"
       sku       = "express"
       version   = "latest"
-      "os_type" = "windows"
+      os_type   = "windows"
     },
 
     mssql2017dev = {
@@ -363,7 +356,7 @@ variable "os_distribution_list" {
       offer     = "SQL2017-WS2019"
       sku       = "sqldev"
       version   = "latest"
-      "os_type" = "windows"
+      os_type   = "windows"
     },
 
     mssql2017std = {
@@ -371,7 +364,7 @@ variable "os_distribution_list" {
       offer     = "SQL2017-WS2019"
       sku       = "standard"
       version   = "latest"
-      "os_type" = "windows"
+      os_type   = "windows"
     },
 
     mssql2017ent = {
@@ -379,7 +372,7 @@ variable "os_distribution_list" {
       offer     = "SQL2017-WS2019"
       sku       = "enterprise"
       version   = "latest"
-      "os_type" = "windows"
+      os_type   = "windows"
     },
 
     mssql2019std = {
@@ -387,7 +380,7 @@ variable "os_distribution_list" {
       offer     = "sql2019-ws2019"
       sku       = "standard"
       version   = "latest"
-      "os_type" = "windows"
+      os_type   = "windows"
     },
 
     mssql2019dev = {
@@ -395,7 +388,7 @@ variable "os_distribution_list" {
       offer     = "sql2019-ws2019"
       sku       = "sqldev"
       version   = "latest"
-      "os_type" = "windows"
+      os_type   = "windows"
     },
 
     mssql2019ent = {
@@ -403,7 +396,7 @@ variable "os_distribution_list" {
       offer     = "sql2019-ws2019"
       sku       = "enterprise"
       version   = "latest"
-      "os_type" = "windows"
+      os_type   = "windows"
     },
 
     mssql2019ent-byol = {
@@ -411,7 +404,7 @@ variable "os_distribution_list" {
       offer     = "sql2019-ws2019-byol"
       sku       = "enterprise"
       version   = "latest"
-      "os_type" = "windows"
+      os_type   = "windows"
     },
 
     mssql2019std-byol = {
@@ -419,8 +412,10 @@ variable "os_distribution_list" {
       offer     = "sql2019-ws2019-byol"
       sku       = "standard"
       version   = "latest"
-      "os_type" = "windows"
+      os_type   = "windows"
     },
+
+    none = null
   }
 }
 
@@ -543,4 +538,40 @@ variable "subscription_id" {
   description = "Subscription for which sub the virtual machine images should be found in (ex. image gallery sub)."
   type        = string
   default     = ""
+}
+
+variable "server_image_name" {
+  default = "Server2019-FI-Custom-Image"
+}
+
+variable "compute_gallery_name" {
+  default = "coreimggaldev"
+}
+
+variable "image_os" {
+  default = "none"
+}
+
+variable "image_os_type" {
+  type = map(object({
+    server_image_name         = string
+    compute_gallery_name      = string
+  }))
+
+  default = {
+    winserver2019 = {
+      server_image_name    = "Server2019-FI-Custom-Image"
+      compute_gallery_name = "coreimggaldev"
+    },
+
+    rhel8 = {
+      server_image_name    = "rhel8_fi_custom_image"
+      compute_gallery_name = "coreimggaldev"
+    },
+
+    none = {
+      server_image_name    = "none"
+      compute_gallery_name = "none"
+    }
+  }
 }
