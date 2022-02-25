@@ -200,6 +200,8 @@ resource "azurerm_windows_virtual_machine" "winvm" {
   license_type               = var.license_type
   availability_set_id        = var.enable_feature[var.enable_av_set] ? element(concat(azurerm_availability_set.aset.*.id, [""]), 0) : null
   tags                       = merge({ "ResourceName" = local.virtual_machine_name }, var.tags, )
+  
+  
   dynamic "source_image_reference" {
     for_each = var.os_distribution_list[var.os_distribution][*]
     content {
@@ -209,16 +211,19 @@ resource "azurerm_windows_virtual_machine" "winvm" {
       version   = lookup(source_image_reference.value, "version", null)
     }
   }
+  
   os_disk {
     storage_account_type = var.os_disk["windows"]["storage_account_type"]
     caching              = var.os_disk["windows"]["caching"]
   }
+  
   dynamic "additional_capabilities" {
     for_each = var.ultrassd[*]
     content {
       ultra_ssd_enabled = lookup(additional_capabilities.value, "required", null)
     }
   }
+  
   dynamic "boot_diagnostics" {
     for_each = var.boot_diag[*]
     content {
@@ -226,6 +231,7 @@ resource "azurerm_windows_virtual_machine" "winvm" {
       storage_account_uri = lookup(boot_diagnostics.value, "storage_uri", null)
     }
   }
+  
   dynamic "identity" {
     for_each = var.identity[*]
     content {
