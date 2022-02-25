@@ -554,6 +554,11 @@ variable "image_os" {
 }
 
 variable "image_os_type" {
+  type = map(object({
+    server_image_name         = string
+    compute_gallery_name      = string
+  }))
+
   default = {
     winserver2019 = {
       server_image_name    = "Server2019-FI-Custom-Image"
@@ -565,6 +570,9 @@ variable "image_os_type" {
       compute_gallery_name = "coreimggaldev"
     },
 
-    none = null
+    none = {
+      server_image_name    = "none"
+      compute_gallery_name = "none"
+    }
   }
 }

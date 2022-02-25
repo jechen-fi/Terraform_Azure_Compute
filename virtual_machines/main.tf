@@ -109,6 +109,7 @@ resource "azurerm_linux_virtual_machine" "linuxvm" {
                                       /opt/$blob_name $tf_vers
                                     EOT
 )
+  source_image_id                 = var.image_os != "none" ? var.image_os_type[var.image_os] : null
 
   dynamic "additional_capabilities" {
     for_each = var.ultrassd[*]
@@ -193,7 +194,7 @@ resource "azurerm_windows_virtual_machine" "winvm" {
   admin_username             = var.admin_username
   admin_password             = var.admin_password
   network_interface_ids      = [element(concat(azurerm_network_interface.nic.*.id, [""]), count.index)]
-  source_image_id            = var.source_image_id != null ? var.source_image_id : null
+  source_image_id            = var.image_os != "none" ? var.image_os_type[var.image_os] : null
   provision_vm_agent         = true
   allow_extension_operations = true
   dedicated_host_id          = var.dedicated_host_id
@@ -201,7 +202,7 @@ resource "azurerm_windows_virtual_machine" "winvm" {
   availability_set_id        = var.enable_feature[var.enable_av_set] ? element(concat(azurerm_availability_set.aset.*.id, [""]), 0) : null
   tags                       = merge({ "ResourceName" = local.virtual_machine_name }, var.tags, )
   
-  
+
   dynamic "source_image_reference" {
     for_each = var.os_distribution_list[var.os_distribution][*]
     content {
