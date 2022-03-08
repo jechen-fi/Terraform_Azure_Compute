@@ -7,40 +7,6 @@ resource "tls_private_key" "rsa" {
   rsa_bits  = 4096
 }
 
-#----------------------------------------------------------
-# Gather data for Resource Group, VNet, Subnet selection & Random Resources
-#----------------------------------------------------------
-data "azurerm_resource_group" "rg" {
-  name = var.resource_group_name
-}
-
-data "azurerm_resource_group" "vnet_rg" {
-  name = var.resource_group_vnet
-}
-
-data "azurerm_virtual_network" "vnet" {
-  name                = var.virtual_network_name
-  resource_group_name = data.azurerm_resource_group.vnet_rg.name
-}
-
-data "azurerm_subnet" "snet" {
-  name                 = var.subnet_name
-  virtual_network_name = data.azurerm_virtual_network.vnet.name
-  resource_group_name  = data.azurerm_resource_group.vnet_rg.name
-}
-
-data "azurerm_log_analytics_workspace" "logws" {
-  count               = var.log_analytics_workspace_name != null ? 1 : 0
-  name                = var.log_analytics_workspace_name
-  resource_group_name = data.azurerm_resource_group.rg.name
-}
-
-data "azurerm_storage_account" "storeacc" {
-  count               = var.vm_storage_account != null ? 1 : 0
-  name                = var.vm_storage_account
-  resource_group_name = data.azurerm_resource_group.rg.name
-}
-
 resource "random_string" "str" {
   length  = 6
   special = false
@@ -111,7 +77,6 @@ resource "azurerm_linux_virtual_machine" "linuxvm" {
   admin_password                  = var.admin_password
   disable_password_authentication = var.disable_password_authentication
   network_interface_ids           = [element(concat(azurerm_network_interface.nic.*.id, [""]), count.index)]
-  source_image_id                 = var.source_image_id != null ? var.source_image_id : null
   provision_vm_agent              = true
   allow_extension_operations      = true
   dedicated_host_id               = var.dedicated_host_id
@@ -122,6 +87,7 @@ resource "azurerm_linux_virtual_machine" "linuxvm" {
   zone                            = var.zone
   priority                        = var.priority
   custom_data                     = var.custom_data
+  source_image_id                 = var.image_os != "none" ? var.image_os_type[var.image_os] : null
 
   dynamic "additional_capabilities" {
     for_each = var.ultrassd[*]
@@ -206,13 +172,15 @@ resource "azurerm_windows_virtual_machine" "winvm" {
   admin_username             = var.admin_username
   admin_password             = var.admin_password
   network_interface_ids      = [element(concat(azurerm_network_interface.nic.*.id, [""]), count.index)]
-  source_image_id            = var.source_image_id != null ? var.source_image_id : null
+  source_image_id            = var.image_os != "none" ? var.image_os_type[var.image_os] : null
   provision_vm_agent         = true
   allow_extension_operations = true
   dedicated_host_id          = var.dedicated_host_id
   license_type               = var.license_type
   availability_set_id        = var.enable_feature[var.enable_av_set] ? element(concat(azurerm_availability_set.aset.*.id, [""]), 0) : null
   tags                       = merge({ "ResourceName" = local.virtual_machine_name }, var.tags, )
+  
+
   dynamic "source_image_reference" {
     for_each = var.os_distribution_list[var.os_distribution][*]
     content {
@@ -222,16 +190,19 @@ resource "azurerm_windows_virtual_machine" "winvm" {
       version   = lookup(source_image_reference.value, "version", null)
     }
   }
+  
   os_disk {
     storage_account_type = var.os_disk["windows"]["storage_account_type"]
     caching              = var.os_disk["windows"]["caching"]
   }
+  
   dynamic "additional_capabilities" {
     for_each = var.ultrassd[*]
     content {
       ultra_ssd_enabled = lookup(additional_capabilities.value, "required", null)
     }
   }
+  
   dynamic "boot_diagnostics" {
     for_each = var.boot_diag[*]
     content {
@@ -239,6 +210,7 @@ resource "azurerm_windows_virtual_machine" "winvm" {
       storage_account_uri = lookup(boot_diagnostics.value, "storage_uri", null)
     }
   }
+  
   dynamic "identity" {
     for_each = var.identity[*]
     content {
