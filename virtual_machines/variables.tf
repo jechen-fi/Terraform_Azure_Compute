@@ -276,7 +276,7 @@ variable "os_distribution_list" {
       offer     = "sql2019-rhel8"
       sku       = "sqldev"
       version   = "latest"
-      "os_type" = "linux"
+      os_type = "linux"
     },
 
     mssql2019ent-ubuntu1804 = {
@@ -284,7 +284,7 @@ variable "os_distribution_list" {
       offer     = "sql2019-ubuntu1804"
       sku       = "enterprise"
       version   = "latest"
-      "os_type" = "linux"
+      os_type = "linux"
     },
 
     mssql2019std-ubuntu1804 = {
@@ -292,7 +292,7 @@ variable "os_distribution_list" {
       offer     = "sql2019-ubuntu1804"
       sku       = "standard"
       version   = "latest"
-      "os_type" = "linux"
+      os_type = "linux"
     },
 
     mssql2019dev-ubuntu1804 = {
@@ -300,7 +300,7 @@ variable "os_distribution_list" {
       offer     = "sql2019-ubuntu1804"
       sku       = "sqldev"
       version   = "latest"
-      "os_type" = "linux"
+      os_type = "linux"
     },
 
     win2016 = {
@@ -308,7 +308,7 @@ variable "os_distribution_list" {
       offer     = "WindowsServer"
       sku       = "2016-Datacenter"
       version   = "latest"
-      "os_type" = "windows"
+      os_type = "windows"
     },
 
     windows2016 = {
@@ -316,7 +316,7 @@ variable "os_distribution_list" {
       offer     = "WindowsServer"
       sku       = "2016-Datacenter"
       version   = "latest"
-      "os_type" = "windows"
+      os_type = "windows"
     },
 
     win2019 = {
@@ -324,7 +324,7 @@ variable "os_distribution_list" {
       offer     = "WindowsServer"
       sku       = "2019-Datacenter"
       version   = "latest"
-      "os_type" = "windows"
+      os_type = "windows"
     },
 
     windows2019 = {
@@ -332,7 +332,7 @@ variable "os_distribution_list" {
       offer     = "WindowsServer"
       sku       = "2019-Datacenter"
       version   = "latest"
-      "os_type" = "windows"
+      os_type = "windows"
     },
 
     windows2016dccore = {
@@ -340,7 +340,7 @@ variable "os_distribution_list" {
       offer     = "WindowsServer"
       sku       = "2016-Datacenter-Server-Core"
       version   = "latest"
-      "os_type" = "windows"
+      os_type = "windows"
     },
 
     mssql2017exp = {
@@ -348,7 +348,7 @@ variable "os_distribution_list" {
       offer     = "SQL2017-WS2019"
       sku       = "express"
       version   = "latest"
-      "os_type" = "windows"
+      os_type = "windows"
     },
 
     mssql2017dev = {
@@ -356,7 +356,7 @@ variable "os_distribution_list" {
       offer     = "SQL2017-WS2019"
       sku       = "sqldev"
       version   = "latest"
-      "os_type" = "windows"
+      os_type = "windows"
     },
 
     mssql2017std = {
@@ -364,7 +364,7 @@ variable "os_distribution_list" {
       offer     = "SQL2017-WS2019"
       sku       = "standard"
       version   = "latest"
-      "os_type" = "windows"
+      os_type = "windows"
     },
 
     mssql2017ent = {
@@ -372,7 +372,7 @@ variable "os_distribution_list" {
       offer     = "SQL2017-WS2019"
       sku       = "enterprise"
       version   = "latest"
-      "os_type" = "windows"
+      os_type = "windows"
     },
 
     mssql2019std = {
@@ -380,7 +380,7 @@ variable "os_distribution_list" {
       offer     = "sql2019-ws2019"
       sku       = "standard"
       version   = "latest"
-      "os_type" = "windows"
+      os_type = "windows"
     },
 
     mssql2019dev = {
@@ -388,7 +388,7 @@ variable "os_distribution_list" {
       offer     = "sql2019-ws2019"
       sku       = "sqldev"
       version   = "latest"
-      "os_type" = "windows"
+      os_type = "windows"
     },
 
     mssql2019ent = {
@@ -396,7 +396,7 @@ variable "os_distribution_list" {
       offer     = "sql2019-ws2019"
       sku       = "enterprise"
       version   = "latest"
-      "os_type" = "windows"
+      os_type = "windows"
     },
 
     mssql2019ent-byol = {
@@ -404,7 +404,7 @@ variable "os_distribution_list" {
       offer     = "sql2019-ws2019-byol"
       sku       = "enterprise"
       version   = "latest"
-      "os_type" = "windows"
+      os_type = "windows"
     },
 
     mssql2019std-byol = {
@@ -412,7 +412,7 @@ variable "os_distribution_list" {
       offer     = "sql2019-ws2019-byol"
       sku       = "standard"
       version   = "latest"
-      "os_type" = "windows"
+      os_type = "windows"
     },
   }
 }
