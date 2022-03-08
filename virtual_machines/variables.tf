@@ -1,12 +1,11 @@
-/*
-variable "custom_data_file" {
-  description = "Custom data file for running through cloud-init - passed in through TF root main.tf that calls this module"
-  default = null
-}
-*/
-
 variable "application_env" {
   description = ""
+  type        = string
+  default     = null
+}
+
+variable "custom_data" {
+  description = "Custom data script to build linux VM, if needed.  Ensure terraform root main passes this variable into module base64 encoded or it will cause custom_data script to not run."
   type        = string
   default     = null
 }
@@ -27,12 +26,6 @@ variable "virtual_network_name" {
 
 variable "subnet_name" {
   description = "Subnet name within the virtual network that resources will live on"
-}
-
-variable "bootstrap_sub_name" {
-  type        = string
-  description = "Subscription name for the bootstrap storage account"
-  default     = ""
 }
 
 variable "log_analytics_workspace_name" {
