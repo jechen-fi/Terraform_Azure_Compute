@@ -6,7 +6,7 @@ Terraform generalized module to build one or more linux or windows virtual machi
 
 | Name (providers)   | Version            |
 |--------------------|--------------------|
-| azurerm            | >= 2.93.1          |
+| azurerm            | >= 2.95.0          |
 | tls                | >= 3.1.0           |
 | random             | >= 3.1.0           |
 | terraform          | >= 0.15.5          |
