@@ -192,6 +192,19 @@ resource "azurerm_linux_virtual_machine" "linuxvm" {
   }
 }
 #---------------------------------------
+# Linux VM Guest Configuration Extension
+#---------------------------------------
+resource "azurerm_virtual_machine_extension" "vm_guest_config_linux" {
+  count                      = local.os_type == "linux" ? 1 : 0
+  name                       = "VMGuestConfigExtensionLinux"
+  virtual_machine_id         = azurerm_linux_virtual_machine.linuxvm[0].id
+  publisher                  = "Microsoft.GuestConfiguration"
+  type                       = "ConfigurationforLinux"
+  type_handler_version       = "1.0"
+  auto_upgrade_minor_version = "true"
+}
+
+#---------------------------------------
 # Windows Virtual machine
 #---------------------------------------
 resource "azurerm_windows_virtual_machine" "winvm" {
@@ -243,6 +256,16 @@ resource "azurerm_windows_virtual_machine" "winvm" {
       identity_ids = lookup(identity.value, "identity_ids", null)
     }
   }
+}
+
+resource "azurerm_virtual_machine_extension" "vm_guest_config_windows" {
+  count                      = local.os_type == "linux" ? 1 : 0
+  name                       = "VMGuestConfigExtensionWindows"
+  virtual_machine_id         = azurerm_windows_virtual_machine.winvm[0].id
+  publisher                  = "Microsoft.GuestConfiguration"
+  type                       = "ConfigurationforWindows"
+  type_handler_version       = "1.0"
+  auto_upgrade_minor_version = "true"
 }
 #--------------------------------------------------------------
 # Azure Log Analytics Workspace Agent Installation for windows
