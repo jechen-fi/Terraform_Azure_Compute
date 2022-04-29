@@ -259,7 +259,7 @@ resource "azurerm_windows_virtual_machine" "winvm" {
 }
 
 resource "azurerm_virtual_machine_extension" "vm_guest_config_windows" {
-  count                      = local.os_type == "linux" ? 1 : 0
+  count                      = local.os_type == "windows" ? 1 : 0
   name                       = "VMGuestConfigExtensionWindows"
   virtual_machine_id         = azurerm_windows_virtual_machine.winvm[0].id
   publisher                  = "Microsoft.GuestConfiguration"
