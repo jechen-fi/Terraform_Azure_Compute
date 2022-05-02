@@ -303,6 +303,14 @@ variable "os_distribution_list" {
       os_type = "linux"
     },
 
+    teramind = {
+      publisher = "teramindinc"
+      offer     = "teramind"
+      sku       = "teramind"
+      version   = "20220406.593.1"
+      os_type = "linux"
+    },
+
     win2016 = {
       publisher = "MicrosoftWindowsServer"
       offer     = "WindowsServer"
