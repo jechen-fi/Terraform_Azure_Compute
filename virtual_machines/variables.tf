@@ -129,7 +129,7 @@ variable "identity" {
   description = "Type of Managed Identity which should be assigned to the virtual machine. Possible values are SystemAssigned, UserAssigned, and SystemAssigned, UserAssigned"
   type = object({
     type         = string
-    identity_ids = list(string)
+    identity_ids = optional(list(string))
   })
   default = null
   # {
