@@ -10,4 +10,5 @@ terraform {
     }
   }
   required_version = ">= 0.15.5"
+  experiments = [module_variable_optional_attrs]
 }
