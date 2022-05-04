@@ -552,3 +552,13 @@ locals {
     }
   }
 }
+
+variable "data_disks" {
+  description = "Managed Data Disks for azure viratual machine"
+  type = list(object({
+    name                 = string
+    storage_account_type = string
+    disk_size_gb         = number
+  }))
+  default = []
+}
