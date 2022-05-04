@@ -271,14 +271,6 @@ resource "azurerm_virtual_machine_extension" "vm_guest_config_windows" {
 #---------------------------------------
 # Virtual Machine Data Disks
 #---------------------------------------
-locals {
-  vm_data_disks = { for idx, data_disk in var.data_disks : data_disk.name => {
-    idx : idx,
-    data_disk : data_disk,
-    }
-  }
-}
-
 resource "azurerm_managed_disk" "data_disk" {
   for_each             = local.vm_data_disks
   name                 = "${local.virtual_machine_name}_DataDisk_${each.value.idx}"
