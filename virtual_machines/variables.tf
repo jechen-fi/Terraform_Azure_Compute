@@ -570,3 +570,8 @@ locals {
     }
   }
 }
+  
+variable "zones" {
+  description = "Optional - the Zone in which the data disks should be created.  Changing this forces a new resource to be created."
+  default     = []
+}
