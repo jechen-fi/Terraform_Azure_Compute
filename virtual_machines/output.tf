@@ -25,3 +25,13 @@ output "vm_availability_set_id" {
   description = "The resource ID of Virtual Machine availability set"
   value       = tobool(var.enable_av_set) ? element(concat(azurerm_availability_set.aset.*.id, [""]), 0) : null
 }
+
+output "vm_nic_id" {
+  description = "The IDs of the vm nics."
+  value       = compact(concat(azurerm_network_interface.nic.*.id, [""]))
+}
+
+output "vm_nic_ip" {
+  description = "private ip addresses of the vm nics"
+  value       = compact(concat(azurerm_network_interface.nic.*.private_ip_address, [""]))
+}
