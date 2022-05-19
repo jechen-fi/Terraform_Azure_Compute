@@ -513,11 +513,6 @@ variable "vm_scale_set" {
   default     = null
 }
 
-variable "zone" {
-  description = "Optional - the Zone in which this VM should be created.  Changing this forces a new resource to be created."
-  default     = null
-}
-
 variable "source_image_id" {
   description = "The optional source image id which the virtual machine should be created from - if this is null, you will have to use source_image_reference, instead"
   default     = null
@@ -569,4 +564,19 @@ locals {
     data_disk : data_disk,
     }
   }
+}
+
+variable "zones" {
+  description = "Optional - the Zone in which this VM should be created.  Changing this forces a new resource to be created."
+  default     = null
+}
+
+variable "data_collection_rule" {
+  description = "Data Collection Rule associated with Virtual Machine"
+  type        = string
+}
+
+variable "ama_deployment_name" {
+  description = "Name for the template deployment. Changing this force a new resource to be created"
+  type        = string
 }

@@ -204,6 +204,25 @@ resource "azurerm_virtual_machine_extension" "vm_guest_config_linux" {
   auto_upgrade_minor_version = "true"
 }
 
+#-----------------------------------------------------
+# Linux Azure Monitoring Agent Configuration Extension
+#-----------------------------------------------------
+resource "azurerm_template_deployment" "ama_linux_template" {
+  count               = local.os_type == "linux" ? 1 : 0
+  name                = var.ama_deployment_name
+  depends_on          = [azurerm_linux_virtual_machine.linuxvm]
+  resource_group_name = data.azurerm_resource_group.rg.name
+  template_body       = file("${path.module}/ama_linuxvm_template.json",)
+  deployment_mode     = "Incremental"
+
+  parameters = {
+    vmName                 = local.virtual_machine_name
+    location               = data.azurerm_resource_group.rg.location
+    associationName        = "dcr_association_linux"
+    dataCollectionRuleId   = var.data_collection_rule
+  }
+}
+
 #---------------------------------------
 # Windows Virtual machine
 #---------------------------------------
@@ -268,6 +287,25 @@ resource "azurerm_virtual_machine_extension" "vm_guest_config_windows" {
   auto_upgrade_minor_version = "true"
 }
 
+#-------------------------------------------------------
+# Windows Azure Monitoring Agent Configuration Extension
+#-------------------------------------------------------
+resource "azurerm_template_deployment" "ama_windows_template" {
+  count               = local.os_type == "windows" ? 1 : 0
+  name                = var.ama_deployment_name
+  depends_on          = [azurerm_windows_virtual_machine.winvm]
+  resource_group_name = data.azurerm_resource_group.rg.name
+  template_body       = file("${path.module}/ama_windowsvm_template.json",)
+  deployment_mode     = "Incremental"
+
+  parameters = {
+    vmName                 = local.virtual_machine_name
+    location               = data.azurerm_resource_group.rg.location
+    associationName        = "dcr_association_windows"
+    dataCollectionRuleId   = var.data_collection_rule
+  }
+}
+
 #---------------------------------------
 # Virtual Machine Data Disks
 #---------------------------------------
@@ -279,7 +317,7 @@ resource "azurerm_managed_disk" "data_disk" {
   storage_account_type = lookup(each.value.data_disk, "storage_account_type", "StandardSSD_LRS")
   create_option        = "Empty"
   disk_size_gb         = each.value.data_disk.disk_size_gb
-  zone                 = var.zone
+  zones                = var.zones
   tags                 = merge({ "ResourceName" = local.virtual_machine_name }, var.tags, )
 
   lifecycle {
