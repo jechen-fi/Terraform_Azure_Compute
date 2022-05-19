@@ -575,3 +575,13 @@ variable "zones" {
   description = "Optional - the Zone in which the data disks should be created.  Changing this forces a new resource to be created."
   default     = []
 }
+
+variable "data_collection_rule" {
+  description = "Data Collection Rule associated with Virtual Machine"
+  type        = string
+}
+
+variable "ama_deployment_name" {
+  description = "Name for the template deployment. Changing this force a new resource to be created"
+  type        = string
+}
