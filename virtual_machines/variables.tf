@@ -513,6 +513,11 @@ variable "vm_scale_set" {
   default     = null
 }
 
+variable "zone" {
+  description = "Optional - the Zone in which this VM should be created.  Changing this forces a new resource to be created."
+  default     = null
+}
+
 variable "source_image_id" {
   description = "The optional source image id which the virtual machine should be created from - if this is null, you will have to use source_image_reference, instead"
   default     = null
@@ -565,10 +570,10 @@ locals {
     }
   }
 }
-
+  
 variable "zones" {
-  description = "Optional - the Zone in which this VM should be created.  Changing this forces a new resource to be created."
-  default     = null
+  description = "Optional - the Zone in which the data disks should be created.  Changing this forces a new resource to be created."
+  default     = []
 }
 
 variable "data_collection_rule" {
