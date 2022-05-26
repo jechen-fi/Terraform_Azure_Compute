@@ -254,6 +254,7 @@ resource "azurerm_windows_virtual_machine" "winvm" {
   os_disk {
     storage_account_type = var.os_disk["windows"]["storage_account_type"]
     caching              = var.os_disk["windows"]["caching"]
+    disk_encryption_set_id = var.os_disk["windows"]["disk_encryption_set_id"]
   }
   dynamic "additional_capabilities" {
     for_each = var.ultrassd[*]
@@ -319,6 +320,28 @@ resource "azurerm_managed_disk" "data_disk" {
   disk_size_gb         = each.value.data_disk.disk_size_gb
   zones                = var.zones
   tags                 = merge({ "ResourceName" = local.virtual_machine_name }, var.tags, )
+  disk_encryption_set_id = lookup(each.value.data_disk, "disk_encryption_set_id", null)
+  
+  dynamic "encryption_settings" {
+    for_each = var.encryption_settings[*]
+    content {
+      dynamic "disk_encryption_key" {
+        for_each = var.disk_encryption_key[*]
+        content {
+          secret_url      = lookup(disk_encryption_key.value, "secret_url", null)
+          source_vault_id = lookup(disk_encryption_key.value, "source_vault_id", null)
+        }
+      }
+      dynamic "key_encryption_key" {
+        for_each = var.key_encryption_key[*]
+        content {
+          key_url         = lookup(key_encryption_key.value, "key_url", null)
+          source_vault_id = lookup(key_encryption_key.value, "source_vault_id", null)
+        }
+      }
+      enabled = lookup(encryption_settings.value, "enabled", "true")
+    }
+  }
 
   lifecycle {
     ignore_changes = [
