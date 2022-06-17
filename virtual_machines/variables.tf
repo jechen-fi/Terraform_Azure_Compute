@@ -594,5 +594,5 @@ variable "data_collection_rule" {
 
 locals {
   current_time    = timestamp()
-  expiration_date = timeadd(local.current_time, "8760h")
+  expiration_date = timeadd(local.current_time, "17520h")
 }

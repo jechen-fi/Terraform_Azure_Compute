@@ -352,7 +352,7 @@ resource "azurerm_disk_encryption_set" "des" {
   location                  = data.azurerm_resource_group.rg.location
   key_vault_key_id          = azurerm_key_vault_key.desKey.id
   encryption_type           = "EncryptionAtRestWithCustomerKey"
-  auto_key_rotation_enabled = "false"
+  auto_key_rotation_enabled = true
 
   identity {
     type = "SystemAssigned"
