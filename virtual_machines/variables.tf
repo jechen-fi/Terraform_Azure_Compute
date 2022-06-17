@@ -33,6 +33,16 @@ variable "log_analytics_workspace_name" {
   default     = null
 }
 
+variable "kv_name" {
+  description = "Platform KeyVault that holds . Make sure it's in same region as the Virtual machine"
+  type        = string
+}
+
+variable "scope" {
+  description = "DES Reader role access on the KeyVault."
+  type = string
+}
+
 variable "vm_storage_account" {
   description = "VM storage account to store logs - log analytics use only"
   type        = string
@@ -582,50 +592,7 @@ variable "data_collection_rule" {
   type        = string
 }
 
-variable "ama_deployment_name" {
-  description = "Name for the template deployment. Changing this force a new resource to be created"
-  type        = string
+locals {
+  current_time    = timestamp()
+  expiration_date = timeadd(local.current_time, "8760h")
 }
-
-variable "disk_encryption_key" {
-  description = "the URL of a KV Certificate"
-  type = object({
-    secret_url = string
-    source_vault_id = string
-  })
-  default   = null
-  #sensitive = true
-}
-
-variable "key_encryption_key" {
-  description = "the URL of a KV Certificate"
-  type = object({
-    key_url = string
-    source_vault_id = string
-  })
-  default   = null
-  #sensitive = true
-}
-
-variable "encryption_settings" {
-  description = "Disk Encryption Setting to be used for the managed disk"
-  type = object({
-    enabled = string
-    disk_encryption_key = object({
-      secret_url = string
-      source_vault_id = string
-    })
-    key_encryption_key = object({
-      key_url = string
-      source_vault_id = string
-    })
-  })
-  default   = null
-  #sensitive = true
-}
-
-# variable "disk_encryption_set_id" {
-#   description = "Disk Encryption Set ID"
-#   type = string
-#   default = null
-# }
