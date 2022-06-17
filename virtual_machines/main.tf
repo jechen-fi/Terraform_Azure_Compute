@@ -224,7 +224,7 @@ resource "azurerm_template_deployment" "ama_linux_template" {
 
   parameters = {
     vmName                 = local.virtual_machine_name
-    location               = data.azurerm_resource_group.rg.location
+    location               = var.rg_location
     associationName        = "dcr_association_linux"
     dataCollectionRuleId   = var.data_collection_rule
   }
@@ -308,7 +308,7 @@ resource "azurerm_template_deployment" "ama_windows_template" {
 
   parameters = {
     vmName                 = local.virtual_machine_name
-    location               = data.azurerm_resource_group.rg.location
+    location               = var.rg_location
     associationName        = "dcr_association_windows"
     dataCollectionRuleId   = var.data_collection_rule
   }
