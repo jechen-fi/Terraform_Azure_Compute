@@ -89,6 +89,17 @@ terraform {
 provider "azurerm" {
   features {}
 }
+
+# Import Resource Group
+data "azurerm_resource_group" "rg" {
+  name = "rg-jtchoffo-sbx"
+}
+
+data "azurerm_key_vault" "commonKV" {
+  name = "rg-jimmyt-kv"
+  resource_group_name = data.azurerm_resource_group.rg.name
+}
+
 #############################version.tf####################################
 module "virtual-machine" {
   # version = github.com/FisherInvestments/tf_arm_virtualmachines?ref=development
@@ -109,6 +120,9 @@ module "virtual-machine" {
   admin_password                = var.local_account_cred
   instances_count               = var.resource_count
   enable_av_set                 = var.enable_availability_set[var.enable_av_set]
+  data_collection_rule        = "/subscriptions/dc8d3140-b19c-40d6-89a1-3d1576e5d00f/resourcegroups/rg-jtchoffo-sbx/providers/Microsoft.Insights/dataCollectionRules/dcrAzMonitorWindows"
+  scope                       = "/subscriptions/dc8d3140-b19c-40d6-89a1-3d1576e5d00f/resourceGroups/rg-jtchoffo-sbx/providers/Microsoft.KeyVault/vaults/rg-jimmyt-kv"
+  kv                          = data.azurerm_key_vault.commonKV.name
 
 
   tags = {
