@@ -89,6 +89,17 @@ terraform {
 provider "azurerm" {
   features {}
 }
+
+# Import Resource Group
+data "azurerm_resource_group" "rg" {
+  name = "rg-jtchoffo-sbx"
+}
+
+data "azurerm_key_vault" "commonKV" {
+  name = "rg-jimmyt-kv"
+  resource_group_name = data.azurerm_resource_group.rg.name
+}
+
 #############################version.tf####################################
 module "virtual-machine" {
   # version = github.com/FisherInvestments/tf_arm_virtualmachines?ref=development
@@ -109,6 +120,33 @@ module "virtual-machine" {
   admin_password                = var.local_account_cred
   instances_count               = var.resource_count
   enable_av_set                 = var.enable_availability_set[var.enable_av_set]
+  data_collection_rule        = "/subscriptions/dc8d3140-b19c-40d6-89a1-3d1576e5d00f/resourcegroups/rg-jtchoffo-sbx/providers/Microsoft.Insights/dataCollectionRules/dcrAzMonitorWindows"
+  scope                       = "/subscriptions/dc8d3140-b19c-40d6-89a1-3d1576e5d00f/resourceGroups/rg-jtchoffo-sbx/providers/Microsoft.KeyVault/vaults/rg-jimmyt-kv"
+  kv_name                     = data.azurerm_key_vault.commonKV.name
+
+  # Data Collecting Rule is the DCR which the Virtual Machine will be associated with for logs reporting
+  # For the kv_name variable, you're required to specify any of the platform-level keyvault below which should be in same region as the virtual machine being deployed
+  # Scope is the full ID path of the KeyVault you specify
+  SUB-COREMGMT-DEV
+  a00000-cmnkv1wcus-dev	West Central US
+  a00000-cmnkv1wus2-dev	West US 2
+  a00000-cmnkv1wus3-dev	West US 3
+
+  SUB-COREMGMT-QA
+  a00000-cmnkv1wcus-qa	West Central US
+  a00000-cmnkv1wus2-qa	West US 2
+  a00000-cmnkv1wus3-qa	West US 3
+
+  SUB-COREMGMT-PRD
+  a00000-cmnkv1wcus-prd	West Central US
+  a00000-cmnkv1wus2-prd	West US 2
+  a00000-cmnkv1wus3-prd	West US 3
+
+  SUB-COREMGMT-SIT
+  a00000-cmnkv1wcus-sit	West Central US
+  a00000-cmnkv1wus2-sit	West US 2
+  a00000-cmnkv1wus3-sit	West US 3
+
 
 
   tags = {

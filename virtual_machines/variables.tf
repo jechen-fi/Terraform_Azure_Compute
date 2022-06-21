@@ -33,6 +33,16 @@ variable "log_analytics_workspace_name" {
   default     = null
 }
 
+variable "kv_name" {
+  description = "Platform KeyVault that holds . Make sure it's in same region as the Virtual machine"
+  type        = string
+}
+
+variable "scope" {
+  description = "DES Reader role access on the KeyVault."
+  type = string
+}
+
 variable "vm_storage_account" {
   description = "VM storage account to store logs - log analytics use only"
   type        = string
@@ -554,11 +564,12 @@ locals {
 }
 
 variable "data_disks" {
-  description = "Managed Data Disks for azure viratual machine"
+  description = "Managed Data Disks for azure virtual machine"
   type = list(object({
     name                 = string
     storage_account_type = string
     disk_size_gb         = number
+    disk_encryption_set_id = string
   }))
   default = []
 }
@@ -581,7 +592,7 @@ variable "data_collection_rule" {
   type        = string
 }
 
-variable "ama_deployment_name" {
-  description = "Name for the template deployment. Changing this force a new resource to be created"
-  type        = string
+locals {
+  current_time    = timestamp()
+  expiration_date = timeadd(local.current_time, "17520h")
 }

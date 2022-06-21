@@ -10,6 +10,8 @@ resource "tls_private_key" "rsa" {
 #----------------------------------------------------------
 # Gather data for Resource Group, VNet, Subnet selection & Random Resources
 #----------------------------------------------------------
+data "azurerm_client_config" "current" {}
+
 data "azurerm_resource_group" "rg" {
   name = var.resource_group_name
 }
@@ -38,6 +40,11 @@ data "azurerm_log_analytics_workspace" "logws" {
 data "azurerm_storage_account" "storeacc" {
   count               = var.vm_storage_account != null ? 1 : 0
   name                = var.vm_storage_account
+  resource_group_name = data.azurerm_resource_group.rg.name
+}
+
+data "azurerm_key_vault" "kv" {
+  name                = var.kv_name
   resource_group_name = data.azurerm_resource_group.rg.name
 }
 
@@ -186,7 +193,7 @@ resource "azurerm_linux_virtual_machine" "linuxvm" {
       disk_size_gb              = lookup(os_disk.value, "disk_size_gb", null)
       storage_account_type      = lookup(os_disk.value, "storage_account_type", null)
       caching                   = lookup(os_disk.value, "caching", null)
-      disk_encryption_set_id    = lookup(os_disk.value, "disk_encryption_set_id", null)
+      disk_encryption_set_id    = azurerm_disk_encryption_set.des.id
       write_accelerator_enabled = lookup(os_disk.value, "write_accelerator_enabled", null)
     }
   }
@@ -209,7 +216,7 @@ resource "azurerm_virtual_machine_extension" "vm_guest_config_linux" {
 #-----------------------------------------------------
 resource "azurerm_template_deployment" "ama_linux_template" {
   count               = local.os_type == "linux" ? 1 : 0
-  name                = var.ama_deployment_name
+  name                = "${random_string.str.result}-ama-linux-deployment"
   depends_on          = [azurerm_linux_virtual_machine.linuxvm]
   resource_group_name = data.azurerm_resource_group.rg.name
   template_body       = file("${path.module}/ama_linuxvm_template.json",)
@@ -254,6 +261,7 @@ resource "azurerm_windows_virtual_machine" "winvm" {
   os_disk {
     storage_account_type = var.os_disk["windows"]["storage_account_type"]
     caching              = var.os_disk["windows"]["caching"]
+    disk_encryption_set_id = azurerm_disk_encryption_set.des.id
   }
   dynamic "additional_capabilities" {
     for_each = var.ultrassd[*]
@@ -292,7 +300,7 @@ resource "azurerm_virtual_machine_extension" "vm_guest_config_windows" {
 #-------------------------------------------------------
 resource "azurerm_template_deployment" "ama_windows_template" {
   count               = local.os_type == "windows" ? 1 : 0
-  name                = var.ama_deployment_name
+  name                = "${random_string.str.result}-ama-win-deployment"
   depends_on          = [azurerm_windows_virtual_machine.winvm]
   resource_group_name = data.azurerm_resource_group.rg.name
   template_body       = file("${path.module}/ama_windowsvm_template.json",)
@@ -319,7 +327,8 @@ resource "azurerm_managed_disk" "data_disk" {
   disk_size_gb         = each.value.data_disk.disk_size_gb
   zones                = var.zones
   tags                 = merge({ "ResourceName" = local.virtual_machine_name }, var.tags, )
-
+  disk_encryption_set_id = azurerm_disk_encryption_set.des.id
+  
   lifecycle {
     ignore_changes = [
       tags,
@@ -334,6 +343,52 @@ resource "azurerm_virtual_machine_data_disk_attachment" "data_disk" {
   lun                = each.value.idx
   caching            = "ReadWrite"
 }
+
+# Creating Disk Encryption Set
+resource "azurerm_disk_encryption_set" "des" {
+  depends_on                = [azurerm_key_vault_key.desKey]
+  name                      = "des_${local.virtual_machine_name}"
+  resource_group_name       = data.azurerm_resource_group.rg.name
+  location                  = data.azurerm_resource_group.rg.location
+  key_vault_key_id          = azurerm_key_vault_key.desKey.id
+  encryption_type           = "EncryptionAtRestWithCustomerKey"
+  auto_key_rotation_enabled = true
+
+  identity {
+    type = "SystemAssigned"
+  }
+}
+
+# Create Customer Manage Key to be used for encryption
+resource "azurerm_key_vault_key" "desKey" {
+  name            = "cmk-${local.virtual_machine_name}"
+  key_vault_id    = data.azurerm_key_vault.kv.id
+  key_type        = "RSA"
+  key_size        = 2048
+  expiration_date = local.expiration_date
+  key_opts        = ["decrypt", "encrypt", "sign", "unwrapKey", "verify", "wrapKey",]
+}
+
+# Enabling KeyVault Access Policy for DES
+resource "azurerm_key_vault_access_policy" "desKvPolicy" {
+  depends_on   = [azurerm_disk_encryption_set.des]
+  key_vault_id = data.azurerm_key_vault.kv.id
+  tenant_id    = azurerm_disk_encryption_set.des.identity.0.tenant_id
+  object_id    = azurerm_disk_encryption_set.des.identity.0.principal_id
+
+  key_permissions = [
+    "Get", "WrapKey", "UnwrapKey"
+  ]
+}
+
+# Create a Reader role for DES on the KeyVault
+resource "azurerm_role_assignment" "desRole" {
+  depends_on           = [azurerm_disk_encryption_set.des, azurerm_key_vault_access_policy.desKvPolicy]
+  role_definition_name = "Reader"
+  scope                = var.scope
+  principal_id         = azurerm_disk_encryption_set.des.identity.0.principal_id
+}
+
 
 #--------------------------------------------------------------
 # Azure Log Analytics Workspace Agent Installation for windows
