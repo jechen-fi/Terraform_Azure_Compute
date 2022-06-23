@@ -227,6 +227,8 @@ resource "azurerm_template_deployment" "ama_linux_template" {
     location               = var.rg_location
     associationName        = "dcr_association_linux"
     dataCollectionRuleId   = var.data_collection_rule
+    dataCollectionEndpointId = var.data_collection_endpoint
+    vmScope = azurerm_linux_virtual_machine.linuxvm[count.index].id
   }
 }
 
@@ -311,6 +313,8 @@ resource "azurerm_template_deployment" "ama_windows_template" {
     location               = var.rg_location
     associationName        = "dcr_association_windows"
     dataCollectionRuleId   = var.data_collection_rule
+    dataCollectionEndpointId = var.data_collection_endpoint
+    vmScope                  = azurerm_windows_virtual_machine.winvm[count.index].id
   }
 }
 
@@ -381,13 +385,13 @@ resource "azurerm_key_vault_access_policy" "desKvPolicy" {
   ]
 }
 
-# Create a Reader role for DES on the KeyVault
-resource "azurerm_role_assignment" "desRole" {
-  depends_on           = [azurerm_disk_encryption_set.des, azurerm_key_vault_access_policy.desKvPolicy]
-  role_definition_name = "Reader"
-  scope                = var.scope
-  principal_id         = azurerm_disk_encryption_set.des.identity.0.principal_id
-}
+# # Create a Reader role for DES on the KeyVault
+# resource "azurerm_role_assignment" "desRole" {
+#   depends_on           = [azurerm_disk_encryption_set.des, azurerm_key_vault_access_policy.desKvPolicy]
+#   role_definition_name = "Reader"
+#   scope                = var.scope
+#   principal_id         = azurerm_disk_encryption_set.des.identity.0.principal_id
+# }
 
 
 #--------------------------------------------------------------
