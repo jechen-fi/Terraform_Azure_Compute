@@ -38,10 +38,10 @@ variable "kv_name" {
   type        = string
 }
 
-variable "scope" {
-  description = "DES Reader role access on the KeyVault."
-  type = string
-}
+# variable "scope" {
+#   description = "DES Reader role access on the KeyVault."
+#   type = string
+# }
 
 variable "vm_storage_account" {
   description = "VM storage account to store logs - log analytics use only"
@@ -590,6 +590,11 @@ variable "zones" {
 variable "data_collection_rule" {
   description = "Data Collection Rule associated with Virtual Machine"
   type        = string
+}
+
+variable "data_collection_endpoint" {
+  description = "Data Collection Endpoint to be associated with Virtual machine"
+  type = string
 }
 
 locals {

@@ -22,6 +22,18 @@
             "metadata": {
                 "description": "Resource ID of the data collection rule."
             }
+        },
+        "dataCollectionEndpointId": {
+            "type": "string",
+            "metadata": {
+                "description": "Resource ID of the data collection endpoint."
+            }
+        },
+        "vmScope": {
+            "type": "string",
+            "metadata": {
+                "description": "Full resource ID path of the Windows VM"
+            }
         }
     },
     "resources": [
@@ -55,6 +67,17 @@
                 "description": "Association of data collection rule. Deleting this association will break the data collection for this virtual machine.",
                 "dataCollectionRuleId": "[parameters('dataCollectionRuleId')]"
             }
+        },
+        {
+            "type": "Microsoft.Insights/dataCollectionRuleAssociations",
+            "apiVersion": "2021-09-01-preview",
+            "name": "configurationAccessEndpoint",
+            "scope": "[parameters('vmScope')]",
+            "properties": {
+              "dataCollectionEndpointId": "[parameters('dataCollectionEndpointId')]",
+              "description": "string"
+            }
         }
+        
     ]
 }
