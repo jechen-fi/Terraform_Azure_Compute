@@ -120,9 +120,9 @@ module "virtual-machine" {
   admin_password                = var.local_account_cred
   instances_count               = var.resource_count
   enable_av_set                 = var.enable_availability_set[var.enable_av_set]
-  data_collection_rule         = "/subscriptions/dc8d3140-b19c-40d6-89a1-3d1576e5d00f/resourcegroups/rg-jtchoffo-sbx/providers/Microsoft.Insights/dataCollectionRules/dcrAzMonitorWindows"
-  data_collection_endpoint      = "/subscriptions/ed307960-0bd5-4924-bf57-e09e39f61659/resourceGroups/a00002-namespace-dev/providers/Microsoft.Insights/dataCollectionEndpoints/coretest-dce-windows"
-  //scope                       = "/subscriptions/dc8d3140-b19c-40d6-89a1-3d1576e5d00f/resourceGroups/rg-jtchoffo-sbx/providers/Microsoft.KeyVault/vaults/rg-jimmyt-kv"
+  data_collection_rule         = "/subscriptions/${var.subscription_id}/resourcegroups/${var.resource_group}/providers/Microsoft.Insights/dataCollectionRules/${var.dcr_name}"
+  data_collection_endpoint      = "/subscriptions/${var.subscription_id}/resourceGroups/${var.resource_group}/providers/Microsoft.Insights/dataCollectionEndpoints/${var.dce_name}"
+  //scope                       = "/subscriptions/${var.subscription_id}/resourceGroups/${var.resource_group}/providers/Microsoft.KeyVault/vaults/${var.kv_name}"
   kv_name                     = data.azurerm_key_vault.commonKV.name
 
   # Data Collecting Rule is the DCR which the Virtual Machine will be associated with for logs reporting. This is a required component
