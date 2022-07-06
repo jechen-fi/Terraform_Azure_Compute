@@ -43,7 +43,8 @@ Terraform generalized module to build one or more linux or windows virtual machi
 | admin_ssh_key | Either this or `admin_password` must be specified for authentication. Block supporting the following:<ul><li>`public_key` - (Required) The Public Key which should be used for authentication, which needs to be at least 2048-bit and in ssh-rsa format. Changing this forces a new resource to be created.<\li><li>`username` - (Required) The Username for which this Public SSH Key should be configured. Changing this forces a new resource to be created.<\li><\ul> | `map` | `null`<br>`or, use format:`<br>`admin_ssh_key {`<br>&nbsp;&nbsp;`username   = "adminuser"`<br>&nbsp;&nbsp;`public_key = file("/full_path/to/pubkey/id_rsa.pub")`<br>`}` | no | yes |
 | admin_password |  Either this or admin_ssh_key must be specified for authentication.  The Password for the local-administrator account on this Virtual Machine.  When `admin_password` is specified, `disable_password_authentication` must be set to false. Changing this forces a new resource to be created. | `string` | `None`  | no | yes |
 | secret | Block with info for one or more certsecret blocks defined above and the ID for a Key Vault from which all secrets should be sourced | `object` | `null`<br>`or, use format:`<br>`{`<br>&nbsp;&nbsp;`key_vault_id = string`<br>&nbsp;&nbsp;`certificate = map`<br>`}`  | no | yes |
-| data_disks | Used to add data disks to a VM | `object` | `null`<br>`or, use format:`<br>`{`<br>&nbsp;&nbsp;`name = string`<br>&nbsp;&nbsp;`disk_size_gb = integer`<br><br>&nbsp;&nbsp;`storage_account_type = string`<br>`}`  | no | yes |
+| data_disks | Used to add data disks to a VM | `object` | `null`<br>`or, use format:`<br>`{`<br>&nbsp;&nbsp;`name = string`<br>&nbsp;&nbsp;`disk_size_gb = integer`<br><br>&nbsp;&nbsp;`storage_account_type = string`<br>`}`  | no | no |
+| zone | Used to specify the availability zone of the VM (1-3) | `integer` | `3`  | yes | no |
 | tags | Tags to be assigned to the Azure resource in Azure | `object` or `map` | `null` | yes | no |
 
 ## Outputs
@@ -104,7 +105,7 @@ data "azurerm_key_vault" "commonKV" {
 module "virtual-machine" {
   # version = github.com/FisherInvestments/tf_arm_virtualmachines?ref=development
   # tags = v1.1.0
-  source                       = "./modules/tf_arm_virtualmachines"
+  source                       = "./modules/virtual_machines"
   boot_diag                    = local.boot_diag
   resource_group_name          = var.rg_name
   resource_group_vnet          = var.vnet_rg_name
@@ -123,7 +124,9 @@ module "virtual-machine" {
   data_collection_rule         = "/subscriptions/${var.subscription_id}/resourcegroups/${var.resource_group}/providers/Microsoft.Insights/dataCollectionRules/${var.dcr_name}"
   data_collection_endpoint      = "/subscriptions/${var.subscription_id}/resourceGroups/${var.resource_group}/providers/Microsoft.Insights/dataCollectionEndpoints/${var.dce_name}"
   //scope                       = "/subscriptions/${var.subscription_id}/resourceGroups/${var.resource_group}/providers/Microsoft.KeyVault/vaults/${var.kv_name}"
-  kv_name                     = data.azurerm_key_vault.commonKV.name
+  # Availability zone needs to be passed in to set this with a value of 1, 2, or 3
+  zone                          = var.zone
+  kv_name                       = data.azurerm_key_vault.commonKV.name
 
   # Data Collecting Rule is the DCR which the Virtual Machine will be associated with for logs reporting. This is a required component
   # Data Collection Endpoint specifies how the Virtual machine should pick logs. This is a required component
