@@ -524,8 +524,8 @@ variable "vm_scale_set" {
 }
 
 variable "zone" {
-  description = "Optional - the Zone in which this VM should be created.  Changing this forces a new resource to be created."
-  default     = null
+  description = "Required - the Zone in which this VM should be created.  Changing this forces a new resource to be created."
+  default     = 3
 }
 
 variable "source_image_id" {
