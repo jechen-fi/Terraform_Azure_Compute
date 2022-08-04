@@ -109,6 +109,7 @@ resource "azurerm_availability_set" "aset" {
 # Linux Virtual machine
 #---------------------------------------
 resource "azurerm_linux_virtual_machine" "linuxvm" {
+  depends_on                      = [azurerm_disk_encryption_set.des, azurerm_key_vault_access_policy.desKey]
   count                           = local.os_type == "linux" ? 1 : 0
   name                            = local.virtual_machine_name
   resource_group_name             = data.azurerm_resource_group.rg.name
@@ -236,6 +237,7 @@ resource "azurerm_template_deployment" "ama_linux_template" {
 # Windows Virtual machine
 #---------------------------------------
 resource "azurerm_windows_virtual_machine" "winvm" {
+  depends_on = [azurerm_disk_encryption_set.des, azurerm_key_vault_access_policy.desKey]
   count                      = local.os_type == "windows" ? 1 : 0
   name                       = local.virtual_machine_name
   computer_name              = local.virtual_machine_name
@@ -354,13 +356,19 @@ resource "azurerm_disk_encryption_set" "des" {
   depends_on                = [azurerm_key_vault_key.desKey]
   name                      = "des_${local.virtual_machine_name}"
   resource_group_name       = data.azurerm_resource_group.rg.name
-  location                  = data.azurerm_resource_group.rg.location
+  location                  = var.rg_location
   key_vault_key_id          = azurerm_key_vault_key.desKey.id
   encryption_type           = "EncryptionAtRestWithCustomerKey"
   auto_key_rotation_enabled = true
 
   identity {
     type = "SystemAssigned"
+  }
+
+  lifecycle {
+    ignore_changes = [
+      location,
+    ]
   }
 }
 
