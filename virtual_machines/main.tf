@@ -109,7 +109,7 @@ resource "azurerm_availability_set" "aset" {
 # Linux Virtual machine
 #---------------------------------------
 resource "azurerm_linux_virtual_machine" "linuxvm" {
-  depends_on                      = [azurerm_disk_encryption_set.des, azurerm_key_vault_access_policy.desKey]
+  depends_on                      = [azurerm_disk_encryption_set.des, azurerm_key_vault_access_policy.desKvPolicy]
   count                           = local.os_type == "linux" ? 1 : 0
   name                            = local.virtual_machine_name
   resource_group_name             = data.azurerm_resource_group.rg.name
@@ -237,7 +237,7 @@ resource "azurerm_template_deployment" "ama_linux_template" {
 # Windows Virtual machine
 #---------------------------------------
 resource "azurerm_windows_virtual_machine" "winvm" {
-  depends_on = [azurerm_disk_encryption_set.des, azurerm_key_vault_access_policy.desKey]
+  depends_on = [azurerm_disk_encryption_set.des, azurerm_key_vault_access_policy.desKvPolicy]
   count                      = local.os_type == "windows" ? 1 : 0
   name                       = local.virtual_machine_name
   computer_name              = local.virtual_machine_name
