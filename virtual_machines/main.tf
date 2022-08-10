@@ -306,7 +306,6 @@ resource "azurerm_virtual_machine_extension" "vm_guest_config_windows" {
 resource "azurerm_template_deployment" "ama_windows_template" {
   count               = local.os_type == "windows" ? 1 : 0
   name                = "${random_string.str.result}-ama-win-deployment"
-  depends_on          = [azurerm_windows_virtual_machine.winvm]
   resource_group_name = data.azurerm_resource_group.rg.name
   template_body       = file("${path.module}/ama_windowsvm_template.json",)
   deployment_mode     = "Incremental"
