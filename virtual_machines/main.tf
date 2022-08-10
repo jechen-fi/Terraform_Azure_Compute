@@ -215,23 +215,23 @@ resource "azurerm_virtual_machine_extension" "vm_guest_config_linux" {
 #-----------------------------------------------------
 # Linux Azure Monitoring Agent Configuration Extension
 #-----------------------------------------------------
-resource "azurerm_template_deployment" "ama_linux_template" {
-  count               = local.os_type == "linux" ? 1 : 0
-  name                = "${random_string.str.result}-ama-linux-deployment"
-  depends_on          = [azurerm_linux_virtual_machine.linuxvm]
-  resource_group_name = data.azurerm_resource_group.rg.name
-  template_body       = file("${path.module}/ama_linuxvm_template.json",)
-  deployment_mode     = "Incremental"
+# resource "azurerm_template_deployment" "ama_linux_template" {
+#   count               = local.os_type == "linux" ? 1 : 0
+#   name                = "${random_string.str.result}-ama-linux-deployment"
+#   depends_on          = [azurerm_linux_virtual_machine.linuxvm]
+#   resource_group_name = data.azurerm_resource_group.rg.name
+#   template_body       = file("${path.module}/ama_linuxvm_template.json",)
+#   deployment_mode     = "Incremental"
 
-  parameters = {
-    vmName                 = local.virtual_machine_name
-    location               = var.rg_location
-    associationName        = "dcr_association_linux"
-    dataCollectionRuleId   = var.data_collection_rule
-    dataCollectionEndpointId = var.data_collection_endpoint
-    vmScope = azurerm_linux_virtual_machine.linuxvm[count.index].id
-  }
-}
+#   parameters = {
+#     vmName                 = local.virtual_machine_name
+#     location               = var.rg_location
+#     associationName        = "dcr_association_linux"
+#     dataCollectionRuleId   = var.data_collection_rule
+#     dataCollectionEndpointId = var.data_collection_endpoint
+#     vmScope = azurerm_linux_virtual_machine.linuxvm[count.index].id
+#   }
+# }
 
 #---------------------------------------
 # Windows Virtual machine
@@ -303,22 +303,22 @@ resource "azurerm_virtual_machine_extension" "vm_guest_config_windows" {
 #-------------------------------------------------------
 # Windows Azure Monitoring Agent Configuration Extension
 #-------------------------------------------------------
-resource "azurerm_template_deployment" "ama_windows_template" {
-  count               = local.os_type == "windows" ? 1 : 0
-  name                = "${random_string.str.result}-ama-win-deployment"
-  resource_group_name = data.azurerm_resource_group.rg.name
-  template_body       = file("${path.module}/ama_windowsvm_template.json",)
-  deployment_mode     = "Incremental"
+# resource "azurerm_template_deployment" "ama_windows_template" {
+#   count               = local.os_type == "windows" ? 1 : 0
+#   name                = "${random_string.str.result}-ama-win-deployment"
+#   resource_group_name = data.azurerm_resource_group.rg.name
+#   template_body       = file("${path.module}/ama_windowsvm_template.json",)
+#   deployment_mode     = "Incremental"
 
-  parameters = {
-    vmName                 = local.virtual_machine_name
-    location               = var.rg_location
-    associationName        = "dcr_association_windows"
-    dataCollectionRuleId   = var.data_collection_rule
-    dataCollectionEndpointId = var.data_collection_endpoint
-    vmScope                  = azurerm_windows_virtual_machine.winvm[count.index].id
-  }
-}
+#   parameters = {
+#     vmName                 = local.virtual_machine_name
+#     location               = var.rg_location
+#     associationName        = "dcr_association_windows"
+#     dataCollectionRuleId   = var.data_collection_rule
+#     dataCollectionEndpointId = var.data_collection_endpoint
+#     vmScope                  = azurerm_windows_virtual_machine.winvm[count.index].id
+#   }
+# }
 
 #---------------------------------------
 # Virtual Machine Data Disks
