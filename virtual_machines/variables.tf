@@ -596,8 +596,3 @@ variable "data_collection_endpoint" {
   description = "Data Collection Endpoint to be associated with Virtual machine"
   type = string
 }
-
-locals {
-  current_time    = timestamp()
-  expiration_date = timeadd(local.current_time, "17520h")
-}
