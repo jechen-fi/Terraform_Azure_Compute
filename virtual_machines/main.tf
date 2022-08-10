@@ -306,7 +306,6 @@ resource "azurerm_virtual_machine_extension" "vm_guest_config_windows" {
 resource "azurerm_template_deployment" "ama_windows_template" {
   count               = local.os_type == "windows" ? 1 : 0
   name                = "${random_string.str.result}-ama-win-deployment"
-  depends_on          = [azurerm_windows_virtual_machine.winvm]
   resource_group_name = data.azurerm_resource_group.rg.name
   template_body       = file("${path.module}/ama_windowsvm_template.json",)
   deployment_mode     = "Incremental"
@@ -332,7 +331,7 @@ resource "azurerm_managed_disk" "data_disk" {
   storage_account_type = lookup(each.value.data_disk, "storage_account_type", "StandardSSD_LRS")
   create_option        = "Empty"
   disk_size_gb         = each.value.data_disk.disk_size_gb
-  zones                = var.zones
+  zone                 = var.zones
   tags                 = merge({ "ResourceName" = local.virtual_machine_name }, var.tags, )
   disk_encryption_set_id = azurerm_disk_encryption_set.des.id
   
@@ -353,11 +352,11 @@ resource "azurerm_virtual_machine_data_disk_attachment" "data_disk" {
 
 # Creating Disk Encryption Set
 resource "azurerm_disk_encryption_set" "des" {
-  depends_on                = [azurerm_key_vault_key.desKey]
+  depends_on                = [azurerm_key_vault_key.cmk]
   name                      = "des_${local.virtual_machine_name}"
   resource_group_name       = data.azurerm_resource_group.rg.name
   location                  = var.rg_location
-  key_vault_key_id          = azurerm_key_vault_key.desKey.id
+  key_vault_key_id          = azurerm_key_vault_key.cmk.id
   encryption_type           = "EncryptionAtRestWithCustomerKey"
   auto_key_rotation_enabled = true
 
@@ -372,13 +371,18 @@ resource "azurerm_disk_encryption_set" "des" {
   }
 }
 
+# CMK Expiration
+resource "time_rotating" "cmk_expiration" {
+  rotation_days = 720
+}
+
 # Create Customer Manage Key to be used for encryption
-resource "azurerm_key_vault_key" "desKey" {
+resource "azurerm_key_vault_key" "cmk" {
   name            = "cmk-${local.virtual_machine_name}"
   key_vault_id    = data.azurerm_key_vault.kv.id
   key_type        = "RSA"
   key_size        = 2048
-  expiration_date = local.expiration_date
+  expiration_date = time_rotating.cmk_expiration.rotation_rfc3339
   key_opts        = ["decrypt", "encrypt", "sign", "unwrapKey", "verify", "wrapKey",]
 }
 
@@ -392,6 +396,43 @@ resource "azurerm_key_vault_access_policy" "desKvPolicy" {
   key_permissions = [
     "Get", "WrapKey", "UnwrapKey"
   ]
+}
+
+# Key Rotation Policy
+resource "azapi_update_resource" "cmk_rotate_policy" {
+  type      = "Microsoft.KeyVault/vaults/keys@2021-11-01-preview"
+  name      = azurerm_key_vault_key.cmk.name
+  parent_id = azurerm_key_vault_key.cmk.key_vault_id
+
+  body = jsonencode({
+    properties = {
+      rotationPolicy = {
+        lifetimeActions = [
+          {
+            action = {
+              type = "Rotate"
+            }
+            trigger = {
+              timeAfterCreate  = "P180D"
+              timeBeforeExpiry = null
+            }
+          },
+          {
+            action = {
+              type = "Notify"
+            }
+            trigger = {
+              timeAfterCreate  = null
+              timeBeforeExpiry = "P20D"
+            }
+          }
+        ],
+        attributes = {
+          expiryTime = "P2Y"
+        }
+      }
+    }
+  })
 }
 
 # # Create a Reader role for DES on the KeyVault
