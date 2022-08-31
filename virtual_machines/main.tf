@@ -215,6 +215,45 @@ resource "azurerm_virtual_machine_extension" "vm_guest_config_linux" {
 #-----------------------------------------------------
 # Linux Azure Monitoring Agent Configuration Extension
 #-----------------------------------------------------
+resource "azurerm_virtual_machine_extension" "azure_monitoring_agent_linux" {
+  count                      = local.os_type == "linux" ? 1 : 0
+  name                       = "AzureMonitorLinuxAgent"
+  virtual_machine_id         = azurerm_linux_virtual_machine.linuxvm[count.index].id
+  publisher                  = "Microsoft.Azure.Monitor"
+  type                       = "AzureMonitorLinuxAgent"
+  type_handler_version       = "1.2"
+  auto_upgrade_minor_version = "true"
+  depends_on = [
+    azurerm_linux_virtual_machine.linuxvm
+  ]
+}
+
+resource "azapi_resource" "dcr_association_linux" {
+  count                      = local.os_type == "linux" ? 1 : 0
+  type = "Microsoft.Insights/dataCollectionRuleAssociations@2021-09-01-preview"
+  name = "dcrAzMonitorWindows"
+  parent_id = azurerm_linux_virtual_machine.linuxvm[count.index].id
+  body = jsonencode({
+    properties = {
+      dataCollectionRuleId =  var.data_collection_rule
+      description = "Association of data collection rule. Deleting this association will break the data collection for this virtual machine"
+    }
+  })
+}
+
+resource "azapi_resource" "dce_association_linux" {
+  count                      = local.os_type == "linux" ? 1 : 0
+  type = "Microsoft.Insights/dataCollectionRuleAssociations@2021-09-01-preview"
+  name = "configurationAccessEndpoint"
+  parent_id = azurerm_linux_virtual_machine.linuxvm[count.index].id
+  body = jsonencode({
+    properties = {
+      dataCollectionEndpointId = var.data_collection_endpoint
+      description = "Association of data collection rule. Deleting this association will break the data collection for this virtual machine"
+    }
+  })
+}
+
 # resource "azurerm_template_deployment" "ama_linux_template" {
 #   count               = local.os_type == "linux" ? 1 : 0
 #   name                = "${random_string.str.result}-ama-linux-deployment"
@@ -230,6 +269,19 @@ resource "azurerm_virtual_machine_extension" "vm_guest_config_linux" {
 #     dataCollectionRuleId   = var.data_collection_rule
 #     dataCollectionEndpointId = var.data_collection_endpoint
 #     vmScope = azurerm_linux_virtual_machine.linuxvm[count.index].id
+#   }
+# }
+
+# resource "azurerm_template_deployment" "ada_windows_template" {
+#   count               = local.os_type == "linux" ? 1 : 0
+#   name                = "${random_string.str.result}-ada-win-deployment"
+#   resource_group_name = data.azurerm_resource_group.rg.name
+#   template_body       = file("${path.module}/ada_linuxvm_template.json",)
+#   deployment_mode     = "Incremental"
+#   depends_on          = [azurerm_linux_virtual_machine.linuxvm]
+
+#   parameters = {
+#     vmName                 = local.virtual_machine_name
 #   }
 # }
 
@@ -303,6 +355,45 @@ resource "azurerm_virtual_machine_extension" "vm_guest_config_windows" {
 #-------------------------------------------------------
 # Windows Azure Monitoring Agent Configuration Extension
 #-------------------------------------------------------
+resource "azurerm_virtual_machine_extension" "azure_monitoring_agent_windows" {
+  count                      = local.os_type == "windows" ? 1 : 0
+  name                       = "AzureMonitorWindowsAgent"
+  virtual_machine_id         = azurerm_windows_virtual_machine.winvm[0].id
+  publisher                  = "Microsoft.Azure.Monitor"
+  type                       = "AzureMonitorWindowsAgent"
+  type_handler_version       = "1.2"
+  auto_upgrade_minor_version = "true"
+  depends_on = [
+    azurerm_windows_virtual_machine.winvm
+  ]
+}
+
+resource "azapi_resource" "dcr_association_windows" {
+  count                      = local.os_type == "windows" ? 1 : 0
+  type = "Microsoft.Insights/dataCollectionRuleAssociations@2021-09-01-preview"
+  name = "dcrAzMonitorWindows"
+  parent_id = azurerm_windows_virtual_machine.winvm[count.index].id
+  body = jsonencode({
+    properties = {
+      dataCollectionRuleId =  var.data_collection_rule
+      description = "Association of data collection rule. Deleting this association will break the data collection for this virtual machine"
+    }
+  })
+}
+
+resource "azapi_resource" "dce_association_windows" {
+  count                      = local.os_type == "windows" ? 1 : 0
+  type = "Microsoft.Insights/dataCollectionRuleAssociations@2021-09-01-preview"
+  name = "configurationAccessEndpoint"
+  parent_id = azurerm_windows_virtual_machine.winvm[count.index].id
+  body = jsonencode({
+    properties = {
+      dataCollectionEndpointId = var.data_collection_endpoint
+      description = "Association of data collection rule. Deleting this association will break the data collection for this virtual machine"
+    }
+  })
+}
+
 # resource "azurerm_template_deployment" "ama_windows_template" {
 #   count               = local.os_type == "windows" ? 1 : 0
 #   name                = "${random_string.str.result}-ama-win-deployment"
@@ -320,6 +411,19 @@ resource "azurerm_virtual_machine_extension" "vm_guest_config_windows" {
 #   }
 # }
 
+# resource "azurerm_template_deployment" "ada_windows_template" {
+#   count               = local.os_type == "windows" ? 1 : 0
+#   name                = "${random_string.str.result}-ada-win-deployment"
+#   resource_group_name = data.azurerm_resource_group.rg.name
+#   template_body       = file("${path.module}/ada_windowsvm_template.json",)
+#   deployment_mode     = "Incremental"
+#   depends_on          = [azurerm_windows_virtual_machine.winvm]
+
+#   parameters = {
+#     vmName                 = local.virtual_machine_name
+#   }
+# }
+
 #---------------------------------------
 # Virtual Machine Data Disks
 #---------------------------------------
@@ -331,7 +435,7 @@ resource "azurerm_managed_disk" "data_disk" {
   storage_account_type = lookup(each.value.data_disk, "storage_account_type", "StandardSSD_LRS")
   create_option        = "Empty"
   disk_size_gb         = each.value.data_disk.disk_size_gb
-  zone                 = var.zones
+  zones                = var.zones
   tags                 = merge({ "ResourceName" = local.virtual_machine_name }, var.tags, )
   disk_encryption_set_id = azurerm_disk_encryption_set.des.id
   
