@@ -126,7 +126,7 @@ resource "azurerm_linux_virtual_machine" "linuxvm" {
   encryption_at_host_enabled      = var.encryption_at_host_enabled
   tags                            = merge({ "ResourceName" = local.virtual_machine_name }, var.tags, )
   virtual_machine_scale_set_id    = var.vm_scale_set
-  zones                            = var.zone
+  zone                            = var.zone
   priority                        = var.priority
   custom_data                     = var.custom_data
 
@@ -304,7 +304,7 @@ resource "azurerm_windows_virtual_machine" "winvm" {
   dedicated_host_id          = var.dedicated_host_id
   license_type               = var.license_type
   #availability_set_id        = var.enable_feature[var.enable_av_set] ? element(concat(azurerm_availability_set.aset.*.id, [""]), 0) : null
-  zones                       = var.zone
+  zone                       = var.zone
   tags                       = merge({ "ResourceName" = local.virtual_machine_name }, var.tags, )
   dynamic "source_image_reference" {
     for_each = var.os_distribution_list[var.os_distribution][*]
@@ -405,7 +405,7 @@ resource "azurerm_managed_disk" "data_disk" {
   storage_account_type = lookup(each.value.data_disk, "storage_account_type", "StandardSSD_LRS")
   create_option        = "Empty"
   disk_size_gb         = each.value.data_disk.disk_size_gb
-  zone                = var.zones
+  zones                = var.zones
   tags                 = merge({ "ResourceName" = local.virtual_machine_name }, var.tags, )
   disk_encryption_set_id = azurerm_disk_encryption_set.des.id
   
