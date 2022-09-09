@@ -126,7 +126,7 @@ resource "azurerm_linux_virtual_machine" "linuxvm" {
   encryption_at_host_enabled      = var.encryption_at_host_enabled
   tags                            = merge({ "ResourceName" = local.virtual_machine_name }, var.tags, )
   virtual_machine_scale_set_id    = var.vm_scale_set
-  zone                            = var.zone
+  zones                            = var.zone
   priority                        = var.priority
   custom_data                     = var.custom_data
 
@@ -304,7 +304,7 @@ resource "azurerm_windows_virtual_machine" "winvm" {
   dedicated_host_id          = var.dedicated_host_id
   license_type               = var.license_type
   #availability_set_id        = var.enable_feature[var.enable_av_set] ? element(concat(azurerm_availability_set.aset.*.id, [""]), 0) : null
-  zone                       = var.zone
+  zones                       = var.zone
   tags                       = merge({ "ResourceName" = local.virtual_machine_name }, var.tags, )
   dynamic "source_image_reference" {
     for_each = var.os_distribution_list[var.os_distribution][*]
@@ -393,36 +393,6 @@ resource "azapi_resource" "dce_association_windows" {
     }
   })
 }
-
-# resource "azurerm_template_deployment" "ama_windows_template" {
-#   count               = local.os_type == "windows" ? 1 : 0
-#   name                = "${random_string.str.result}-ama-win-deployment"
-#   resource_group_name = data.azurerm_resource_group.rg.name
-#   template_body       = file("${path.module}/ama_windowsvm_template.json",)
-#   deployment_mode     = "Incremental"
-
-#   parameters = {
-#     vmName                 = local.virtual_machine_name
-#     location               = var.rg_location
-#     associationName        = "dcr_association_windows"
-#     dataCollectionRuleId   = var.data_collection_rule
-#     dataCollectionEndpointId = var.data_collection_endpoint
-#     vmScope                  = azurerm_windows_virtual_machine.winvm[count.index].id
-#   }
-# }
-
-# resource "azurerm_template_deployment" "ada_windows_template" {
-#   count               = local.os_type == "windows" ? 1 : 0
-#   name                = "${random_string.str.result}-ada-win-deployment"
-#   resource_group_name = data.azurerm_resource_group.rg.name
-#   template_body       = file("${path.module}/ada_windowsvm_template.json",)
-#   deployment_mode     = "Incremental"
-#   depends_on          = [azurerm_windows_virtual_machine.winvm]
-
-#   parameters = {
-#     vmName                 = local.virtual_machine_name
-#   }
-# }
 
 #---------------------------------------
 # Virtual Machine Data Disks
