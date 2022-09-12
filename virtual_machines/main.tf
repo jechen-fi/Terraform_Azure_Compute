@@ -75,15 +75,15 @@ resource "azurerm_public_ip" "pip" {
 # Network Interface for Virtual Machine
 #---------------------------------------
 resource "azurerm_network_interface" "nic" {
-  count                           = 1
-  name                            = "nic-${local.virtual_machine_name}"
-  resource_group_name             = data.azurerm_resource_group.rg.name
-  location                        = var.rg_location
-  dns_servers                     = var.dns_servers
-  enable_ip_forwarding            = var.enable_ip_forwarding
-  enable_accelerated_networking   = var.enable_accelerated_networking
-  tags                            = merge({ "ResourceName" = "nic-${replace(local.virtual_machine_name, "/[[:^alnum:]]/", "")}" }, var.tags, )
-# tags                            = merge({ "ResourceName" = "nic-${replace(local.virtual_machine_name, "/[[:^alnum:]]/", "")}" }, var.tags, )
+  count                         = 1
+  name                          = "nic-${local.virtual_machine_name}"
+  resource_group_name           = data.azurerm_resource_group.rg.name
+  location                      = var.rg_location
+  dns_servers                   = var.dns_servers
+  enable_ip_forwarding          = var.enable_ip_forwarding
+  enable_accelerated_networking = var.enable_accelerated_networking
+  tags                          = merge({ "ResourceName" = "nic-${replace(local.virtual_machine_name, "/[[:^alnum:]]/", "")}" }, var.tags, )
+  # tags                            = merge({ "ResourceName" = "nic-${replace(local.virtual_machine_name, "/[[:^alnum:]]/", "")}" }, var.tags, )
   ip_configuration {
     name                          = format("ipconfig-%s", lower(local.virtual_machine_name))
     primary                       = true
@@ -94,14 +94,14 @@ resource "azurerm_network_interface" "nic" {
   }
 }
 resource "azurerm_availability_set" "aset" {
-  count                           = tobool(var.enable_feature[var.enable_av_set]) ? 1 : 0
-  name                            = "avail-${local.virtual_machine_name}-${var.rg_location}"
-  resource_group_name             = data.azurerm_resource_group.rg.name
-  location                        = var.rg_location
-  platform_fault_domain_count     = 2
-  platform_update_domain_count    = 2
-  managed                         = true
-  tags                            = merge({ "ResourceName" = lower("avail-${local.virtual_machine_name}-${var.rg_location}") }, var.tags, )
+  count                        = tobool(var.enable_feature[var.enable_av_set]) ? 1 : 0
+  name                         = "avail-${local.virtual_machine_name}-${var.rg_location}"
+  resource_group_name          = data.azurerm_resource_group.rg.name
+  location                     = var.rg_location
+  platform_fault_domain_count  = 2
+  platform_update_domain_count = 2
+  managed                      = true
+  tags                         = merge({ "ResourceName" = lower("avail-${local.virtual_machine_name}-${var.rg_location}") }, var.tags, )
 }
 
 
@@ -122,13 +122,14 @@ resource "azurerm_linux_virtual_machine" "linuxvm" {
   provision_vm_agent              = true
   allow_extension_operations      = true
   dedicated_host_id               = var.dedicated_host_id
+  source_image_id                 = var.source_image_id != null ? var.source_image_id : null
   #availability_set_id             = var.enable_feature[var.enable_av_set] ? element(concat(azurerm_availability_set.aset.*.id, [""]), count.index) : null
-  encryption_at_host_enabled      = var.encryption_at_host_enabled
-  tags                            = merge({ "ResourceName" = local.virtual_machine_name }, var.tags, )
-  virtual_machine_scale_set_id    = var.vm_scale_set
-  zone                            = var.zone
-  priority                        = var.priority
-  custom_data                     = var.custom_data
+  encryption_at_host_enabled   = var.encryption_at_host_enabled
+  tags                         = merge({ "ResourceName" = local.virtual_machine_name }, var.tags, )
+  virtual_machine_scale_set_id = var.vm_scale_set
+  zone                         = var.zone
+  priority                     = var.priority
+  custom_data                  = var.custom_data
 
   dynamic "additional_capabilities" {
     for_each = var.ultrassd[*]
@@ -171,7 +172,7 @@ resource "azurerm_linux_virtual_machine" "linuxvm" {
     }
   }
   dynamic "source_image_reference" {
-    for_each = var.os_distribution_list[var.os_distribution][*]
+    for_each = var.source_image_id != null ? [] : var.os_distribution_list[var.os_distribution][*]
     content {
       publisher = lookup(source_image_reference.value, "publisher", null)
       offer     = lookup(source_image_reference.value, "offer", null)
@@ -180,7 +181,7 @@ resource "azurerm_linux_virtual_machine" "linuxvm" {
     }
   }
   dynamic "plan" {
-    for_each = var.plan[*]
+    for_each = var.source_image_id != null ? [] : var.plan[*]
     content {
       name      = lookup(plan.value, "name", null)
       product   = lookup(plan.value, "product", null)
@@ -229,27 +230,27 @@ resource "azurerm_virtual_machine_extension" "azure_monitoring_agent_linux" {
 }
 
 resource "azapi_resource" "dcr_association_linux" {
-  count                      = local.os_type == "linux" ? 1 : 0
-  type = "Microsoft.Insights/dataCollectionRuleAssociations@2021-09-01-preview"
-  name = "dcrAzMonitorWindows"
+  count     = local.os_type == "linux" ? 1 : 0
+  type      = "Microsoft.Insights/dataCollectionRuleAssociations@2021-09-01-preview"
+  name      = "dcrAzMonitorWindows"
   parent_id = azurerm_linux_virtual_machine.linuxvm[count.index].id
   body = jsonencode({
     properties = {
-      dataCollectionRuleId =  var.data_collection_rule
-      description = "Association of data collection rule. Deleting this association will break the data collection for this virtual machine"
+      dataCollectionRuleId = var.data_collection_rule
+      description          = "Association of data collection rule. Deleting this association will break the data collection for this virtual machine"
     }
   })
 }
 
 resource "azapi_resource" "dce_association_linux" {
-  count                      = local.os_type == "linux" ? 1 : 0
-  type = "Microsoft.Insights/dataCollectionRuleAssociations@2021-09-01-preview"
-  name = "configurationAccessEndpoint"
+  count     = local.os_type == "linux" ? 1 : 0
+  type      = "Microsoft.Insights/dataCollectionRuleAssociations@2021-09-01-preview"
+  name      = "configurationAccessEndpoint"
   parent_id = azurerm_linux_virtual_machine.linuxvm[count.index].id
   body = jsonencode({
     properties = {
       dataCollectionEndpointId = var.data_collection_endpoint
-      description = "Association of data collection rule. Deleting this association will break the data collection for this virtual machine"
+      description              = "Association of data collection rule. Deleting this association will break the data collection for this virtual machine"
     }
   })
 }
@@ -289,7 +290,7 @@ resource "azapi_resource" "dce_association_linux" {
 # Windows Virtual machine
 #---------------------------------------
 resource "azurerm_windows_virtual_machine" "winvm" {
-  depends_on = [azurerm_disk_encryption_set.des, azurerm_key_vault_access_policy.desKvPolicy]
+  depends_on                 = [azurerm_disk_encryption_set.des, azurerm_key_vault_access_policy.desKvPolicy]
   count                      = local.os_type == "windows" ? 1 : 0
   name                       = local.virtual_machine_name
   computer_name              = local.virtual_machine_name
@@ -304,10 +305,11 @@ resource "azurerm_windows_virtual_machine" "winvm" {
   dedicated_host_id          = var.dedicated_host_id
   license_type               = var.license_type
   #availability_set_id        = var.enable_feature[var.enable_av_set] ? element(concat(azurerm_availability_set.aset.*.id, [""]), 0) : null
-  zone                       = var.zone
-  tags                       = merge({ "ResourceName" = local.virtual_machine_name }, var.tags, )
+  source_image_id = var.source_image_id != null ? var.source_image_id : null
+  zone            = var.zone
+  tags            = merge({ "ResourceName" = local.virtual_machine_name }, var.tags, )
   dynamic "source_image_reference" {
-    for_each = var.os_distribution_list[var.os_distribution][*]
+    for_each = var.source_image_id != null ? [] : var.os_distribution_list[var.os_distribution][*]
     content {
       publisher = lookup(source_image_reference.value, "publisher", null)
       offer     = lookup(source_image_reference.value, "offer", null)
@@ -316,8 +318,8 @@ resource "azurerm_windows_virtual_machine" "winvm" {
     }
   }
   os_disk {
-    storage_account_type = var.os_disk["windows"]["storage_account_type"]
-    caching              = var.os_disk["windows"]["caching"]
+    storage_account_type   = var.os_disk["windows"]["storage_account_type"]
+    caching                = var.os_disk["windows"]["caching"]
     disk_encryption_set_id = azurerm_disk_encryption_set.des.id
   }
   dynamic "additional_capabilities" {
@@ -369,27 +371,27 @@ resource "azurerm_virtual_machine_extension" "azure_monitoring_agent_windows" {
 }
 
 resource "azapi_resource" "dcr_association_windows" {
-  count                      = local.os_type == "windows" ? 1 : 0
-  type = "Microsoft.Insights/dataCollectionRuleAssociations@2021-09-01-preview"
-  name = "dcrAzMonitorWindows"
+  count     = local.os_type == "windows" ? 1 : 0
+  type      = "Microsoft.Insights/dataCollectionRuleAssociations@2021-09-01-preview"
+  name      = "dcrAzMonitorWindows"
   parent_id = azurerm_windows_virtual_machine.winvm[count.index].id
   body = jsonencode({
     properties = {
-      dataCollectionRuleId =  var.data_collection_rule
-      description = "Association of data collection rule. Deleting this association will break the data collection for this virtual machine"
+      dataCollectionRuleId = var.data_collection_rule
+      description          = "Association of data collection rule. Deleting this association will break the data collection for this virtual machine"
     }
   })
 }
 
 resource "azapi_resource" "dce_association_windows" {
-  count                      = local.os_type == "windows" ? 1 : 0
-  type = "Microsoft.Insights/dataCollectionRuleAssociations@2021-09-01-preview"
-  name = "configurationAccessEndpoint"
+  count     = local.os_type == "windows" ? 1 : 0
+  type      = "Microsoft.Insights/dataCollectionRuleAssociations@2021-09-01-preview"
+  name      = "configurationAccessEndpoint"
   parent_id = azurerm_windows_virtual_machine.winvm[count.index].id
   body = jsonencode({
     properties = {
       dataCollectionEndpointId = var.data_collection_endpoint
-      description = "Association of data collection rule. Deleting this association will break the data collection for this virtual machine"
+      description              = "Association of data collection rule. Deleting this association will break the data collection for this virtual machine"
     }
   })
 }
@@ -398,17 +400,17 @@ resource "azapi_resource" "dce_association_windows" {
 # Virtual Machine Data Disks
 #---------------------------------------
 resource "azurerm_managed_disk" "data_disk" {
-  for_each             = local.vm_data_disks
-  name                 = "${local.virtual_machine_name}_DataDisk_${each.value.idx}"
-  resource_group_name  = data.azurerm_resource_group.rg.name
-  location             = var.rg_location
-  storage_account_type = lookup(each.value.data_disk, "storage_account_type", "StandardSSD_LRS")
-  create_option        = "Empty"
-  disk_size_gb         = each.value.data_disk.disk_size_gb
-  zones                = var.zones
-  tags                 = merge({ "ResourceName" = local.virtual_machine_name }, var.tags, )
+  for_each               = local.vm_data_disks
+  name                   = "${local.virtual_machine_name}_DataDisk_${each.value.idx}"
+  resource_group_name    = data.azurerm_resource_group.rg.name
+  location               = var.rg_location
+  storage_account_type   = lookup(each.value.data_disk, "storage_account_type", "StandardSSD_LRS")
+  create_option          = "Empty"
+  disk_size_gb           = each.value.data_disk.disk_size_gb
+  zones                  = var.zones
+  tags                   = merge({ "ResourceName" = local.virtual_machine_name }, var.tags, )
   disk_encryption_set_id = azurerm_disk_encryption_set.des.id
-  
+
   lifecycle {
     ignore_changes = [
       tags,
@@ -457,7 +459,7 @@ resource "azurerm_key_vault_key" "cmk" {
   key_type        = "RSA"
   key_size        = 2048
   expiration_date = time_rotating.cmk_expiration.rotation_rfc3339
-  key_opts        = ["decrypt", "encrypt", "sign", "unwrapKey", "verify", "wrapKey",]
+  key_opts        = ["decrypt", "encrypt", "sign", "unwrapKey", "verify", "wrapKey", ]
 }
 
 # Enabling KeyVault Access Policy for DES

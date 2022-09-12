@@ -46,7 +46,7 @@ variable "kv_name" {
 variable "vm_storage_account" {
   description = "VM storage account to store logs - log analytics use only"
   type        = string
-   default    = null
+  default     = null
 }
 
 variable "virtual_machine_name" {
@@ -286,7 +286,7 @@ variable "os_distribution_list" {
       offer     = "sql2019-rhel8"
       sku       = "sqldev"
       version   = "latest"
-      os_type = "linux"
+      os_type   = "linux"
     },
 
     mssql2019ent-ubuntu1804 = {
@@ -294,7 +294,7 @@ variable "os_distribution_list" {
       offer     = "sql2019-ubuntu1804"
       sku       = "enterprise"
       version   = "latest"
-      os_type = "linux"
+      os_type   = "linux"
     },
 
     mssql2019std-ubuntu1804 = {
@@ -302,7 +302,7 @@ variable "os_distribution_list" {
       offer     = "sql2019-ubuntu1804"
       sku       = "standard"
       version   = "latest"
-      os_type = "linux"
+      os_type   = "linux"
     },
 
     mssql2019dev-ubuntu1804 = {
@@ -310,7 +310,7 @@ variable "os_distribution_list" {
       offer     = "sql2019-ubuntu1804"
       sku       = "sqldev"
       version   = "latest"
-      os_type = "linux"
+      os_type   = "linux"
     },
 
     teramind = {
@@ -318,7 +318,7 @@ variable "os_distribution_list" {
       offer     = "teramind"
       sku       = "teramind"
       version   = "20220406.593.1"
-      os_type = "linux"
+      os_type   = "linux"
     },
 
     win2016 = {
@@ -326,7 +326,7 @@ variable "os_distribution_list" {
       offer     = "WindowsServer"
       sku       = "2016-Datacenter"
       version   = "latest"
-      os_type = "windows"
+      os_type   = "windows"
     },
 
     windows2016 = {
@@ -334,7 +334,7 @@ variable "os_distribution_list" {
       offer     = "WindowsServer"
       sku       = "2016-Datacenter"
       version   = "latest"
-      os_type = "windows"
+      os_type   = "windows"
     },
 
     win2019 = {
@@ -342,7 +342,7 @@ variable "os_distribution_list" {
       offer     = "WindowsServer"
       sku       = "2019-Datacenter"
       version   = "latest"
-      os_type = "windows"
+      os_type   = "windows"
     },
 
     windows2019 = {
@@ -350,7 +350,7 @@ variable "os_distribution_list" {
       offer     = "WindowsServer"
       sku       = "2019-Datacenter"
       version   = "latest"
-      os_type = "windows"
+      os_type   = "windows"
     },
 
     windows2016dccore = {
@@ -358,7 +358,7 @@ variable "os_distribution_list" {
       offer     = "WindowsServer"
       sku       = "2016-Datacenter-Server-Core"
       version   = "latest"
-      os_type = "windows"
+      os_type   = "windows"
     },
 
     mssql2017exp = {
@@ -366,7 +366,7 @@ variable "os_distribution_list" {
       offer     = "SQL2017-WS2019"
       sku       = "express"
       version   = "latest"
-      os_type = "windows"
+      os_type   = "windows"
     },
 
     mssql2017dev = {
@@ -374,7 +374,7 @@ variable "os_distribution_list" {
       offer     = "SQL2017-WS2019"
       sku       = "sqldev"
       version   = "latest"
-      os_type = "windows"
+      os_type   = "windows"
     },
 
     mssql2017std = {
@@ -382,7 +382,7 @@ variable "os_distribution_list" {
       offer     = "SQL2017-WS2019"
       sku       = "standard"
       version   = "latest"
-      os_type = "windows"
+      os_type   = "windows"
     },
 
     mssql2017ent = {
@@ -390,7 +390,7 @@ variable "os_distribution_list" {
       offer     = "SQL2017-WS2019"
       sku       = "enterprise"
       version   = "latest"
-      os_type = "windows"
+      os_type   = "windows"
     },
 
     mssql2019std = {
@@ -398,7 +398,7 @@ variable "os_distribution_list" {
       offer     = "sql2019-ws2019"
       sku       = "standard"
       version   = "latest"
-      os_type = "windows"
+      os_type   = "windows"
     },
 
     mssql2019dev = {
@@ -406,7 +406,7 @@ variable "os_distribution_list" {
       offer     = "sql2019-ws2019"
       sku       = "sqldev"
       version   = "latest"
-      os_type = "windows"
+      os_type   = "windows"
     },
 
     mssql2019ent = {
@@ -414,7 +414,7 @@ variable "os_distribution_list" {
       offer     = "sql2019-ws2019"
       sku       = "enterprise"
       version   = "latest"
-      os_type = "windows"
+      os_type   = "windows"
     },
 
     mssql2019ent-byol = {
@@ -422,7 +422,7 @@ variable "os_distribution_list" {
       offer     = "sql2019-ws2019-byol"
       sku       = "enterprise"
       version   = "latest"
-      os_type = "windows"
+      os_type   = "windows"
     },
 
     mssql2019std-byol = {
@@ -430,7 +430,7 @@ variable "os_distribution_list" {
       offer     = "sql2019-ws2019-byol"
       sku       = "standard"
       version   = "latest"
-      os_type = "windows"
+      os_type   = "windows"
     },
   }
 }
@@ -533,6 +533,11 @@ variable "source_image_id" {
   default     = null
 }
 
+variable "source_image_os_type" {
+  description = "The optional source image os type which virtual machine should be created from"
+  default     = null
+}
+
 
 variable "license_type" {
   description = "Specifies the type of on-premise license which should be used for this Virtual Machine. Possible values are None, Windows_Client and Windows_Server."
@@ -554,7 +559,7 @@ locals {
 
   virtual_machine_name = try(lower(var.virtual_machine_name), lower(format("%s%s%s", var.virtual_machine_name_prepend, "-", var.application_env)))
 
-  os_type = var.os_distribution_list[var.os_distribution]["os_type"]
+  os_type = var.source_image_os_type != null ? var.source_image_os_type : var.os_distribution_list[var.os_distribution]["os_type"]
 
   nsg_inbound_rules = { for idx, security_rule in var.nsg_inbound_rules : security_rule.name => {
     idx : idx,
@@ -566,9 +571,9 @@ locals {
 variable "data_disks" {
   description = "Managed Data Disks for azure virtual machine"
   type = list(object({
-    name                 = string
-    storage_account_type = string
-    disk_size_gb         = number
+    name                   = string
+    storage_account_type   = string
+    disk_size_gb           = number
     disk_encryption_set_id = string
   }))
   default = []
@@ -581,18 +586,18 @@ locals {
     }
   }
 }
-  
+
 variable "zones" {
   description = "Optional - the Zone in which the data disks should be created.  Changing this forces a new resource to be created."
   default     = []
 }
 
- variable "data_collection_rule" {
-   description = "Data Collection Rule associated with Virtual Machine"
-   type        = string
- }
+variable "data_collection_rule" {
+  description = "Data Collection Rule associated with Virtual Machine"
+  type        = string
+}
 
- variable "data_collection_endpoint" {
-   description = "Data Collection Endpoint to be associated with Virtual machine"
-   type = string
- }
+variable "data_collection_endpoint" {
+  description = "Data Collection Endpoint to be associated with Virtual machine"
+  type        = string
+}
