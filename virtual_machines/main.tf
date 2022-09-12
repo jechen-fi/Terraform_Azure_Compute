@@ -459,7 +459,7 @@ resource "azurerm_key_vault_key" "cmk" {
   key_type        = "RSA"
   key_size        = 2048
   expiration_date = time_rotating.cmk_expiration.rotation_rfc3339
-  key_opts        = ["decrypt", "encrypt", "sign", "unwrapKey", "verify", "wrapKey", ]
+  key_opts        = ["decrypt", "encrypt", "sign", "unwrapKey", "verify", "wrapKey",]
 }
 
 # Enabling KeyVault Access Policy for DES
