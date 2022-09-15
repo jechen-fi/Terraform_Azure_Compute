@@ -407,7 +407,7 @@ resource "azurerm_managed_disk" "data_disk" {
   storage_account_type   = lookup(each.value.data_disk, "storage_account_type", "StandardSSD_LRS")
   create_option          = "Empty"
   disk_size_gb           = each.value.data_disk.disk_size_gb
-  zone                  = var.zone
+  zones                  = var.zone
   tags                   = merge({ "ResourceName" = local.virtual_machine_name }, var.tags, )
   disk_encryption_set_id = azurerm_disk_encryption_set.des.id
 
