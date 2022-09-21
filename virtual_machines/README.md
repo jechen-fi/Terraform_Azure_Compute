@@ -46,7 +46,10 @@ Terraform generalized module to build one or more linux or windows virtual machi
 | data_disks | Used to add data disks to a VM | `object` | `null`<br>`or, use format:`<br>`{`<br>&nbsp;&nbsp;`name = string`<br>&nbsp;&nbsp;`disk_size_gb = integer`<br><br>&nbsp;&nbsp;`storage_account_type = string`<br>`}`  | no | no |
 | zone | Used to specify the availability zone of the VM (1-3) | `integer` | `3`  | yes | no |
 | tags | Tags to be assigned to the Azure resource in Azure | `object` or `map` | `null` | yes | no |
-
+| kv_id|  Platform KeyVault ID for the CMKs. This should be gathered from a 'data' call on an existing key vault from the code that calls this module. Make sure it's in same region as the Virtual machine.| `string` | None | yes | No|
+|data_collection_endpoint| Data Collection Endpoint to be associated with Virtual machine | `string` | None | yes | No |
+|data_collection_rule| Data Collection Endpoint to be associated with Virtual machine | `string`  | None | Yes | No |
+  
 ## Outputs
 | Name              | Description                              | Sensitive |
 |-------------------|------------------------------------------|-----------|
@@ -126,7 +129,7 @@ module "virtual-machine" {
   //scope                       = "/subscriptions/${var.subscription_id}/resourceGroups/${var.resource_group}/providers/Microsoft.KeyVault/vaults/${var.kv_name}"
   # Availability zone needs to be passed in to set this with a value of 1, 2, or 3
   zone                          = var.zone
-  kv_name                       = data.azurerm_key_vault.commonKV.name
+  kv_id                       = data.azurerm_key_vault.commonKV.id
 
   # Data Collecting Rule is the DCR which the Virtual Machine will be associated with for logs reporting. This is a required component
   # Data Collection Endpoint specifies how the Virtual machine should pick logs. This is a required component

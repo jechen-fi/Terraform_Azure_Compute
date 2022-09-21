@@ -455,7 +455,7 @@ resource "time_rotating" "cmk_expiration" {
 # Create Customer Manage Key to be used for encryption
 resource "azurerm_key_vault_key" "cmk" {
   name            = "cmk-${local.virtual_machine_name}"
-  key_vault_id    = data.azurerm_key_vault.kv.id
+  key_vault_id    = var.kv_id
   key_type        = "RSA"
   key_size        = 2048
   expiration_date = time_rotating.cmk_expiration.rotation_rfc3339
@@ -465,7 +465,7 @@ resource "azurerm_key_vault_key" "cmk" {
 # Enabling KeyVault Access Policy for DES
 resource "azurerm_key_vault_access_policy" "desKvPolicy" {
   depends_on   = [azurerm_disk_encryption_set.des]
-  key_vault_id = data.azurerm_key_vault.kv.id
+  key_vault_id = var.kv_id
   tenant_id    = azurerm_disk_encryption_set.des.identity.0.tenant_id
   object_id    = azurerm_disk_encryption_set.des.identity.0.principal_id
 
