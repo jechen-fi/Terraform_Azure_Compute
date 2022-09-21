@@ -34,7 +34,7 @@ variable "log_analytics_workspace_name" {
 }
 
 variable "kv_id" {
-  description = "Platform KeyVault that holds . Make sure it's in same region as the Virtual machine"
+  description = "Platform KeyVault ID for the CMKs.  This should be gathered from a 'data' call on an existing key vault from the code that calls this module. Make sure it's in same region as the Virtual machine."
   type        = string
 }
 
