@@ -43,10 +43,10 @@ data "azurerm_storage_account" "storeacc" {
   resource_group_name = data.azurerm_resource_group.rg.name
 }
 
-data "azurerm_key_vault" "kv" {
+/*data "azurerm_key_vault" "kv" {
   name                = var.kv_name
   resource_group_name = data.azurerm_resource_group.rg.name
-}
+}*/
 
 resource "random_string" "str" {
   length  = 6
