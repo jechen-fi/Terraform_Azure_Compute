@@ -33,7 +33,7 @@ variable "log_analytics_workspace_name" {
   default     = null
 }
 
-variable "kv_name" {
+variable "kv_id" {
   description = "Platform KeyVault that holds . Make sure it's in same region as the Virtual machine"
   type        = string
 }
