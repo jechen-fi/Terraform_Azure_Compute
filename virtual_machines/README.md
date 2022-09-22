@@ -46,6 +46,8 @@ Terraform generalized module to build one or more linux or windows virtual machi
 | data_disks | Used to add data disks to a VM | `object` | `null`<br>`or, use format:`<br>`{`<br>&nbsp;&nbsp;`name = string`<br>&nbsp;&nbsp;`disk_size_gb = integer`<br><br>&nbsp;&nbsp;`storage_account_type = string`<br>`}`  | no | no |
 | zone | Used to specify the availability zone of the VM (1-3) | `integer` | `3`  | yes | no |
 | tags | Tags to be assigned to the Azure resource in Azure | `object` or `map` | `null` | yes | no |
+| data_collection_rule | Data Collection Rules to be associated with Azure Monitoring Agent | `list(string)` | `null` | yes | no |
+| data_collection_endpoint | Data Collection Endpoint to be associated with Azure Monitoring Agent | `string` | `null` | yes | no |
 
 ## Outputs
 | Name              | Description                              | Sensitive |
@@ -121,7 +123,7 @@ module "virtual-machine" {
   admin_password                = var.local_account_cred
   instances_count               = var.resource_count
   enable_av_set                 = var.enable_availability_set[var.enable_av_set]
-  data_collection_rule         = "/subscriptions/${var.subscription_id}/resourcegroups/${var.resource_group}/providers/Microsoft.Insights/dataCollectionRules/${var.dcr_name}"
+  data_collection_rule         = ["/subscriptions/${var.subscription_id}/resourcegroups/${var.resource_group}/providers/Microsoft.Insights/dataCollectionRules/${var.dcr_name}"]
   data_collection_endpoint      = "/subscriptions/${var.subscription_id}/resourceGroups/${var.resource_group}/providers/Microsoft.Insights/dataCollectionEndpoints/${var.dce_name}"
   //scope                       = "/subscriptions/${var.subscription_id}/resourceGroups/${var.resource_group}/providers/Microsoft.KeyVault/vaults/${var.kv_name}"
   # Availability zone needs to be passed in to set this with a value of 1, 2, or 3
