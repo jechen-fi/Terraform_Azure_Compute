@@ -594,7 +594,7 @@ variable "zones" {
 
 variable "data_collection_rule" {
   description = "Data Collection Rule associated with Virtual Machine"
-  type        = string
+  type        = list(string)
 }
 
 variable "data_collection_endpoint" {
