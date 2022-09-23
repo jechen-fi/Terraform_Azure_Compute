@@ -128,7 +128,7 @@ module "virtual-machine" {
   //scope                       = "/subscriptions/${var.subscription_id}/resourceGroups/${var.resource_group}/providers/Microsoft.KeyVault/vaults/${var.kv_name}"
   # Availability zone needs to be passed in to set this with a value of 1, 2, or 3
   zone                          = var.zone
-  kv_name                       = data.azurerm_key_vault.commonKV.name
+  kv_id                       = data.azurerm_key_vault.commonKV.id
 
   # Data Collecting Rule is the DCR which the Virtual Machine will be associated with for logs reporting. This is a required component
   # Data Collection Endpoint specifies how the Virtual machine should pick logs. This is a required component
