@@ -231,7 +231,7 @@ resource "azapi_resource" "dcr_association_linux" {
   parent_id = azurerm_linux_virtual_machine.linuxvm[0].id
   body = jsonencode({
     properties = {
-      dataCollectionRuleId = var.data_collection_rule
+      dataCollectionRuleId = var.data_collection_rule[count.index]
       description          = "Association of data collection rule. Deleting this association will break the data collection for this virtual machine"
     }
   })
