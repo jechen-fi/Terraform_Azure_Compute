@@ -312,13 +312,16 @@ resource "azurerm_windows_virtual_machine" "winvm" {
       version   = lookup(source_image_reference.value, "version", null)
     }
   }
-  os_disk {
+  dynamic "os_disk" {
+    for_each = var.os_disk[local.os_type][*]
+    content {
       name                      = lookup(os_disk.value, "name", null)
       disk_size_gb              = lookup(os_disk.value, "disk_size_gb", null)
       storage_account_type      = lookup(os_disk.value, "storage_account_type", null)
       caching                   = lookup(os_disk.value, "caching", null)
       disk_encryption_set_id    = azurerm_disk_encryption_set.des.id
       write_accelerator_enabled = lookup(os_disk.value, "write_accelerator_enabled", null)
+    }
   }
   dynamic "additional_capabilities" {
     for_each = var.ultrassd[*]
