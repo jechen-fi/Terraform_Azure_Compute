@@ -512,6 +512,8 @@ resource "azapi_update_resource" "cmk_rotate_policy" {
   })
 }
 
+
+
 # # Create a Reader role for DES on the KeyVault
 # resource "azurerm_role_assignment" "desRole" {
 #   depends_on           = [azurerm_disk_encryption_set.des, azurerm_key_vault_access_policy.desKvPolicy]
