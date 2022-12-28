@@ -183,7 +183,7 @@ resource "azurerm_proximity_placement_group" "appgrp" {
 resource "azurerm_linux_virtual_machine_scale_set" "linux_vmss" {
   depends_on                                        = [azurerm_disk_encryption_set.des, azurerm_key_vault_access_policy.desKvPolicy]
   count                                             = var.os_type == "linux" ? 1 : 0
-  #name                                              = format("vm%s%s", lower(replace(local.virtual_machine_name, "/[[:^alnum:]]/", "")), count.index + 1)
+  name                                              = format("vm%s%s", lower(replace(local.virtual_machine_name, "/[[:^alnum:]]/", "")), count.index + 1)
   computer_name_prefix                              = var.computer_name_prefix == null && var.instances_count == 1 ? substr(local.virtual_machine_name, 0, 15) : substr(format("%s%s", lower(replace(local.virtual_machine_name, "/[[:^alnum:]]/", "")), count.index + 1), 0, 15)
   resource_group_name                               = data.azurerm_resource_group.rg.name
   location                                          = var.rg_location
@@ -230,7 +230,6 @@ resource "azurerm_linux_virtual_machine_scale_set" "linux_vmss" {
   dynamic "os_disk" {
     for_each = var.os_disk[local.os_type][*]
     content {
-      name                      = lookup(os_disk.value, "name", null)
       disk_size_gb              = lookup(os_disk.value, "disk_size_gb", null)
       storage_account_type      = lookup(os_disk.value, "storage_account_type", null)
       caching                   = lookup(os_disk.value, "caching", null)
@@ -401,7 +400,7 @@ resource "azapi_resource" "dce_association_linux" {
 resource "azurerm_windows_virtual_machine_scale_set" "winsrv_vmss" {
   depends_on                                        = [azurerm_disk_encryption_set.des, azurerm_key_vault_access_policy.desKvPolicy]
   count                                             = var.os_type == "windows" ? 1 : 0
-  #name                                              = format("%s", lower(replace(local.virtual_machine_name, "/[[:^alnum:]]/", "")))
+  name                                              = format("vm%s%s", lower(replace(local.virtual_machine_name, "/[[:^alnum:]]/", "")), count.index + 1)
   computer_name_prefix                              = var.computer_name_prefix == null && var.instances_count == 1 ? substr(local.virtual_machine_name, 0, 15) : substr(format("%s%s", lower(replace(local.virtual_machine_name, "/[[:^alnum:]]/", "")), count.index + 1), 0, 15)
   resource_group_name                               = data.azurerm_resource_group.rg.name
   location                                          = var.rg_location
@@ -441,7 +440,6 @@ resource "azurerm_windows_virtual_machine_scale_set" "winsrv_vmss" {
   dynamic "os_disk" {
     for_each = var.os_disk[local.os_type][*]
     content {
-      name                      = lookup(os_disk.value, "name", null)
       disk_size_gb              = lookup(os_disk.value, "disk_size_gb", null)
       storage_account_type      = lookup(os_disk.value, "storage_account_type", null)
       caching                   = lookup(os_disk.value, "caching", null)
