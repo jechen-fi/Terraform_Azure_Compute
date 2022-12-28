@@ -117,7 +117,7 @@ resource "azurerm_lb_nat_pool" "natpol" {
 resource "azurerm_lb_probe" "lbp" {
   count               = var.enable_load_balancer ? 1 : 0
   name                = lower("lb-probe-port-${var.load_balancer_health_probe_port}-${local.virtual_machine_name}")
-  resource_group_name = data.azurerm_resource_group.rg.name
+  #resource_group_name = data.azurerm_resource_group.rg.name
   loadbalancer_id     = azurerm_lb.vmsslb[count.index].id
   port                = var.load_balancer_health_probe_port
   protocol            = var.lb_probe_protocol

@@ -23,7 +23,30 @@ variable "log_analytics_workspace_name" {}
 variable "enable_public_ip_address" {
   default     = false
 }
-variable "enable_feature" {}
+
+variable "enable_feature" {
+  description = "Manages turning other features on / off"
+  type        = map(any)
+  default = {
+    "yes"   = true
+    "y"     = true
+    "true"  = true
+    "no"    = false
+    "n"     = false
+    "false" = false
+  }
+}
+
+variable "kv_id" {
+  description = "Platform KeyVault ID for the CMKs.  This should be gathered from a 'data' call on an existing key vault from the code that calls this module. Make sure it's in same region as the Virtual machine."
+  type        = string
+}
+
+variable "private_ip_address" {
+  description = "The Static IP Address which should be used. This is valid only when `private_ip_address_allocation` is set to `Static`"
+  type        = string
+  default     = null
+}
 
 variable "random_password_length" {
   description = "The desired length of random password created by this module"
@@ -536,6 +559,37 @@ variable "enable_os_disk_write_accelerator" {
   default     = false
 }
 
+variable "os_disk" {
+  type = map(object({
+    name                      = string
+    disk_size_gb              = string
+    storage_account_type      = string
+    caching                   = string
+    disk_encryption_set_id    = string
+    write_accelerator_enabled = bool
+  }))
+
+  default = {
+    linux = {
+      name                      = null
+      disk_size_gb              = null
+      storage_account_type      = "StandardSSD_LRS"
+      caching                   = "ReadWrite"
+      disk_encryption_set_id    = null
+      write_accelerator_enabled = null
+    },
+    windows = {
+      name                      = null
+      disk_size_gb              = null
+      storage_account_type      = "StandardSSD_LRS"
+      caching                   = "ReadWrite"
+      disk_encryption_set_id    = null
+      write_accelerator_enabled = null
+    },
+  }
+}
+
+
 variable "enable_ultra_ssd_data_disk_storage_support" {
   description = "Should the capacity to enable Data Disks of the UltraSSD_LRS storage account type be supported on this Virtual Machine"
   default     = false
@@ -727,6 +781,17 @@ variable "data_collection_rule" {
 variable "data_collection_endpoint" {
   description = "Data Collection Endpoint to be associated with Virtual machine"
   type        = string
+}
+
+variable "data_disks" {
+  description = "Managed Data Disks for azure virtual machine"
+  type = list(object({
+    name                   = string
+    storage_account_type   = string
+    disk_size_gb           = number
+    disk_encryption_set_id = string
+  }))
+  default = []
 }
 
 locals {
