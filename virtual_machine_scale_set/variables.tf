@@ -657,6 +657,19 @@ variable "grace_period" {
   default     = "PT30M"
 }
 
+variable "identity" {
+  description = "Type of Managed Identity which should be assigned to the virtual machine. Possible values are SystemAssigned, UserAssigned, and SystemAssigned, UserAssigned"
+  type = object({
+    type         = string
+    identity_ids = optional(list(string))
+  })
+  default = null
+  # {
+  #   type         = null
+  #   identity_ids = null
+  # }
+}
+
 variable "managed_identity_type" {
   description = "The type of Managed Identity which should be assigned to the Linux Virtual Machine Scale Set. Possible values are `SystemAssigned`, `UserAssigned` and `SystemAssigned, UserAssigned`"
   default     = null
