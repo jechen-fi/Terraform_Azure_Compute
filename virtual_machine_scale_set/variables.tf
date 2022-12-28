@@ -795,6 +795,14 @@ variable "data_disks" {
 }
 
 locals {
+  vm_data_disks = { for idx, data_disk in var.data_disks : data_disk.name => {
+    idx : idx,
+    data_disk : data_disk,
+    }
+  }
+}
+
+locals {
 
   virtual_machine_name = try(lower(var.virtual_machine_name), lower(format("%s%s%s", var.virtual_machine_name_prepend, "-", var.application_env)))
 
