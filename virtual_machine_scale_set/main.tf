@@ -183,7 +183,7 @@ resource "azurerm_proximity_placement_group" "appgrp" {
 resource "azurerm_linux_virtual_machine_scale_set" "linux_vmss" {
   depends_on                                        = [azurerm_disk_encryption_set.des, azurerm_key_vault_access_policy.desKvPolicy]
   count                                             = var.os_type == "linux" ? 1 : 0
-  name                                              = format("vm%s%s", lower(replace(local.virtual_machine_name, "/[[:^alnum:]]/", "")), count.index + 1)
+  #name                                              = format("vm%s%s", lower(replace(local.virtual_machine_name, "/[[:^alnum:]]/", "")), count.index + 1)
   computer_name_prefix                              = var.computer_name_prefix == null && var.instances_count == 1 ? substr(local.virtual_machine_name, 0, 15) : substr(format("%s%s", lower(replace(local.virtual_machine_name, "/[[:^alnum:]]/", "")), count.index + 1), 0, 15)
   resource_group_name                               = data.azurerm_resource_group.rg.name
   location                                          = var.rg_location
@@ -401,7 +401,7 @@ resource "azapi_resource" "dce_association_linux" {
 resource "azurerm_windows_virtual_machine_scale_set" "winsrv_vmss" {
   depends_on                                        = [azurerm_disk_encryption_set.des, azurerm_key_vault_access_policy.desKvPolicy]
   count                                             = var.os_type == "windows" ? 1 : 0
-  name                                              = format("%s", lower(replace(local.virtual_machine_name, "/[[:^alnum:]]/", "")))
+  #name                                              = format("%s", lower(replace(local.virtual_machine_name, "/[[:^alnum:]]/", "")))
   computer_name_prefix                              = var.computer_name_prefix == null && var.instances_count == 1 ? substr(local.virtual_machine_name, 0, 15) : substr(format("%s%s", lower(replace(local.virtual_machine_name, "/[[:^alnum:]]/", "")), count.index + 1), 0, 15)
   resource_group_name                               = data.azurerm_resource_group.rg.name
   location                                          = var.rg_location
@@ -424,7 +424,7 @@ resource "azurerm_windows_virtual_machine_scale_set" "winsrv_vmss" {
   source_image_id                                   = var.source_image_id != null ? var.source_image_id : null
   upgrade_mode                                      = var.os_upgrade_mode
   timezone                                          = var.vm_time_zone
-  zone                                              = var.availability_zones
+  zones                                              = var.availability_zones
   zone_balance                                      = var.availability_zone_balance
   tags                                              = merge({ "ResourceName" = local.virtual_machine_name }, var.tags, )
 

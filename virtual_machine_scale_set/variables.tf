@@ -881,3 +881,9 @@ variable "boot_diag" {
   default     = null
 }
 
+variable "priority" {
+  description = "Specifies the priority of this VM.  Possible values are 'Regular' or 'Spot' - a change will force a new resource to be created"
+  type        = string
+  default     = "Regular"
+}
+
