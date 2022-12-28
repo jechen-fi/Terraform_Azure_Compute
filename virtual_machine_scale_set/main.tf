@@ -346,7 +346,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "linux_vmss" {
 resource "azurerm_virtual_machine_extension" "vm_guest_config_linux" {
   count                      = local.os_type == "linux" ? 1 : 0
   name                       = "VMGuestConfigExtensionLinux"
-  virtual_machine_id         = azurerm_linux_virtual_machine.linuxvm[0].id
+  virtual_machine_id         = azurerm_linux_virtual_machine_scale_set.linux_vmss[0].id
   publisher                  = "Microsoft.GuestConfiguration"
   type                       = "ConfigurationforLinux"
   type_handler_version       = "1.0"
@@ -359,13 +359,13 @@ resource "azurerm_virtual_machine_extension" "vm_guest_config_linux" {
 resource "azurerm_virtual_machine_extension" "azure_monitoring_agent_linux" {
   count                      = local.os_type == "linux" ? 1 : 0
   name                       = "AzureMonitorLinuxAgent"
-  virtual_machine_id         = azurerm_linux_virtual_machine.linuxvm[count.index].id
+  virtual_machine_id         = azurerm_linux_virtual_machine_scale_set.linux_vmss[count.index].id
   publisher                  = "Microsoft.Azure.Monitor"
   type                       = "AzureMonitorLinuxAgent"
   type_handler_version       = "1.2"
   auto_upgrade_minor_version = "true"
   depends_on = [
-    azurerm_linux_virtual_machine.linuxvm
+    azurerm_linux_virtual_machine_scale_set.linux_vmss
   ]
 }
 
@@ -373,7 +373,7 @@ resource "azapi_resource" "dcr_association_linux" {
   count     = local.os_type == "linux" ? length(var.data_collection_rule) : 0
   type      = "Microsoft.Insights/dataCollectionRuleAssociations@2021-09-01-preview"
   name      = format("%s%s", "dcrAzMonitorLinux", count.index + 1)
-  parent_id = azurerm_linux_virtual_machine.linuxvm[0].id
+  parent_id = azurerm_linux_virtual_machine_scale_set.linux_vmss[0].id
   body = jsonencode({
     properties = {
       dataCollectionRuleId = var.data_collection_rule[count.index]
@@ -386,7 +386,7 @@ resource "azapi_resource" "dce_association_linux" {
   count     = local.os_type == "linux" ? 1 : 0
   type      = "Microsoft.Insights/dataCollectionRuleAssociations@2021-09-01-preview"
   name      = "configurationAccessEndpoint"
-  parent_id = azurerm_linux_virtual_machine.linuxvm[count.index].id
+  parent_id = azurerm_linux_virtual_machine_scale_set.linux_vmss[count.index].id
   body = jsonencode({
     properties = {
       dataCollectionEndpointId = var.data_collection_endpoint
@@ -558,7 +558,7 @@ resource "azurerm_windows_virtual_machine_scale_set" "winsrv_vmss" {
 resource "azurerm_virtual_machine_extension" "vm_guest_config_windows" {
   count                      = local.os_type == "windows" ? 1 : 0
   name                       = "VMGuestConfigExtensionWindows"
-  virtual_machine_id         = azurerm_windows_virtual_machine.winvm[0].id
+  virtual_machine_id         = azurerm_windows_virtual_machine_scale_set.winsrv_vmss[0].id
   publisher                  = "Microsoft.GuestConfiguration"
   type                       = "ConfigurationforWindows"
   type_handler_version       = "1.0"
@@ -571,13 +571,13 @@ resource "azurerm_virtual_machine_extension" "vm_guest_config_windows" {
 resource "azurerm_virtual_machine_extension" "azure_monitoring_agent_windows" {
   count                      = local.os_type == "windows" ? 1 : 0
   name                       = "AzureMonitorWindowsAgent"
-  virtual_machine_id         = azurerm_windows_virtual_machine.winvm[0].id
+  virtual_machine_id         = azurerm_windows_virtual_machine_scale_set.winsrv_vmss[0].id
   publisher                  = "Microsoft.Azure.Monitor"
   type                       = "AzureMonitorWindowsAgent"
   type_handler_version       = "1.2"
   auto_upgrade_minor_version = "true"
   depends_on = [
-    azurerm_windows_virtual_machine.winvm
+    azurerm_windows_virtual_machine_scale_set.winsrv_vmss
   ]
 }
 
@@ -585,7 +585,7 @@ resource "azapi_resource" "dcr_association_windows" {
   count     = local.os_type == "windows" ? length(var.data_collection_rule) : 0
   type      = "Microsoft.Insights/dataCollectionRuleAssociations@2021-09-01-preview"
   name      = format("%s%s", "dcrAzMonitorWindows", count.index + 1)
-  parent_id = azurerm_windows_virtual_machine.winvm[0].id
+  parent_id = azurerm_windows_virtual_machine_scale_set.winsrv_vmss[0].id
   body = jsonencode({
     properties = {
       dataCollectionRuleId = var.data_collection_rule[count.index]
@@ -598,7 +598,7 @@ resource "azapi_resource" "dce_association_windows" {
   count     = local.os_type == "windows" ? 1 : 0
   type      = "Microsoft.Insights/dataCollectionRuleAssociations@2021-09-01-preview"
   name      = "configurationAccessEndpoint"
-  parent_id = azurerm_windows_virtual_machine.winvm[count.index].id
+  parent_id = azurerm_windows_virtual_machine_scale_set.winsrv_vmss[count.index].id
   body = jsonencode({
     properties = {
       dataCollectionEndpointId = var.data_collection_endpoint
@@ -691,7 +691,7 @@ resource "azurerm_managed_disk" "data_disk" {
 resource "azurerm_virtual_machine_data_disk_attachment" "data_disk" {
   for_each           = local.vm_data_disks
   managed_disk_id    = azurerm_managed_disk.data_disk[each.key].id
-  virtual_machine_id = local.os_type == "windows" ? azurerm_windows_virtual_machine.winvm[0].id : azurerm_linux_virtual_machine.linuxvm[0].id
+  virtual_machine_id = local.os_type == "windows" ? azurerm_windows_virtual_machine_scale_set.winsrv_vmss[0].id : azurerm_linux_virtual_machine_scale_set.linux_vmss[0].id
   lun                = each.value.idx
   caching            = "ReadWrite"
 }

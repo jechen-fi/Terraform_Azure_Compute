@@ -18,6 +18,13 @@ variable "storage_account_name" {
   default     = null
 }
 
+variable "resource_group_vnet" {}
+variable "log_analytics_workspace_name" {}
+variable "enable_public_ip_address" {
+  default     = false
+}
+variable "enable_feature" {}
+
 variable "random_password_length" {
   description = "The desired length of random password created by this module"
   default     = 24
