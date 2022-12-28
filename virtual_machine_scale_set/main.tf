@@ -337,7 +337,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "linux_vmss" {
   }
 
   # As per the recomendation by Terraform documentation
-  depends_on = [azurerm_lb_rule.lbrule]
+  # depends_on = [azurerm_lb_rule.lbrule]
 }
 
 #---------------------------------------
@@ -552,7 +552,7 @@ resource "azurerm_windows_virtual_machine_scale_set" "winsrv_vmss" {
   }
 
   # As per the recomendation by Terraform documentation
-  depends_on = [azurerm_lb_rule.lbrule]
+  # depends_on = [azurerm_lb_rule.lbrule]
 }
 
 resource "azurerm_virtual_machine_extension" "vm_guest_config_windows" {
