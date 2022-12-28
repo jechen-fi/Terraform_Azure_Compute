@@ -131,7 +131,7 @@ resource "azurerm_lb_probe" "lbp" {
 resource "azurerm_lb_rule" "lbrule" {
   count                          = var.enable_load_balancer ? length(var.load_balanced_port_list) : 0
   name                           = format("%s-%02d-rule", local.virtual_machine_name, count.index + 1)
-  resource_group_name            = data.azurerm_resource_group.rg.name
+  #resource_group_name            = data.azurerm_resource_group.rg.name
   loadbalancer_id                = azurerm_lb.vmsslb[0].id
   probe_id                       = azurerm_lb_probe.lbp[0].id
   protocol                       = "Tcp"
@@ -263,7 +263,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "linux_vmss" {
     dns_servers                   = var.dns_servers
     enable_ip_forwarding          = var.enable_ip_forwarding
     enable_accelerated_networking = var.enable_accelerated_networking
-    network_security_group_id     = var.existing_network_security_group_id == null ? azurerm_network_security_group.nsg.0.id : var.existing_network_security_group_id
+    #network_security_group_id     = var.existing_network_security_group_id == null ? azurerm_network_security_group.nsg.0.id : var.existing_network_security_group_id
 
     ip_configuration {
       name                                   = lower("ipconig-${format("vm%s%s", lower(replace(local.virtual_machine_name, "/[[:^alnum:]]/", "")), count.index + 1)}")
@@ -474,7 +474,7 @@ resource "azurerm_windows_virtual_machine_scale_set" "winsrv_vmss" {
     dns_servers                   = var.dns_servers
     enable_ip_forwarding          = var.enable_ip_forwarding
     enable_accelerated_networking = var.enable_accelerated_networking
-    network_security_group_id     = var.existing_network_security_group_id == null ? azurerm_network_security_group.nsg.0.id : var.existing_network_security_group_id
+    #network_security_group_id     = var.existing_network_security_group_id == null ? azurerm_network_security_group.nsg.0.id : var.existing_network_security_group_id
 
     ip_configuration {
       name                                   = lower("ipconfig-${format("vm%s%s", lower(replace(local.virtual_machine_name, "/[[:^alnum:]]/", "")), count.index + 1)}")

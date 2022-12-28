@@ -853,3 +853,31 @@ variable "source_image_os_type" {
   description = "The optional source image os type which virtual machine should be created from"
   default     = null
 }
+
+variable "certsecret" {
+  description = "the URL of a KV Certificate"
+  type = object({
+    url = string
+  })
+  default   = null
+  sensitive = true
+}
+
+variable "secret" {
+  description = "Block with info for one or more certsecret blocks defined above and the ID for a Key Vault from which all secrets should be sourced"
+  type = object({
+    key_vault_id = string
+    certificate = object({
+      url = string
+    })
+  })
+  default   = null
+  sensitive = true
+}
+
+variable "boot_diag" {
+  description = "Whether or not to turn on boot diagnostics and proper settings"
+  type        = map(any)
+  default     = null
+}
+
