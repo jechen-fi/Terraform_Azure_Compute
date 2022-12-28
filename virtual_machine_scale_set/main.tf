@@ -424,7 +424,7 @@ resource "azurerm_windows_virtual_machine_scale_set" "winsrv_vmss" {
   source_image_id                                   = var.source_image_id != null ? var.source_image_id : null
   upgrade_mode                                      = var.os_upgrade_mode
   timezone                                          = var.vm_time_zone
-  zones                                             = var.availability_zones
+  zone                                              = var.availability_zones
   zone_balance                                      = var.availability_zone_balance
   tags                                              = merge({ "ResourceName" = local.virtual_machine_name }, var.tags, )
 
@@ -543,7 +543,7 @@ resource "azurerm_windows_virtual_machine_scale_set" "winsrv_vmss" {
     }
   }
 
-   dynamic "boot_diagnostics" {
+  dynamic "boot_diagnostics" {
     for_each = var.boot_diag[*]
     content {
       # below ensures boot diag is stored in a managed storage account
