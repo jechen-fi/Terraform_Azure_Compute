@@ -107,7 +107,7 @@ resource "azurerm_lb_nat_pool" "natpol" {
   protocol                       = "Tcp"
   frontend_port_start            = var.nat_pool_frontend_ports[0]
   frontend_port_end              = var.nat_pool_frontend_ports[1]
-  backend_port                   = var.os_flavor == "linux" ? 22 : 3389
+  backend_port                   = var.os_type == "linux" ? 22 : 3389
   frontend_ip_configuration_name = azurerm_lb.vmsslb.0.frontend_ip_configuration.0.name
 }
 
@@ -616,7 +616,7 @@ resource "azurerm_monitor_autoscale_setting" "auto" {
   name                = lower("auto-scale-set-${local.virtual_machine_name}")
   resource_group_name = data.azurerm_resource_group.rg.name
   location            = var.rg_location
-  target_resource_id  = var.os_flavor == "windows" ? azurerm_windows_virtual_machine_scale_set.winsrv_vmss.0.id : azurerm_linux_virtual_machine_scale_set.linux_vmss.0.id
+  target_resource_id  = var.os_type == "windows" ? azurerm_windows_virtual_machine_scale_set.winsrv_vmss.0.id : azurerm_linux_virtual_machine_scale_set.linux_vmss.0.id
 
   profile {
     name = "default"
@@ -629,7 +629,7 @@ resource "azurerm_monitor_autoscale_setting" "auto" {
     rule {
       metric_trigger {
         metric_name        = "Percentage CPU"
-        metric_resource_id = var.os_flavor == "windows" ? azurerm_windows_virtual_machine_scale_set.winsrv_vmss.0.id : azurerm_linux_virtual_machine_scale_set.linux_vmss.0.id
+        metric_resource_id = var.os_type == "windows" ? azurerm_windows_virtual_machine_scale_set.winsrv_vmss.0.id : azurerm_linux_virtual_machine_scale_set.linux_vmss.0.id
         time_grain         = "PT1M"
         statistic          = "Average"
         time_window        = "PT5M"
@@ -648,7 +648,7 @@ resource "azurerm_monitor_autoscale_setting" "auto" {
     rule {
       metric_trigger {
         metric_name        = "Percentage CPU"
-        metric_resource_id = var.os_flavor == "windows" ? azurerm_windows_virtual_machine_scale_set.winsrv_vmss.0.id : azurerm_linux_virtual_machine_scale_set.linux_vmss.0.id
+        metric_resource_id = var.os_type == "windows" ? azurerm_windows_virtual_machine_scale_set.winsrv_vmss.0.id : azurerm_linux_virtual_machine_scale_set.linux_vmss.0.id
         time_grain         = "PT1M"
         statistic          = "Average"
         time_window        = "PT5M"
@@ -664,58 +664,6 @@ resource "azurerm_monitor_autoscale_setting" "auto" {
       }
     }
   }
-}
-
-resource "azurerm_virtual_machine_extension" "vm_guest_config_windows" {
-  count                      = local.os_type == "windows" ? 1 : 0
-  name                       = "VMGuestConfigExtensionWindows"
-  virtual_machine_id         = azurerm_windows_virtual_machine.winvm[0].id
-  publisher                  = "Microsoft.GuestConfiguration"
-  type                       = "ConfigurationforWindows"
-  type_handler_version       = "1.0"
-  auto_upgrade_minor_version = "true"
-}
-
-#-------------------------------------------------------
-# Windows Azure Monitoring Agent Configuration Extension
-#-------------------------------------------------------
-resource "azurerm_virtual_machine_extension" "azure_monitoring_agent_windows" {
-  count                      = local.os_type == "windows" ? 1 : 0
-  name                       = "AzureMonitorWindowsAgent"
-  virtual_machine_id         = azurerm_windows_virtual_machine.winvm[0].id
-  publisher                  = "Microsoft.Azure.Monitor"
-  type                       = "AzureMonitorWindowsAgent"
-  type_handler_version       = "1.2"
-  auto_upgrade_minor_version = "true"
-  depends_on = [
-    azurerm_windows_virtual_machine.winvm
-  ]
-}
-
-resource "azapi_resource" "dcr_association_windows" {
-  count     = local.os_type == "windows" ? length(var.data_collection_rule) : 0
-  type      = "Microsoft.Insights/dataCollectionRuleAssociations@2021-09-01-preview"
-  name      = format("%s%s", "dcrAzMonitorWindows", count.index + 1)
-  parent_id = azurerm_windows_virtual_machine.winvm[0].id
-  body = jsonencode({
-    properties = {
-      dataCollectionRuleId = var.data_collection_rule[count.index]
-      description          = "Association of data collection rule. Deleting this association will break the data collection for this virtual machine"
-    }
-  })
-}
-
-resource "azapi_resource" "dce_association_windows" {
-  count     = local.os_type == "windows" ? 1 : 0
-  type      = "Microsoft.Insights/dataCollectionRuleAssociations@2021-09-01-preview"
-  name      = "configurationAccessEndpoint"
-  parent_id = azurerm_windows_virtual_machine.winvm[count.index].id
-  body = jsonencode({
-    properties = {
-      dataCollectionEndpointId = var.data_collection_endpoint
-      description              = "Association of data collection rule. Deleting this association will break the data collection for this virtual machine"
-    }
-  })
 }
 
 #---------------------------------------
@@ -838,7 +786,7 @@ resource "azapi_update_resource" "cmk_rotate_policy" {
 # # Azure Log Analytics Workspace Agent Installation for windows
 # #--------------------------------------------------------------
 # resource "azurerm_virtual_machine_scale_set_extension" "omsagentwin" {
-#   count                        = var.deploy_log_analytics_agent && var.log_analytics_workspace_id != null && var.os_flavor == "windows" ? 1 : 0
+#   count                        = var.deploy_log_analytics_agent && var.log_analytics_workspace_id != null && var.os_type == "windows" ? 1 : 0
 #   name                         = "OmsAgentForWindows"
 #   publisher                    = "Microsoft.EnterpriseCloud.Monitoring"
 #   type                         = "MicrosoftMonitoringAgent"
@@ -863,7 +811,7 @@ resource "azapi_update_resource" "cmk_rotate_policy" {
 # # Azure Log Analytics Workspace Agent Installation for Linux
 # #--------------------------------------------------------------
 # resource "azurerm_virtual_machine_scale_set_extension" "omsagentlinux" {
-#   count                        = var.deploy_log_analytics_agent && var.log_analytics_workspace_id != null && var.os_flavor == "linux" ? 1 : 0
+#   count                        = var.deploy_log_analytics_agent && var.log_analytics_workspace_id != null && var.os_type == "linux" ? 1 : 0
 #   name                         = "OmsAgentForLinux"
 #   publisher                    = "Microsoft.EnterpriseCloud.Monitoring"
 #   type                         = "OmsAgentForLinux"
@@ -890,7 +838,7 @@ resource "azapi_update_resource" "cmk_rotate_policy" {
 # resource "azurerm_monitor_diagnostic_setting" "vmmsdiag" {
 #   count                      = var.log_analytics_workspace_id != null ? 1 : 0
 #   name                       = lower("${local.virtual_machine_name}-diag")
-#   target_resource_id         = var.os_flavor == "windows" ? azurerm_windows_virtual_machine_scale_set.winsrv_vmss.0.id : azurerm_linux_virtual_machine_scale_set.linux_vmss.0.id
+#   target_resource_id         = var.os_type == "windows" ? azurerm_windows_virtual_machine_scale_set.winsrv_vmss.0.id : azurerm_linux_virtual_machine_scale_set.linux_vmss.0.id
 #   log_analytics_workspace_id = var.log_analytics_workspace_id
 
 #   metric {
