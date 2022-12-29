@@ -345,7 +345,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "linux_vmss" {
 resource "azurerm_virtual_machine_extension" "vm_guest_config_linux" {
   count                      = local.os_type == "linux" ? 1 : 0
   name                       = "VMGuestConfigExtensionLinux"
-  virtual_machine_id         = azurerm_linux_virtual_machine_scale_set.linux_vmss.0.id
+  virtual_machine_id         = "${element(azurerm_linux_virtual_machine_scale_set.linux_vmss.*.id,count.index)}"
   publisher                  = "Microsoft.GuestConfiguration"
   type                       = "ConfigurationforLinux"
   type_handler_version       = "1.0"
@@ -358,7 +358,7 @@ resource "azurerm_virtual_machine_extension" "vm_guest_config_linux" {
 resource "azurerm_virtual_machine_extension" "azure_monitoring_agent_linux" {
   count                      = local.os_type == "linux" ? 1 : 0
   name                       = "AzureMonitorLinuxAgent"
-  virtual_machine_id         = azurerm_linux_virtual_machine_scale_set.linux_vmss.0.id
+  virtual_machine_id         = "${element(azurerm_linux_virtual_machine_scale_set.linux_vmss.*.id,count.index)}"
   publisher                  = "Microsoft.Azure.Monitor"
   type                       = "AzureMonitorLinuxAgent"
   type_handler_version       = "1.2"
@@ -372,7 +372,7 @@ resource "azapi_resource" "dcr_association_linux" {
   count     = local.os_type == "linux" ? length(var.data_collection_rule) : 0
   type      = "Microsoft.Insights/dataCollectionRuleAssociations@2021-09-01-preview"
   name      = format("%s%s", "dcrAzMonitorLinux", count.index + 1)
-  parent_id = azurerm_linux_virtual_machine_scale_set.linux_vmss[0].id
+  parent_id = "${element(azurerm_linux_virtual_machine_scale_set.linux_vmss.*.id,count.index)}"
   body = jsonencode({
     properties = {
       dataCollectionRuleId = var.data_collection_rule[count.index]
@@ -385,7 +385,7 @@ resource "azapi_resource" "dce_association_linux" {
   count     = local.os_type == "linux" ? 1 : 0
   type      = "Microsoft.Insights/dataCollectionRuleAssociations@2021-09-01-preview"
   name      = "configurationAccessEndpoint"
-  parent_id = azurerm_linux_virtual_machine_scale_set.linux_vmss[count.index].id
+  parent_id = "${element(azurerm_linux_virtual_machine_scale_set.linux_vmss.*.id,count.index)}"
   body = jsonencode({
     properties = {
       dataCollectionEndpointId = var.data_collection_endpoint
@@ -556,7 +556,7 @@ resource "azurerm_windows_virtual_machine_scale_set" "winsrv_vmss" {
 resource "azurerm_virtual_machine_extension" "vm_guest_config_windows" {
   count                      = local.os_type == "windows" ? 1 : 0
   name                       = "VMGuestConfigExtensionWindows"
-  virtual_machine_id         = azurerm_windows_virtual_machine_scale_set.winsrv_vmss.0.id
+  virtual_machine_id         = "${element(azurerm_windows_virtual_machine_scale_set.winsrv_vmss.*.id,count.index)}"
   publisher                  = "Microsoft.GuestConfiguration"
   type                       = "ConfigurationforWindows"
   type_handler_version       = "1.0"
@@ -569,7 +569,7 @@ resource "azurerm_virtual_machine_extension" "vm_guest_config_windows" {
 resource "azurerm_virtual_machine_extension" "azure_monitoring_agent_windows" {
   count                      = local.os_type == "windows" ? 1 : 0
   name                       = "AzureMonitorWindowsAgent"
-  virtual_machine_id         = azurerm_windows_virtual_machine_scale_set.winsrv_vmss.0.id
+  virtual_machine_id         = "${element(azurerm_windows_virtual_machine_scale_set.winsrv_vmss.*.id,count.index)}"
   publisher                  = "Microsoft.Azure.Monitor"
   type                       = "AzureMonitorWindowsAgent"
   type_handler_version       = "1.2"
@@ -583,7 +583,7 @@ resource "azapi_resource" "dcr_association_windows" {
   count     = local.os_type == "windows" ? length(var.data_collection_rule) : 0
   type      = "Microsoft.Insights/dataCollectionRuleAssociations@2021-09-01-preview"
   name      = format("%s%s", "dcrAzMonitorWindows", count.index + 1)
-  parent_id = azurerm_windows_virtual_machine_scale_set.winsrv_vmss[0].id
+  parent_id = "${element(azurerm_windows_virtual_machine_scale_set.winsrv_vmss.*.id,count.index)}"
   body = jsonencode({
     properties = {
       dataCollectionRuleId = var.data_collection_rule[count.index]
@@ -596,7 +596,7 @@ resource "azapi_resource" "dce_association_windows" {
   count     = local.os_type == "windows" ? 1 : 0
   type      = "Microsoft.Insights/dataCollectionRuleAssociations@2021-09-01-preview"
   name      = "configurationAccessEndpoint"
-  parent_id = azurerm_windows_virtual_machine_scale_set.winsrv_vmss[count.index].id
+  parent_id = "${element(azurerm_windows_virtual_machine_scale_set.winsrv_vmss.*.id,count.index)}"
   body = jsonencode({
     properties = {
       dataCollectionEndpointId = var.data_collection_endpoint
@@ -614,7 +614,7 @@ resource "azurerm_monitor_autoscale_setting" "auto" {
   name                = lower("auto-scale-set-${local.virtual_machine_name}")
   resource_group_name = data.azurerm_resource_group.rg.name
   location            = var.rg_location
-  target_resource_id  = var.os_type == "windows" ? azurerm_windows_virtual_machine_scale_set.winsrv_vmss.0.id : azurerm_linux_virtual_machine_scale_set.linux_vmss.0.id
+  target_resource_id  = var.os_type == "windows" ? "${element(azurerm_windows_virtual_machine_scale_set.winsrv_vmss.*.id,count.index)}" : "${element(azurerm_linux_virtual_machine_scale_set.linux_vmss.*.id,count.index)}"
 
   profile {
     name = "default"
@@ -627,7 +627,7 @@ resource "azurerm_monitor_autoscale_setting" "auto" {
     rule {
       metric_trigger {
         metric_name        = "Percentage CPU"
-        metric_resource_id = var.os_type == "windows" ? azurerm_windows_virtual_machine_scale_set.winsrv_vmss.0.id : azurerm_linux_virtual_machine_scale_set.linux_vmss.0.id
+        metric_resource_id = var.os_type == "windows" ? "${element(azurerm_windows_virtual_machine_scale_set.winsrv_vmss.*.id,count.index)}" : "${element(azurerm_linux_virtual_machine_scale_set.linux_vmss.*.id,count.index)}"
         time_grain         = "PT1M"
         statistic          = "Average"
         time_window        = "PT5M"
@@ -646,7 +646,7 @@ resource "azurerm_monitor_autoscale_setting" "auto" {
     rule {
       metric_trigger {
         metric_name        = "Percentage CPU"
-        metric_resource_id = var.os_type == "windows" ? azurerm_windows_virtual_machine_scale_set.winsrv_vmss.0.id : azurerm_linux_virtual_machine_scale_set.linux_vmss.0.id
+        metric_resource_id = var.os_type == "windows" ? "${element(azurerm_windows_virtual_machine_scale_set.winsrv_vmss.*.id,count.index)}" : "${element(azurerm_linux_virtual_machine_scale_set.linux_vmss.*.id,count.index)}"
         time_grain         = "PT1M"
         statistic          = "Average"
         time_window        = "PT5M"
@@ -689,7 +689,7 @@ resource "azurerm_managed_disk" "data_disk" {
 resource "azurerm_virtual_machine_data_disk_attachment" "data_disk" {
   for_each           = local.vm_data_disks
   managed_disk_id    = azurerm_managed_disk.data_disk[each.key].id
-  virtual_machine_id = local.os_type == "windows" ? azurerm_windows_virtual_machine_scale_set.winsrv_vmss.0.id : azurerm_linux_virtual_machine_scale_set.linux_vmss.0.id
+  virtual_machine_id = local.os_type == "windows" ? "${element(azurerm_windows_virtual_machine_scale_set.winsrv_vmss.*.id,count.index)}" : "${element(azurerm_linux_virtual_machine_scale_set.linux_vmss.*.id,count.index)}"
   lun                = each.value.idx
   caching            = "ReadWrite"
 }
