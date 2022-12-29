@@ -345,7 +345,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "linux_vmss" {
 resource "azurerm_virtual_machine_extension" "vm_guest_config_linux" {
   count                      = local.os_type == "linux" ? var.instances_count : 0
   name                       = "VMGuestConfigExtensionLinux"
-  virtual_machine_id         = [element(azurerm_linux_virtual_machine_scale_set.linux_vmss.*.id,count.index)]
+  virtual_machine_id         = [element(azurerm_linux_virtual_machine_scale_set.linux_vmss.*.id, count.index)]
   publisher                  = "Microsoft.GuestConfiguration"
   type                       = "ConfigurationforLinux"
   type_handler_version       = "1.0"
@@ -358,7 +358,7 @@ resource "azurerm_virtual_machine_extension" "vm_guest_config_linux" {
 resource "azurerm_virtual_machine_extension" "azure_monitoring_agent_linux" {
   count                      = local.os_type == "linux" ? var.instances_count : 0
   name                       = "AzureMonitorLinuxAgent"
-  virtual_machine_id         = [element(azurerm_linux_virtual_machine_scale_set.linux_vmss.*.id,count.index)]
+  virtual_machine_id         = [element(azurerm_linux_virtual_machine_scale_set.linux_vmss.*.id, count.index)]
   publisher                  = "Microsoft.Azure.Monitor"
   type                       = "AzureMonitorLinuxAgent"
   type_handler_version       = "1.2"
