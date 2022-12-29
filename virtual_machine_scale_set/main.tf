@@ -66,80 +66,80 @@ resource "azurerm_public_ip" "pip" {
   tags                = merge({ "ResourceName" = lower("pip-vm-${local.virtual_machine_name}-${var.rg_location}") }, var.tags, )
 }
 
-#---------------------------------------
-# External Load Balancer with Public IP
-#---------------------------------------
-resource "azurerm_lb" "vmsslb" {
-  count               = var.enable_load_balancer ? 1 : 0
-  name                = var.load_balancer_type == "public" ? lower("lbext-${local.virtual_machine_name}-${var.rg_location}") : lower("lbint-${local.virtual_machine_name}-${data.azurerm_resource_group.rg.location}")
-  location            = var.rg_location
-  resource_group_name = data.azurerm_resource_group.rg.name
-  sku                 = var.load_balancer_sku
-  tags                = merge({ "resourcename" = var.load_balancer_type == "public" ? lower("lbext-${local.virtual_machine_name}-${var.rg_location}") : lower("lbint-${local.virtual_machine_name}-${var.rg_location}") }, var.tags, )
+# #---------------------------------------
+# # External Load Balancer with Public IP
+# #---------------------------------------
+# resource "azurerm_lb" "vmsslb" {
+#   count               = var.enable_load_balancer ? 1 : 0
+#   name                = var.load_balancer_type == "public" ? lower("lbext-${local.virtual_machine_name}-${var.rg_location}") : lower("lbint-${local.virtual_machine_name}-${data.azurerm_resource_group.rg.location}")
+#   location            = var.rg_location
+#   resource_group_name = data.azurerm_resource_group.rg.name
+#   sku                 = var.load_balancer_sku
+#   tags                = merge({ "resourcename" = var.load_balancer_type == "public" ? lower("lbext-${local.virtual_machine_name}-${var.rg_location}") : lower("lbint-${local.virtual_machine_name}-${var.rg_location}") }, var.tags, )
 
-  frontend_ip_configuration {
-    name                          = var.load_balancer_type == "public" ? lower("lbext-frontend-${local.virtual_machine_name}") : lower("lbint-frontend-${local.virtual_machine_name}")
-    public_ip_address_id          = var.enable_load_balancer == true && var.load_balancer_type == "public" ? azurerm_public_ip.pip[count.index].id : null
-    private_ip_address_allocation = var.load_balancer_type == "private" ? var.private_ip_address_allocation_type : null
-    private_ip_address            = var.load_balancer_type == "private" && var.private_ip_address_allocation_type == "Static" ? var.lb_private_ip_address : null
-    subnet_id                     = var.load_balancer_type == "private" ? data.azurerm_subnet.snet.id : null
-  }
+#   frontend_ip_configuration {
+#     name                          = var.load_balancer_type == "public" ? lower("lbext-frontend-${local.virtual_machine_name}") : lower("lbint-frontend-${local.virtual_machine_name}")
+#     public_ip_address_id          = var.enable_load_balancer == true && var.load_balancer_type == "public" ? azurerm_public_ip.pip[count.index].id : null
+#     private_ip_address_allocation = var.load_balancer_type == "private" ? var.private_ip_address_allocation_type : null
+#     private_ip_address            = var.load_balancer_type == "private" && var.private_ip_address_allocation_type == "Static" ? var.lb_private_ip_address : null
+#     subnet_id                     = var.load_balancer_type == "private" ? data.azurerm_subnet.snet.id : null
+#   }
 
-}
+# }
 
-#---------------------------------------
-# Backend address pool for Load Balancer
-#---------------------------------------
-resource "azurerm_lb_backend_address_pool" "bepool" {
-  count           = var.enable_load_balancer ? 1 : 0
-  name            = lower("lbe-backend-pool-${local.virtual_machine_name}")
-  loadbalancer_id = azurerm_lb.vmsslb[count.index].id
-}
+# #---------------------------------------
+# # Backend address pool for Load Balancer
+# #---------------------------------------
+# resource "azurerm_lb_backend_address_pool" "bepool" {
+#   count           = var.enable_load_balancer ? 1 : 0
+#   name            = lower("lbe-backend-pool-${local.virtual_machine_name}")
+#   loadbalancer_id = azurerm_lb.vmsslb[count.index].id
+# }
 
-#---------------------------------------
-# Load Balancer NAT pool
-#---------------------------------------
-resource "azurerm_lb_nat_pool" "natpol" {
-  count                          = var.enable_load_balancer && var.enable_lb_nat_pool ? 1 : 0
-  name                           = lower("lbe-nat-pool-${local.virtual_machine_name}-${var.rg_location}")
-  resource_group_name            = data.azurerm_resource_group.rg.name
-  loadbalancer_id                = azurerm_lb.vmsslb.0.id
-  protocol                       = "Tcp"
-  frontend_port_start            = var.nat_pool_frontend_ports[0]
-  frontend_port_end              = var.nat_pool_frontend_ports[1]
-  backend_port                   = var.os_type == "linux" ? 22 : 3389
-  frontend_ip_configuration_name = azurerm_lb.vmsslb.0.frontend_ip_configuration.0.name
-}
+# #---------------------------------------
+# # Load Balancer NAT pool
+# #---------------------------------------
+# resource "azurerm_lb_nat_pool" "natpol" {
+#   count                          = var.enable_load_balancer && var.enable_lb_nat_pool ? 1 : 0
+#   name                           = lower("lbe-nat-pool-${local.virtual_machine_name}-${var.rg_location}")
+#   resource_group_name            = data.azurerm_resource_group.rg.name
+#   loadbalancer_id                = azurerm_lb.vmsslb.0.id
+#   protocol                       = "Tcp"
+#   frontend_port_start            = var.nat_pool_frontend_ports[0]
+#   frontend_port_end              = var.nat_pool_frontend_ports[1]
+#   backend_port                   = var.os_type == "linux" ? 22 : 3389
+#   frontend_ip_configuration_name = azurerm_lb.vmsslb.0.frontend_ip_configuration.0.name
+# }
 
-#---------------------------------------
-# Health Probe for resources
-#---------------------------------------
-resource "azurerm_lb_probe" "lbp" {
-  count               = var.enable_load_balancer ? 1 : 0
-  name                = lower("lb-probe-port-${var.load_balancer_health_probe_port}-${local.virtual_machine_name}")
-  #resource_group_name = data.azurerm_resource_group.rg.name
-  loadbalancer_id     = azurerm_lb.vmsslb[count.index].id
-  port                = var.load_balancer_health_probe_port
-  protocol            = var.lb_probe_protocol
-  request_path        = var.lb_probe_protocol != "Tcp" ? var.lb_probe_request_path : null
-  number_of_probes    = var.number_of_probes
-}
+# #---------------------------------------
+# # Health Probe for resources
+# #---------------------------------------
+# resource "azurerm_lb_probe" "lbp" {
+#   count               = var.enable_load_balancer ? 1 : 0
+#   name                = lower("lb-probe-port-${var.load_balancer_health_probe_port}-${local.virtual_machine_name}")
+#   #resource_group_name = data.azurerm_resource_group.rg.name
+#   loadbalancer_id     = azurerm_lb.vmsslb[count.index].id
+#   port                = var.load_balancer_health_probe_port
+#   protocol            = var.lb_probe_protocol
+#   request_path        = var.lb_probe_protocol != "Tcp" ? var.lb_probe_request_path : null
+#   number_of_probes    = var.number_of_probes
+# }
 
-#--------------------------
-# Load Balancer Rules
-#--------------------------
-resource "azurerm_lb_rule" "lbrule" {
-  count                          = var.enable_load_balancer ? length(var.load_balanced_port_list) : 0
-  name                           = format("%s-%02d-rule", local.virtual_machine_name, count.index + 1)
-  #resource_group_name            = data.azurerm_resource_group.rg.name
-  loadbalancer_id                = azurerm_lb.vmsslb[0].id
-  probe_id                       = azurerm_lb_probe.lbp[0].id
-  protocol                       = "Tcp"
-  frontend_port                  = tostring(var.load_balanced_port_list[count.index])
-  backend_port                   = tostring(var.load_balanced_port_list[count.index])
-  frontend_ip_configuration_name = azurerm_lb.vmsslb[0].frontend_ip_configuration.0.name
-  backend_address_pool_ids       = [azurerm_lb_backend_address_pool.bepool[0].id]
-}
+# #--------------------------
+# # Load Balancer Rules
+# #--------------------------
+# resource "azurerm_lb_rule" "lbrule" {
+#   count                          = var.enable_load_balancer ? length(var.load_balanced_port_list) : 0
+#   name                           = format("%s-%02d-rule", local.virtual_machine_name, count.index + 1)
+#   #resource_group_name            = data.azurerm_resource_group.rg.name
+#   loadbalancer_id                = azurerm_lb.vmsslb[0].id
+#   probe_id                       = azurerm_lb_probe.lbp[0].id
+#   protocol                       = "Tcp"
+#   frontend_port                  = tostring(var.load_balanced_port_list[count.index])
+#   backend_port                   = tostring(var.load_balanced_port_list[count.index])
+#   frontend_ip_configuration_name = azurerm_lb.vmsslb[0].frontend_ip_configuration.0.name
+#   backend_address_pool_ids       = [azurerm_lb_backend_address_pool.bepool[0].id]
+# }
 
 #---------------------------------------
 # Network Interface for Virtual Machine
