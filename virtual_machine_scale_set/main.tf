@@ -343,7 +343,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "linux_vmss" {
 # Linux VM Guest Configuration Extension
 #---------------------------------------
 resource "azurerm_virtual_machine_extension" "vm_guest_config_linux" {
-  count                      = local.os_type == "linux" ? length(var.instances_count) : 0
+  count                      = local.os_type == "linux" ? 1 : 0
   name                       = "VMGuestConfigExtensionLinux"
   virtual_machine_id         = element(azurerm_linux_virtual_machine_scale_set.linux_vmss.*.id, count.index)
   publisher                  = "Microsoft.GuestConfiguration"
@@ -356,7 +356,7 @@ resource "azurerm_virtual_machine_extension" "vm_guest_config_linux" {
 # Linux Azure Monitoring Agent Configuration Extension
 #-----------------------------------------------------
 resource "azurerm_virtual_machine_extension" "azure_monitoring_agent_linux" {
-  count                      = local.os_type == "linux" ? length(var.instances_count) : 0
+  count                      = local.os_type == "linux" ? 1 : 0
   name                       = "AzureMonitorLinuxAgent"
   virtual_machine_id         = element(azurerm_linux_virtual_machine_scale_set.linux_vmss.*.id, count.index)
   publisher                  = "Microsoft.Azure.Monitor"
@@ -554,7 +554,7 @@ resource "azurerm_windows_virtual_machine_scale_set" "winsrv_vmss" {
 }
 
 resource "azurerm_virtual_machine_extension" "vm_guest_config_windows" {
-  count                      = local.os_type == "windows" ? length(var.instances_count) : 0
+  count                      = local.os_type == "windows" ? 1 : 0
   name                       = "VMGuestConfigExtensionWindows"
   virtual_machine_id         = element(azurerm_windows_virtual_machine_scale_set.winsrv_vmss.*.id, count.index)
   publisher                  = "Microsoft.GuestConfiguration"
@@ -567,7 +567,7 @@ resource "azurerm_virtual_machine_extension" "vm_guest_config_windows" {
 # Windows Azure Monitoring Agent Configuration Extension
 #-------------------------------------------------------
 resource "azurerm_virtual_machine_extension" "azure_monitoring_agent_windows" {
-  count                      = local.os_type == "windows" ? length(var.instances_count) : 0
+  count                      = local.os_type == "windows" ? 1 : 0
   name                       = "AzureMonitorWindowsAgent"
   virtual_machine_id         = element(azurerm_windows_virtual_machine_scale_set.winsrv_vmss.*.id, count.index)
   publisher                  = "Microsoft.Azure.Monitor"
@@ -610,7 +610,7 @@ resource "azapi_resource" "dce_association_windows" {
 # Auto Scaling for Virtual machine scale set
 #-----------------------------------------------
 resource "azurerm_monitor_autoscale_setting" "auto" {
-  count               = var.enable_autoscale_for_vmss ? length(var.instances_count) : 0
+  count               = var.enable_autoscale_for_vmss ? 1 : 0
   name                = lower("auto-scale-set-${local.virtual_machine_name}")
   resource_group_name = data.azurerm_resource_group.rg.name
   location            = var.rg_location
@@ -689,7 +689,7 @@ resource "azurerm_managed_disk" "data_disk" {
 resource "azurerm_virtual_machine_data_disk_attachment" "data_disk" {
   for_each           = local.vm_data_disks
   managed_disk_id    = azurerm_managed_disk.data_disk[each.key].id
-  virtual_machine_id = local.os_type == "windows" ? azurerm_windows_virtual_machine_scale_set.winsrv_vmss[element(split("_", each.key), 1)].id : azurerm_linux_virtual_machine_scale_set.linux_vmss[element(split("_", each.key), 1)].id
+  virtual_machine_id = local.os_type == "windows" ? element(azurerm_windows_virtual_machine_scale_set.winsrv_vmss.*.id) : element(azurerm_linux_virtual_machine_scale_set.linux_vmss.*.id)
   lun                = each.value.idx
   caching            = "ReadWrite"
 }
