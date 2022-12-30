@@ -551,7 +551,6 @@ resource "azurerm_windows_virtual_machine_scale_set" "winsrv_vmss" {
 
   extension {
     name                       = "VMGuestConfigExtensionWindows"
-    virtual_machine_id         = azurerm_windows_virtual_machine_scale_set.winsrv_vmss[count.index].id
     publisher                  = "Microsoft.GuestConfiguration"
     type                       =  "ConfigurationforWindows"
     type_handler_version       = "1.0"
@@ -560,7 +559,6 @@ resource "azurerm_windows_virtual_machine_scale_set" "winsrv_vmss" {
 
   extension {
     name                       = "AzureMonitorWindowsAgent"
-    virtual_machine_id         = azurerm_windows_virtual_machine_scale_set.winsrv_vmss[count.index].id
     publisher                  = "Microsoft.Azure.Monitor"
     type                       = "AzureMonitorWindowsAgent"
     type_handler_version       = "1.2"
