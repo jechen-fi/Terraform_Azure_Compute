@@ -708,7 +708,7 @@ resource "azurerm_managed_disk" "data_disk" {
 resource "azurerm_virtual_machine_data_disk_attachment" "data_disk" {
   for_each           = local.vm_data_disks
   managed_disk_id    = azurerm_managed_disk.data_disk[each.key].id
-  virtual_machine_id = local.os_type == "windows" ? azurerm_windows_virtual_machine_scale_set.winsrv_vmss[count.index].id : azurerm_linux_virtual_machine_scale_set.linux_vmss[count.index].id
+  virtual_machine_id = local.os_type == "windows" ? element(azurerm_windows_virtual_machine_scale_set.winsrv_vmss.*.id, each.value) : element(azurerm_linux_virtual_machine_scale_set.linux_vmss.*.id, each.value)
   lun                = each.value.idx
   caching            = "ReadWrite"
 }
