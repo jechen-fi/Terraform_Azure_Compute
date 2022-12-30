@@ -599,7 +599,7 @@ resource "azurerm_windows_virtual_machine_scale_set" "winsrv_vmss" {
 # }
 
 resource "azapi_resource" "dcr_association_windows" {
-  count     = local.os_type == "windows" ? length(var.data_collection_rule) : 0
+  count     =  local.os_type == "windows" ? length(var.data_collection_rule) : 0
   type      = "Microsoft.Insights/dataCollectionRuleAssociations@2021-09-01-preview"
   name      = format("%s%s", "dcrAzMonitorWindows", count.index + 1)
   parent_id = azurerm_windows_virtual_machine_scale_set.winsrv_vmss[0].id
@@ -612,7 +612,7 @@ resource "azapi_resource" "dcr_association_windows" {
 }
 
 resource "azapi_resource" "dce_association_windows" {
-  count     = local.os_type == "windows" ? length(var.data_collection_endpoint) : 0
+  count     = local.os_type == "windows" ? 1 : 0
   type      = "Microsoft.Insights/dataCollectionRuleAssociations@2021-09-01-preview"
   name      = "configurationAccessEndpoint"
   parent_id = azurerm_windows_virtual_machine_scale_set.winsrv_vmss[0].id
@@ -683,27 +683,27 @@ resource "azurerm_monitor_autoscale_setting" "auto" {
   }
 }
 
-#---------------------------------------
-# Virtual Machine Data Disks
-#---------------------------------------
-resource "azurerm_managed_disk" "data_disk" {
-  for_each               = local.vm_data_disks
-  name                   = "${local.virtual_machine_name}_DataDisk_${each.value.idx}"
-  resource_group_name    = data.azurerm_resource_group.rg.name
-  location               = var.rg_location
-  storage_account_type   = lookup(each.value.data_disk, "storage_account_type", "StandardSSD_LRS")
-  create_option          = "Empty"
-  disk_size_gb           = each.value.data_disk.disk_size_gb
-  zone                  = var.zone
-  tags                   = merge({ "ResourceName" = local.virtual_machine_name }, var.tags, )
-  disk_encryption_set_id = azurerm_disk_encryption_set.des.id
+# #---------------------------------------
+# # Virtual Machine Data Disks
+# #---------------------------------------
+# resource "azurerm_managed_disk" "data_disk" {
+#   for_each               = local.vm_data_disks
+#   name                   = "${local.virtual_machine_name}_DataDisk_${each.value.idx}"
+#   resource_group_name    = data.azurerm_resource_group.rg.name
+#   location               = var.rg_location
+#   storage_account_type   = lookup(each.value.data_disk, "storage_account_type", "StandardSSD_LRS")
+#   create_option          = "Empty"
+#   disk_size_gb           = each.value.data_disk.disk_size_gb
+#   zone                  = var.zone
+#   tags                   = merge({ "ResourceName" = local.virtual_machine_name }, var.tags, )
+#   disk_encryption_set_id = azurerm_disk_encryption_set.des.id
 
-  lifecycle {
-    ignore_changes = [
-      tags,
-    ]
-  }
-}
+#   lifecycle {
+#     ignore_changes = [
+#       tags,
+#     ]
+#   }
+# }
 
 # resource "azurerm_virtual_machine_data_disk_attachment" "data_disk" {
 #   for_each           = local.vm_data_disks
