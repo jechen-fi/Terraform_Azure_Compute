@@ -462,6 +462,7 @@ resource "azurerm_windows_virtual_machine_scale_set" "winsrv_vmss" {
       disk_size_gb         = data_disk.value
       caching              = "ReadWrite"
       create_option        = "Empty"
+      disk_encryption_set_id    = azurerm_disk_encryption_set.des.id
       storage_account_type = var.additional_data_disks_storage_account_type
     }
   }
