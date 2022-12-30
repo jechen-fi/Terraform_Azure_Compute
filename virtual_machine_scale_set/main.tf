@@ -705,13 +705,13 @@ resource "azurerm_managed_disk" "data_disk" {
   }
 }
 
-resource "azurerm_virtual_machine_data_disk_attachment" "data_disk" {
-  for_each           = local.vm_data_disks
-  managed_disk_id    = azurerm_managed_disk.data_disk[each.key].id
-  virtual_machine_id = local.os_type == "windows" ? element(azurerm_windows_virtual_machine_scale_set.winsrv_vmss[0].id, each.value) : element(azurerm_linux_virtual_machine_scale_set.linux_vmss[0].id, each.value)
-  lun                = each.value.idx
-  caching            = "ReadWrite"
-}
+# resource "azurerm_virtual_machine_data_disk_attachment" "data_disk" {
+#   for_each           = local.vm_data_disks
+#   managed_disk_id    = azurerm_managed_disk.data_disk[each.key].id
+#   virtual_machine_id = local.os_type == "windows" ? azurerm_windows_virtual_machine_scale_set.winsrv_vmss[0].id : azurerm_linux_virtual_machine_scale_set.linux_vmss[0].id
+#   lun                = each.value.idx
+#   caching            = "ReadWrite"
+# }
 
 # Creating Disk Encryption Set
 resource "azurerm_disk_encryption_set" "des" {
