@@ -339,60 +339,60 @@ resource "azurerm_linux_virtual_machine_scale_set" "linux_vmss" {
   # depends_on = [azurerm_lb_rule.lbrule]
 }
 
-#---------------------------------------
-# Linux VM Guest Configuration Extension
-#---------------------------------------
-resource "azurerm_virtual_machine_extension" "vm_guest_config_linux" {
-  count                      = local.os_type == "linux" ? 1 : 0
-  name                       = "VMGuestConfigExtensionLinux"
-  virtual_machine_id         = azurerm_linux_virtual_machine_scale_set.linux_vmss[0].id
-  publisher                  = "Microsoft.GuestConfiguration"
-  type                       = "ConfigurationforLinux"
-  type_handler_version       = "1.0"
-  auto_upgrade_minor_version = "true"
-}
+# #---------------------------------------
+# # Linux VM Guest Configuration Extension
+# #---------------------------------------
+# resource "azurerm_virtual_machine_extension" "vm_guest_config_linux" {
+#   count                      = local.os_type == "linux" ? 1 : 0
+#   name                       = "VMGuestConfigExtensionLinux"
+#   virtual_machine_id         = azurerm_linux_virtual_machine_scale_set.linux_vmss[0].id
+#   publisher                  = "Microsoft.GuestConfiguration"
+#   type                       = "ConfigurationforLinux"
+#   type_handler_version       = "1.0"
+#   auto_upgrade_minor_version = "true"
+# }
 
-#-----------------------------------------------------
-# Linux Azure Monitoring Agent Configuration Extension
-#-----------------------------------------------------
-resource "azurerm_virtual_machine_extension" "azure_monitoring_agent_linux" {
-  count                      = local.os_type == "linux" ? 1 : 0
-  name                       = "AzureMonitorLinuxAgent"
-  virtual_machine_id         = azurerm_linux_virtual_machine_scale_set.linux_vmss[0].id
-  publisher                  = "Microsoft.Azure.Monitor"
-  type                       = "AzureMonitorLinuxAgent"
-  type_handler_version       = "1.2"
-  auto_upgrade_minor_version = "true"
-  depends_on = [
-    azurerm_linux_virtual_machine_scale_set.linux_vmss
-  ]
-}
+# #-----------------------------------------------------
+# # Linux Azure Monitoring Agent Configuration Extension
+# #-----------------------------------------------------
+# resource "azurerm_virtual_machine_extension" "azure_monitoring_agent_linux" {
+#   count                      = local.os_type == "linux" ? 1 : 0
+#   name                       = "AzureMonitorLinuxAgent"
+#   virtual_machine_id         = azurerm_linux_virtual_machine_scale_set.linux_vmss[0].id
+#   publisher                  = "Microsoft.Azure.Monitor"
+#   type                       = "AzureMonitorLinuxAgent"
+#   type_handler_version       = "1.2"
+#   auto_upgrade_minor_version = "true"
+#   depends_on = [
+#     azurerm_linux_virtual_machine_scale_set.linux_vmss
+#   ]
+# }
 
-resource "azapi_resource" "dcr_association_linux" {
-  count     = local.os_type == "linux" ? length(var.data_collection_rule) : 0
-  type      = "Microsoft.Insights/dataCollectionRuleAssociations@2021-09-01-preview"
-  name      = format("%s%s", "dcrAzMonitorLinux", count.index + 1)
-  parent_id = azurerm_linux_virtual_machine_scale_set.linux_vmss[0].id
-  body = jsonencode({
-    properties = {
-      dataCollectionRuleId = var.data_collection_rule[count.index]
-      description          = "Association of data collection rule. Deleting this association will break the data collection for this virtual machine"
-    }
-  })
-}
+# resource "azapi_resource" "dcr_association_linux" {
+#   count     = local.os_type == "linux" ? length(var.data_collection_rule) : 0
+#   type      = "Microsoft.Insights/dataCollectionRuleAssociations@2021-09-01-preview"
+#   name      = format("%s%s", "dcrAzMonitorLinux", count.index + 1)
+#   parent_id = azurerm_linux_virtual_machine_scale_set.linux_vmss[0].id
+#   body = jsonencode({
+#     properties = {
+#       dataCollectionRuleId = var.data_collection_rule[count.index]
+#       description          = "Association of data collection rule. Deleting this association will break the data collection for this virtual machine"
+#     }
+#   })
+# }
 
-resource "azapi_resource" "dce_association_linux" {
-  count     = local.os_type == "linux" ? length(var.data_collection_endpoint) : 0
-  type      = "Microsoft.Insights/dataCollectionRuleAssociations@2021-09-01-preview"
-  name      = "configurationAccessEndpoint"
-  parent_id = azurerm_linux_virtual_machine_scale_set.linux_vmss[0].id
-  body = jsonencode({
-    properties = {
-      dataCollectionEndpointId = var.data_collection_endpoint
-      description              = "Association of data collection rule. Deleting this association will break the data collection for this virtual machine"
-    }
-  })
-}
+# resource "azapi_resource" "dce_association_linux" {
+#   count     = local.os_type == "linux" ? length(var.data_collection_endpoint) : 0
+#   type      = "Microsoft.Insights/dataCollectionRuleAssociations@2021-09-01-preview"
+#   name      = "configurationAccessEndpoint"
+#   parent_id = azurerm_linux_virtual_machine_scale_set.linux_vmss[0].id
+#   body = jsonencode({
+#     properties = {
+#       dataCollectionEndpointId = var.data_collection_endpoint
+#       description              = "Association of data collection rule. Deleting this association will break the data collection for this virtual machine"
+#     }
+#   })
+# }
 
 #---------------------------------------
 # Windows Virutal machine scale set
