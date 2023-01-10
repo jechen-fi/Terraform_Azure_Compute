@@ -262,7 +262,6 @@ resource "azurerm_linux_virtual_machine_scale_set" "linux_vmss" {
     dns_servers                   = var.dns_servers
     enable_ip_forwarding          = var.enable_ip_forwarding
     enable_accelerated_networking = var.enable_accelerated_networking
-    #network_security_group_id     = var.existing_network_security_group_id == null ? azurerm_network_security_group.nsg.0.id : var.existing_network_security_group_id
 
     ip_configuration {
       name                                   = lower("ipconig-${format("vm%s%s", lower(replace(local.virtual_machine_name, "/[[:^alnum:]]/", "")), count.index + 1)}")
@@ -339,60 +338,36 @@ resource "azurerm_linux_virtual_machine_scale_set" "linux_vmss" {
   # depends_on = [azurerm_lb_rule.lbrule]
 }
 
-# #---------------------------------------
-# # Linux VM Guest Configuration Extension
-# #---------------------------------------
-# resource "azurerm_virtual_machine_extension" "vm_guest_config_linux" {
-#   count                      = local.os_type == "linux" ? 1 : 0
-#   name                       = "VMGuestConfigExtensionLinux"
-#   virtual_machine_id         = azurerm_linux_virtual_machine_scale_set.linux_vmss[0].id
-#   publisher                  = "Microsoft.GuestConfiguration"
-#   type                       = "ConfigurationforLinux"
-#   type_handler_version       = "1.0"
-#   auto_upgrade_minor_version = "true"
-# }
 
-# #-----------------------------------------------------
-# # Linux Azure Monitoring Agent Configuration Extension
-# #-----------------------------------------------------
-# resource "azurerm_virtual_machine_extension" "azure_monitoring_agent_linux" {
-#   count                      = local.os_type == "linux" ? 1 : 0
-#   name                       = "AzureMonitorLinuxAgent"
-#   virtual_machine_id         = azurerm_linux_virtual_machine_scale_set.linux_vmss[0].id
-#   publisher                  = "Microsoft.Azure.Monitor"
-#   type                       = "AzureMonitorLinuxAgent"
-#   type_handler_version       = "1.2"
-#   auto_upgrade_minor_version = "true"
-#   depends_on = [
-#     azurerm_linux_virtual_machine_scale_set.linux_vmss
-#   ]
-# }
+#-----------------------------------------------------
+# Linux Data Collection Rule & Data Collection Endpoint
+#-----------------------------------------------------
 
-# resource "azapi_resource" "dcr_association_linux" {
-#   count     = local.os_type == "linux" ? length(var.data_collection_rule) : 0
-#   type      = "Microsoft.Insights/dataCollectionRuleAssociations@2021-09-01-preview"
-#   name      = format("%s%s", "dcrAzMonitorLinux", count.index + 1)
-#   parent_id = azurerm_linux_virtual_machine_scale_set.linux_vmss[0].id
-#   body = jsonencode({
-#     properties = {
-#       dataCollectionRuleId = var.data_collection_rule[count.index]
-#       description          = "Association of data collection rule. Deleting this association will break the data collection for this virtual machine"
-#     }
-#   })
-# }
+resource "azapi_resource" "dcr_association_linux" {
+  count     = local.os_type == "linux" ? length(var.data_collection_rule) : 0
+  type      = "Microsoft.Insights/dataCollectionRuleAssociations@2021-09-01-preview"
+  name      = format("%s%s", "dcrAzMonitorLinux", count.index + 1)
+  parent_id = azurerm_linux_virtual_machine_scale_set.linux_vmss[0].id
+  body = jsonencode({
+    properties = {
+      dataCollectionRuleId = var.data_collection_rule[count.index]
+      description          = "Association of data collection rule. Deleting this association will break the data collection for this virtual machine"
+    }
+  })
+}
 
-# resource "azapi_resource" "dce_association_linux" {
-#   count     = local.os_type == "linux" ? length(var.data_collection_endpoint) : 0
-#   type      = "Microsoft.Insights/dataCollectionRuleAssociations@2021-09-01-preview"
-#   name      = "configurationAccessEndpoint"
-#   parent_id = azurerm_linux_virtual_machine_scale_set.linux_vmss[0].id
-#   body = jsonencode({
-#     properties = {
-#       dataCollectionEndpointId = var.data_collection_endpoint
-#       description              = "Association of data collection rule. Deleting this association will break the data collection for this virtual machine"
-#     }
-#   })
-# }
+resource "azapi_resource" "dce_association_linux" {
+  count     = local.os_type == "linux" ? 1 : 0
+  type      = "Microsoft.Insights/dataCollectionRuleAssociations@2021-09-01-preview"
+  name      = "configurationAccessEndpoint"
+  parent_id = azurerm_linux_virtual_machine_scale_set.linux_vms[count.index].id
+  body = jsonencode({
+    properties = {
+      dataCollectionEndpointId = var.data_collection_endpoint
+      description              = "Association of data collection rule. Deleting this association will break the data collection for this virtual machine"
+    }
+  })
+}
 
 #---------------------------------------
 # Windows Virutal machine scale set
@@ -573,57 +548,35 @@ resource "azurerm_windows_virtual_machine_scale_set" "winsrv_vmss" {
   # depends_on = [azurerm_lb_rule.lbrule]
 }
 
-# resource "azurerm_virtual_machine_extension" "vm_guest_config_windows" {
-#   count                      = local.os_type == "windows" ? 1 : 0
-#   name                       = "VMGuestConfigExtensionWindows"
-#   virtual_machine_id         = element(azurerm_windows_virtual_machine_scale_set.winsrv_vmss.*.id, count.index)
-#   publisher                  = "Microsoft.GuestConfiguration"
-#   type                       = "ConfigurationforWindows"
-#   type_handler_version       = "1.0"
-#   auto_upgrade_minor_version = "true"
-# }
+#-------------------------------------------------------
+# Data Collection Rule & Data Collection Endpoint
+#-------------------------------------------------------
 
-# #-------------------------------------------------------
-# # Windows Azure Monitoring Agent Configuration Extension
-# #-------------------------------------------------------
-# resource "azurerm_virtual_machine_extension" "azure_monitoring_agent_windows" {
-#   count                      = local.os_type == "windows" ? 1 : 0
-#   name                       = "AzureMonitorWindowsAgent"
-#   virtual_machine_id         = element(azurerm_windows_virtual_machine_scale_set.winsrv_vmss.*.id, count.index)
-#   publisher                  = "Microsoft.Azure.Monitor"
-#   type                       = "AzureMonitorWindowsAgent"
-#   type_handler_version       = "1.2"
-#   auto_upgrade_minor_version = "true"
-#   depends_on = [
-#     azurerm_windows_virtual_machine_scale_set.winsrv_vmss
-#   ]
-# }
+resource "azapi_resource" "dcr_association_windows" {
+  count     = local.os_type == "windows" ? length(var.data_collection_rule) : 0
+  type      = "Microsoft.Insights/dataCollectionRuleAssociations@2021-09-01-preview"
+  name      = format("%s%s", "dcrAzMonitorWindows", count.index + 1)
+  parent_id = azurerm_windows_virtual_machine_scale_set.winsrv_vmss[0].id
+  body = jsonencode({
+    properties = {
+      dataCollectionRuleId = var.data_collection_rule[count.index]
+      description          = "Association of data collection rule. Deleting this association will break the data collection for this virtual machine"
+    }
+  })
+}
 
-# resource "azapi_resource" "dcr_association_windows" {
-#   count     =  local.os_type == "windows" ? length(var.data_collection_rule) : 0
-#   type      = "Microsoft.Insights/dataCollectionRuleAssociations@2021-09-01-preview"
-#   name      = format("%s%s", "dcrAzMonitorWindows", count.index + 1)
-#   parent_id = azurerm_windows_virtual_machine_scale_set.winsrv_vmss[0].id
-#   body = jsonencode({
-#     properties = {
-#       dataCollectionRuleId = var.data_collection_rule[count.index]
-#       description          = "Association of data collection rule. Deleting this association will break the data collection for this virtual machine"
-#     }
-#   })
-# }
-
-# resource "azapi_resource" "dce_association_windows" {
-#   count     = local.os_type == "windows" ? 1 : 0
-#   type      = "Microsoft.Insights/dataCollectionRuleAssociations@2021-09-01-preview"
-#   name      = "configurationAccessEndpoint"
-#   parent_id = azurerm_windows_virtual_machine_scale_set.winsrv_vmss[0].id
-#   body = jsonencode({
-#     properties = {
-#       dataCollectionEndpointId = var.data_collection_endpoint
-#       description              = "Association of data collection rule. Deleting this association will break the data collection for this virtual machine"
-#     }
-#   })
-# }
+resource "azapi_resource" "dce_association_windows" {
+  count     = local.os_type == "windows" ? 1 : 0
+  type      = "Microsoft.Insights/dataCollectionRuleAssociations@2021-09-01-preview"
+  name      = "configurationAccessEndpoint"
+  parent_id = azurerm_windows_virtual_machine_scale_set.winsrv_vmss[count.index].id
+  body = jsonencode({
+    properties = {
+      dataCollectionEndpointId = var.data_collection_endpoint
+      description              = "Association of data collection rule. Deleting this association will break the data collection for this virtual machine"
+    }
+  })
+}
 
 
 #-----------------------------------------------
@@ -684,35 +637,6 @@ resource "azurerm_monitor_autoscale_setting" "auto" {
   }
 }
 
-# #---------------------------------------
-# # Virtual Machine Data Disks
-# #---------------------------------------
-# resource "azurerm_managed_disk" "data_disk" {
-#   for_each               = local.vm_data_disks
-#   name                   = "${local.virtual_machine_name}_DataDisk_${each.value.idx}"
-#   resource_group_name    = data.azurerm_resource_group.rg.name
-#   location               = var.rg_location
-#   storage_account_type   = lookup(each.value.data_disk, "storage_account_type", "StandardSSD_LRS")
-#   create_option          = "Empty"
-#   disk_size_gb           = each.value.data_disk.disk_size_gb
-#   zone                  = var.zone
-#   tags                   = merge({ "ResourceName" = local.virtual_machine_name }, var.tags, )
-#   disk_encryption_set_id = azurerm_disk_encryption_set.des.id
-
-#   lifecycle {
-#     ignore_changes = [
-#       tags,
-#     ]
-#   }
-# }
-
-# resource "azurerm_virtual_machine_data_disk_attachment" "data_disk" {
-#   for_each           = local.vm_data_disks
-#   managed_disk_id    = azurerm_managed_disk.data_disk[each.key].id
-#   virtual_machine_id = local.os_type == "windows" ? azurerm_windows_virtual_machine_scale_set.winsrv_vmss[0].id : azurerm_linux_virtual_machine_scale_set.linux_vmss[0].id
-#   lun                = each.value.idx
-#   caching            = "ReadWrite"
-# }
 
 # Creating Disk Encryption Set
 resource "azurerm_disk_encryption_set" "des" {

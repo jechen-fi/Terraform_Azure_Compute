@@ -786,15 +786,16 @@ variable "tags" {
   default     = {}
 }
 
-# variable "data_collection_rule" {
-#   description = "Data Collection Rule associated with Virtual Machine"
-#   type        = list(string)
-# }
+variable "data_collection_rule" {
+  description = "Data Collection Rule associated with Virtual Machine"
+  type        = list(string)
+}
 
-# variable "data_collection_endpoint" {
-#   description = "Data Collection Endpoint to be associated with Virtual machine"
-#   type        = string
-# }
+variable "data_collection_endpoint" {
+  description = "Data Collection Endpoint to be associated with Virtual machine"
+  type        = string
+}
+
 
 variable "data_disks" {
   description = "Managed Data Disks for azure virtual machine"
