@@ -49,7 +49,8 @@ variable "publisher" {
 
 variable "script_uris" {
   description = "Required. URI or URI(s) for blob storage to access the virtual machine extension script."
-  default     = null
+  default     = []
+  type        = list(string)
 }
 
 variable "script_storage_account" {

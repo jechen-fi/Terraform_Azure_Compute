@@ -19,9 +19,7 @@ SETTINGS
     {
        "commandToExecute": "${var.exec_command}",
        "managedIdentity": { "objectId": "${var.managed_identity}" },
-       "fileUris": [
-         "${var.script_uris}"
-       ]
+       "fileUris": ${var.script_uris}
     }
 PROTECTED_SETTINGS
   #       "storageAccountName": "${var.script_storage_account}",
