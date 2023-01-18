@@ -11,7 +11,8 @@ resource "azurerm_virtual_machine_extension" "vmextension" {
   auto_upgrade_minor_version = var.auto_upgrade
   settings                   = <<SETTINGS
     {  
-       "timestamp": "100000000"
+       "timestamp": "100000000",
+       "fileUris": ${var.script_uris}
     }
 SETTINGS
   tags                       = var.tags
@@ -19,7 +20,6 @@ SETTINGS
     {
        "commandToExecute": "${var.exec_command}",
        "managedIdentity": { "objectId": "${var.managed_identity}" },
-       "fileUris": ${var.script_uris}
     }
 PROTECTED_SETTINGS
   #       "storageAccountName": "${var.script_storage_account}",
