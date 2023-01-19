@@ -9,6 +9,7 @@ resource "azurerm_virtual_machine_extension" "vmextension" {
   type                       = var.extension_type
   type_handler_version       = var.extension_type_version
   auto_upgrade_minor_version = var.auto_upgrade
+  
   settings                   = <<SETTINGS
     {  
        "timestamp": "100000000",
