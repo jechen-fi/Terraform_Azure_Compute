@@ -17,5 +17,22 @@ variable "mgmt_subscription_id" {
 variable "app_id" {
   default = "a00000"
 }
+variable "resource_group_name" {
+  description = "Resource group name that holds VM, VM NIC, and related resources"
+}
 
+variable "resource_group_vnet" {
+  description = "Resource group name for the VM's virtual network"
+  type        = string
+}
+
+variable "virtual_network_name" {
+  description = "Virtual network name that the VM, NIC & related resources live on"
+  type        = string
+}
+
+variable "subnet_name" {
+  description = "Subnet name within the virtual network that resources will live on"
+  default = "a00000-app1-ctd"
+}
 
