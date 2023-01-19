@@ -17,7 +17,5 @@ variable "mgmt_subscription_id" {
 variable "app_id" {
   default = "a00000"
 }
-variable "subnet_name" {
-  default = "a00000-app1-ctd"
-}
+
 

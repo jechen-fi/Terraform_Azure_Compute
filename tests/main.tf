@@ -8,8 +8,8 @@ module "virtual-machine" {
   resource_group_name      = data.azurerm_resource_group.rg.name
   rg_location              = data.azurerm_resource_group.rg.location
   resource_group_vnet      = data.azurerm_resource_group.rg.name
-  virtual_network_name     = data.azurerm_resource_group.vnet_rg.name
-  subnet_name              = var.subnet_name
+  virtual_network_name     = data.azurerm_virtual_network.vnet.name
+  subnet_name              = data.azurerm_subnet.snet
   virtual_machine_name     = "a0000-tstvm01"
   data_collection_rule     = ["/subscriptions/5efbbb60-3241-492e-a125-47d13e025aa2/resourcegroups/a00000-shrdsvcmgmt-dev/providers/Microsoft.Insights/dataCollectionRules/core-dcrwin-dev"]
   data_collection_endpoint = "/subscriptions/5efbbb60-3241-492e-a125-47d13e025aa2/resourcegroups/a00000-shrdsvcmgmt-dev/providers/Microsoft.Insights/dataCollectionEndpoints/core-dcewestus3-dev"
