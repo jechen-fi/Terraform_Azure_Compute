@@ -15,7 +15,7 @@ module "virtual-machine" {
   data_collection_endpoint = "/subscriptions/5efbbb60-3241-492e-a125-47d13e025aa2/resourcegroups/a00000-shrdsvcmgmt-dev/providers/Microsoft.Insights/dataCollectionEndpoints/core-dcewestus3-dev"
   os_distribution          = "win2019"
   virtual_machine_size     = "Standard_DS2_v2"
-  admin_username           = local.admin_user_name
+  admin_username           = local.admin_username
   admin_password           = local.admin_password
   tags                     = local.tags
   kv_id                    = data.azurerm_key_vault.kv.id
