@@ -1,4 +1,4 @@
-name: CTD CosmosDB Module Continuous Test
+name: CTD Azure Compute Module Continuous Test
 
 on:
   workflow_dispatch:
@@ -45,7 +45,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:
-        ref: v1.7.0
+        ref: features/vm_extension_enhancement
         submodules: true
         token: ${{ secrets.GH_RUNNER_PAT }}
 
