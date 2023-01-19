@@ -24,7 +24,6 @@ module "virtual-machine" {
 
 
 
-
 module "custom_extension" {
   depends_on = [
     module.virtual-machine
