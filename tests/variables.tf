@@ -19,16 +19,19 @@ variable "app_id" {
 }
 variable "resource_group_name" {
   description = "Resource group name that holds VM, VM NIC, and related resources"
+  default = "a00000-namespace-ctd"
 }
 
 variable "resource_group_vnet" {
   description = "Resource group name for the VM's virtual network"
   type        = string
+  default = "a00000-namespace-ctd"
 }
 
 variable "virtual_network_name" {
   description = "Virtual network name that the VM, NIC & related resources live on"
   type        = string
+  default = "a00000-network-ctd"
 }
 
 variable "subnet_name" {

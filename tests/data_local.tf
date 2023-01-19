@@ -2,15 +2,15 @@ data "azurerm_client_config" "current" {}
 
 # Import Workload Resource Group
 data "azurerm_resource_group" "rg" {
-  name = "a00000-namespace-ctd"
+  name = var.resource_group_name
 }
 
 data "azurerm_resource_group" "vnet_rg" {
-  name = "a00000-namespace-ctd"
+  name = var.resource_group_vnet
 }
 
 data "azurerm_virtual_network" "vnet" {
-  name                = "a00000-network-ctd"
+  name                = var.virtual_network_name
   resource_group_name = data.azurerm_resource_group.vnet_rg.name
 }
 
