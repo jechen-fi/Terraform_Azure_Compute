@@ -36,6 +36,7 @@ variable "virtual_network_name" {
 
 variable "subnet_name" {
   description = "Subnet name within the virtual network that resources will live on"
+  type = string
   default = "a00000-app1-ctd"
 }
 
