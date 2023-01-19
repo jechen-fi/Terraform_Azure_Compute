@@ -6,6 +6,7 @@ data "azurerm_resource_group" "rg" {
 }
 data "azurerm_resource_group" "vnet_rg" {
   name = "a00000-network-ctd"
+  resource_group_name = data.azurerm_resource_group.rg.name
 }
 
 data "azurerm_key_vault" "kv" {
