@@ -35,7 +35,7 @@ module "custom_extension" {
   publisher = "Microsoft.Compute"
   azure_vm_id = module.virtual-machine.vm_info_windows[0].id
   script_uris = local.script_uri
-  exec_command = "powershell -ExecutionPolicy Unrestricted -File wrapper2.ps1 -register_orchestrator $true -add_users_to_group $true -accounts 'pranaya' -local_group 'administrators' -domain 'FIDEV.COM' -key_vault_id '${data.azurerm_key_vault.kv.id}' -app_type 'EC1'"
+  exec_command = "powershell -ExecutionPolicy Unrestricted -File wrapper2.ps1 -register_orchestrator ${true} -add_users_to_group ${true} -accounts 'pranaya' -local_group 'administrators' -domain 'FIDEV.COM' -key_vault_id '${data.azurerm_key_vault.kv.id}' -app_type 'EC1'"
   managed_identity = lookup(module.virtual-machine.vm_info_windows[0].identity[0], "principal_id")
 }
 
