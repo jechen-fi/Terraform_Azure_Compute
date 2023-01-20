@@ -29,7 +29,7 @@ module "custom_extension" {
     module.virtual-machine
   ]
   source = "./../virtual_machine_extension"
-  name_vmextension = "CustomScriptExtension"
+  name_vmextension = "CustomScriptExtension1"
   extension_type = "CustomScriptExtension"
   extension_type_version="1.10"
   publisher = "Microsoft.Compute"
