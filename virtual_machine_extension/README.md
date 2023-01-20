@@ -22,7 +22,7 @@ Terraform generalized module to add a virtual machine extension to one or more l
 | managed_identity | Virtual machine name provided by pipeline | `string` | `None`  | yes | no |
 | name_vmextension | User provided/created name for the virtual machine extension azure resource | `string` | `None` | yes | no |
 | publisher | Publisher for the virtual machine extension being used. | `string` | `Microsoft.Azure.Extensions`  | yes | no |
-| script_uris | List of the URL(s) for file(s) to be downloaded. If URLs are sensitive (such as URLs containing keys), this field should be specified in protectedSettings | `list(string)` | `[]` | no | no |
+| script_uris | The URL(s) for file(s) to be downloaded. If URLs are sensitive (such as URLs containing keys), this field should be specified in protectedSettings | `string array` | `null | no | no |
 | script_storage_account | Storage account where the custom script resides in Azure. Should be passed into the module. | `string` | `null` | yes | no |
 | script_storage_account_key | Storage account access key associated with the script. Should be passed into the module. | `string` | `null` | yes | no |
 | tags | Tags to be assigned to the Azure resource in Azure | `object` or `map` | `null` | yes | no |
