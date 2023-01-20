@@ -13,7 +13,9 @@ resource "azurerm_virtual_machine_extension" "vmextension" {
   settings                   = <<SETTINGS
     {  
        "timestamp": "100000000",
-       "fileUris": [ ${var.script_uris} ]
+       "fileUris": [ 
+         "${var.script_uris}"
+          ]
     }
 SETTINGS
   tags                       = var.tags
