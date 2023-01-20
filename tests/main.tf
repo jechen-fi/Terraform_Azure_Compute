@@ -24,19 +24,19 @@ module "virtual-machine" {
 
 
 
-module "custom_extension" {
-  depends_on = [
-    module.virtual-machine
-  ]
-  source = "./../virtual_machine_extension"
-  name_vmextension = "CustomScriptExtension1"
-  extension_type = "CustomScriptExtension"
-  extension_type_version="1.10"
-  publisher = "Microsoft.Compute"
-  azure_vm_id = module.virtual-machine.vm_info_windows[0].id
-  script_uris = local.script_uri
-  exec_command = "powershell -ExecutionPolicy Unrestricted -File wrapper2.ps1 -register_orchestrator ${true} -add_users_to_group ${true} -accounts 'pranaya' -local_group 'administrators' -domain 'FIDEV.COM' -key_vault_id '${data.azurerm_key_vault.kv.id}' -app_type 'EC1'"
-  managed_identity = lookup(module.virtual-machine.vm_info_windows[0].identity[0], "principal_id")
-}
+# module "custom_extension" {
+#   depends_on = [
+#     module.virtual-machine
+#   ]
+#   source = "./../virtual_machine_extension"
+#   name_vmextension = "CustomScriptExtension1"
+#   extension_type = "CustomScriptExtension"
+#   extension_type_version="1.10"
+#   publisher = "Microsoft.Compute"
+#   azure_vm_id = module.virtual-machine.vm_info_windows[0].id
+#   script_uris = local.script_uri
+#   exec_command = "powershell -ExecutionPolicy Unrestricted -File wrapper2.ps1 -register_orchestrator ${true} -add_users_to_group ${true} -accounts 'pranaya' -local_group 'administrators' -domain 'FIDEV.COM' -key_vault_id '${data.azurerm_key_vault.kv.id}' -app_type 'EC1'"
+#   managed_identity = lookup(module.virtual-machine.vm_info_windows[0].identity[0], "principal_id")
+# }
 
 
