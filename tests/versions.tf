@@ -32,3 +32,4 @@ provider "azurerm" {
   subscription_id = var.mgmt_subscription_id
   alias           = "mgmt-sub"
 }
+
