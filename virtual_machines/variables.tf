@@ -432,6 +432,13 @@ variable "os_distribution_list" {
       version   = "latest"
       os_type   = "windows"
     },
+       
+    windowscore2022 = {
+      publisher = "MicrosoftWindowsServer"
+      offer     = "WindowsServer"
+      sku       = "2022-datacenter-azure-edition-core"
+      version   = "latest"
+      os_type   = "windows"
   }
 }
 
