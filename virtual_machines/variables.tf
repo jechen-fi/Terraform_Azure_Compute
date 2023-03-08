@@ -439,6 +439,7 @@ variable "os_distribution_list" {
       sku       = "2022-datacenter-azure-edition-core"
       version   = "latest"
       os_type   = "windows"
+    }  
   }
 }
 
