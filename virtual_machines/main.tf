@@ -297,6 +297,7 @@ resource "azurerm_windows_virtual_machine" "winvm" {
   network_interface_ids      = [element(concat(azurerm_network_interface.nic.*.id, [""]), count.index)]
   provision_vm_agent         = true
   allow_extension_operations = true
+  patch_mode                 = var.patch_mode
   dedicated_host_id          = var.dedicated_host_id
   license_type               = var.license_type
   #availability_set_id        = var.enable_feature[var.enable_av_set] ? element(concat(azurerm_availability_set.aset.*.id, [""]), 0) : null

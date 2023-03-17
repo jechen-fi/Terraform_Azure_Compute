@@ -516,6 +516,12 @@ variable "rg_location" {
   type        = string
 }
 
+variable "patch_mode" {
+  description = "Sets patch mode for VM"
+  type        = string
+  default     = "AutomaticByPlatform"
+}
+
 variable "nsg_inbound_rules" {
   description = "List of network rules to apply to network interface."
   default     = []
