@@ -569,6 +569,12 @@ variable "tags" {
   default     = null
 }
 
+variable "type_handler_version" {
+  description = "Specifies the version of the extension to use, available versions can be found using the Azure CLI"
+  type = string
+  default = "1.0"
+}
+
 locals {
 
   virtual_machine_name = try(lower(var.virtual_machine_name), lower(format("%s%s%s", var.virtual_machine_name_prepend, "-", var.application_env)))
