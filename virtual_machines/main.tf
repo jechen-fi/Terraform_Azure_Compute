@@ -200,11 +200,11 @@ resource "azurerm_linux_virtual_machine" "linuxvm" {
 #---------------------------------------
 resource "azurerm_virtual_machine_extension" "vm_guest_config_linux" {
   count                      = local.os_type == "linux" ? 1 : 0
-  name                       = "VMGuestConfigExtensionLinux"
+  name                       = "AzurePolicyforLinux"
   virtual_machine_id         = azurerm_linux_virtual_machine.linuxvm[0].id
   publisher                  = "Microsoft.GuestConfiguration"
   type                       = "ConfigurationforLinux"
-  type_handler_version       = "1.0"
+  type_handler_version       = var.type_handler_version
   auto_upgrade_minor_version = "true"
 }
 
