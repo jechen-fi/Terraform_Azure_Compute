@@ -58,7 +58,7 @@ jobs:
       uses: Azure/get-keyvault-secrets@v1
       with:
         keyvault: "core-automatekvtf-dev"
-        secrets: "core-ghrpat-dev,core-tfstatesakey2-dev"
+        secrets: "gh-runner-pat,core-tfstatesakey2-dev"
       id: kvsecrets
 
     - name: Ensure environment variables are set
