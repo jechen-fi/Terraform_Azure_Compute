@@ -432,14 +432,21 @@ variable "os_distribution_list" {
       version   = "latest"
       os_type   = "windows"
     },
-       
+
     windowscore2022 = {
       publisher = "MicrosoftWindowsServer"
       offer     = "WindowsServer"
       sku       = "2022-datacenter-azure-edition-core"
       version   = "latest"
       os_type   = "windows"
-    }  
+    },
+    windows2022 = {
+      publisher = "MicrosoftWindowsServer"
+      offer     = "WindowsServer"
+      sku       = "2022-datacenter"
+      version   = "latest"
+      os_type   = "windows"
+    }
   }
 }
 
@@ -479,6 +486,44 @@ variable "os_disk" {
       caching                   = "ReadWrite"
       disk_encryption_set_id    = null
       write_accelerator_enabled = null
+    },
+  }
+}
+
+
+
+variable "data_disk" {
+  type = map(object({
+    name                      = string
+    create_option             = string
+    disk_size_gb              = string
+    storage_account_type      = string
+    caching                   = string
+    disk_encryption_set_id    = string
+    write_accelerator_enabled = bool
+    lun                       = number
+  }))
+
+  default = {
+    linux = {
+      name                      = null
+      create_option             = "Empty"
+      disk_size_gb              = null
+      storage_account_type      = "StandardSSD_LRS"
+      caching                   = "ReadWrite"
+      disk_encryption_set_id    = null
+      write_accelerator_enabled = null
+      lun                       = null
+    },
+    windows = {
+      name                      = null
+      create_option             = "Empty"
+      disk_size_gb              = null
+      storage_account_type      = "StandardSSD_LRS"
+      caching                   = "ReadWrite"
+      disk_encryption_set_id    = null
+      write_accelerator_enabled = null
+      lun                       = null
     },
   }
 }
@@ -571,8 +616,8 @@ variable "tags" {
 
 variable "type_handler_version" {
   description = "Specifies the version of the extension to use, available versions can be found using the Azure CLI"
-  type = string
-  default = "1.0"
+  type        = string
+  default     = "1.0"
 }
 
 locals {
