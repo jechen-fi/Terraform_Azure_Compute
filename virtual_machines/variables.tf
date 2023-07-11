@@ -432,14 +432,21 @@ variable "os_distribution_list" {
       version   = "latest"
       os_type   = "windows"
     },
-       
+
     windowscore2022 = {
       publisher = "MicrosoftWindowsServer"
       offer     = "WindowsServer"
       sku       = "2022-datacenter-azure-edition-core"
       version   = "latest"
       os_type   = "windows"
-    }  
+    },
+    windows2022 = {
+      publisher = "MicrosoftWindowsServer"
+      offer     = "WindowsServer"
+      sku       = "2022-datacenter"
+      version   = "latest"
+      os_type   = "windows"
+    }
   }
 }
 
@@ -571,8 +578,8 @@ variable "tags" {
 
 variable "type_handler_version" {
   description = "Specifies the version of the extension to use, available versions can be found using the Azure CLI"
-  type = string
-  default = "1.0"
+  type        = string
+  default     = "1.0"
 }
 
 locals {

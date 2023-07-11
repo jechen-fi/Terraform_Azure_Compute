@@ -99,7 +99,6 @@ resource "azurerm_availability_set" "aset" {
   tags                         = merge({ "ResourceName" = lower("avail-${local.virtual_machine_name}-${var.rg_location}") }, var.tags, )
 }
 
-
 #---------------------------------------
 # Linux Virtual machine
 #---------------------------------------
@@ -249,7 +248,6 @@ resource "azapi_resource" "dce_association_linux" {
     }
   })
 }
-
 # resource "azurerm_template_deployment" "ama_linux_template" {
 #   count               = local.os_type == "linux" ? 1 : 0
 #   name                = "${random_string.str.result}-ama-linux-deployment"
@@ -409,7 +407,7 @@ resource "azurerm_managed_disk" "data_disk" {
   storage_account_type   = lookup(each.value.data_disk, "storage_account_type", "StandardSSD_LRS")
   create_option          = "Empty"
   disk_size_gb           = each.value.data_disk.disk_size_gb
-  zone                  = var.zone
+  zone                   = var.zone
   tags                   = merge({ "ResourceName" = local.virtual_machine_name }, var.tags, )
   disk_encryption_set_id = azurerm_disk_encryption_set.des.id
 
@@ -461,7 +459,7 @@ resource "azurerm_key_vault_key" "cmk" {
   key_type        = "RSA"
   key_size        = 2048
   expiration_date = time_rotating.cmk_expiration.rotation_rfc3339
-  key_opts        = ["decrypt", "encrypt", "sign", "unwrapKey", "verify", "wrapKey",]
+  key_opts        = ["decrypt", "encrypt", "sign", "unwrapKey", "verify", "wrapKey", ]
 }
 
 # Enabling KeyVault Access Policy for DES
@@ -569,7 +567,7 @@ resource "azapi_update_resource" "cmk_rotate_policy" {
 #   PROTECTED_SETTINGS
 # }
 #--------------------------------------
-# azurerm monitoring diagnostics 
+# azurerm monitoring diagnostics
 #--------------------------------------
 # resource "azurerm_monitor_diagnostic_setting" "nsg" {
 #   count                      = var.log_analytics_workspace_name != null && var.vm_storage_account != null ? 1 : 0
