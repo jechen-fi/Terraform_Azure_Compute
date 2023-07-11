@@ -490,44 +490,6 @@ variable "os_disk" {
   }
 }
 
-
-
-variable "data_disk" {
-  type = map(object({
-    name                      = string
-    create_option             = string
-    disk_size_gb              = string
-    storage_account_type      = string
-    caching                   = string
-    disk_encryption_set_id    = string
-    write_accelerator_enabled = bool
-    lun                       = number
-  }))
-
-  default = {
-    linux = {
-      name                      = null
-      create_option             = "Empty"
-      disk_size_gb              = null
-      storage_account_type      = "StandardSSD_LRS"
-      caching                   = "ReadWrite"
-      disk_encryption_set_id    = null
-      write_accelerator_enabled = null
-      lun                       = null
-    },
-    windows = {
-      name                      = null
-      create_option             = "Empty"
-      disk_size_gb              = null
-      storage_account_type      = "StandardSSD_LRS"
-      caching                   = "ReadWrite"
-      disk_encryption_set_id    = null
-      write_accelerator_enabled = null
-      lun                       = null
-    },
-  }
-}
-
 variable "generate_admin_ssh_key" {
   description = "Generates a secure private key and encodes it as PEM."
   default     = false

@@ -99,7 +99,6 @@ resource "azurerm_availability_set" "aset" {
   tags                         = merge({ "ResourceName" = lower("avail-${local.virtual_machine_name}-${var.rg_location}") }, var.tags, )
 }
 
-
 #---------------------------------------
 # Linux Virtual machine
 #---------------------------------------
@@ -194,19 +193,6 @@ resource "azurerm_linux_virtual_machine" "linuxvm" {
       write_accelerator_enabled = lookup(os_disk.value, "write_accelerator_enabled", null)
     }
   }
-  dynamic "data_disk" {
-    for_each = var.data_disk[local.os_type][*]
-    content {
-      name                      = lookup(data_disk.value, "name", null)
-      create_option             = lookup(data_disk.value, "create_option", null)
-      disk_size_gb              = lookup(data_disk.value, "disk_size_gb", null)
-      storage_account_type      = lookup(data_disk.value, "storage_account_type", null)
-      caching                   = lookup(data_disk.value, "caching", null)
-      disk_encryption_set_id    = azurerm_disk_encryption_set.des.id
-      write_accelerator_enabled = lookup(data_disk.value, "write_accelerator_enabled", null)
-      lun                       = lookup(data_disk.value, "lun", null)
-    }
-  }
 }
 #---------------------------------------
 # Linux VM Guest Configuration Extension
@@ -262,7 +248,6 @@ resource "azapi_resource" "dce_association_linux" {
     }
   })
 }
-
 # resource "azurerm_template_deployment" "ama_linux_template" {
 #   count               = local.os_type == "linux" ? 1 : 0
 #   name                = "${random_string.str.result}-ama-linux-deployment"
@@ -335,19 +320,6 @@ resource "azurerm_windows_virtual_machine" "winvm" {
       caching                   = lookup(os_disk.value, "caching", null)
       disk_encryption_set_id    = azurerm_disk_encryption_set.des.id
       write_accelerator_enabled = lookup(os_disk.value, "write_accelerator_enabled", null)
-    }
-  }
-  dynamic "data_disk" {
-    for_each = var.data_disk[local.os_type][*]
-    content {
-      name                      = "${local.virtual_machine_name}_DataDisk_${each.value.idx}"
-      create_option             = lookup(data_disk.value, "create_option", null)
-      disk_size_gb              = lookup(data_disk.value, "disk_size_gb", null)
-      storage_account_type      = lookup(data_disk.value, "storage_account_type", null)
-      caching                   = lookup(data_disk.value, "caching", null)
-      disk_encryption_set_id    = azurerm_disk_encryption_set.des.id
-      write_accelerator_enabled = lookup(data_disk.value, "write_accelerator_enabled", null)
-      lun                       = lookup(data_disk.value, "lun", null)
     }
   }
   dynamic "additional_capabilities" {
