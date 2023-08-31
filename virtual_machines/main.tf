@@ -432,7 +432,7 @@ resource "azurerm_disk_encryption_set" "des" {
   name                      = "des_${local.virtual_machine_name}"
   resource_group_name       = data.azurerm_resource_group.rg.name
   location                  = var.rg_location
-  key_vault_key_id          = azurerm_key_vault_key.cmk.id
+  key_vault_key_id          = azurerm_key_vault_key.cmk.versionless_id
   encryption_type           = "EncryptionAtRestWithCustomerKey"
   auto_key_rotation_enabled = true
 
