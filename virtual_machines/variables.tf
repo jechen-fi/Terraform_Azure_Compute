@@ -13,7 +13,7 @@ variable "custom_data" {
 variable "des_resource_group_name" {
   description = "Optional. Disk Encryption Set resource group name to enable a different location for a DES for CMK encryption."
   type        = string
-  default     = ""
+  default     = null
 }
 
 variable "resource_group_name" {
