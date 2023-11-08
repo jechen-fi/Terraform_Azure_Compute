@@ -132,10 +132,10 @@ variable "enable_feature" {
   }
 }
 
-variable "enable_public_ip_address" {
-  description = "Reference to a Public IP Address to associate with the NIC"
-  default     = "false"
-}
+# variable "enable_public_ip_address" {
+#   description = "Reference to a Public IP Address to associate with the NIC"
+#   default     = "false"
+# }
 
 variable "priority" {
   description = "Specifies the priority of this VM.  Possible values are 'Regular' or 'Spot' - a change will force a new resource to be created"
