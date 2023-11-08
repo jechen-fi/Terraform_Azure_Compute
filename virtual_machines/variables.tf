@@ -10,13 +10,21 @@ variable "custom_data" {
   default     = null
 }
 
+variable "des_resource_group_name" {
+  description = "Optional. Disk Encryption Set resource group name to enable a different location for a DES for CMK encryption."
+  type        = string
+  default     = null
+}
+
 variable "resource_group_name" {
-  description = "Resource group name that holds VM, VM NIC, and related resources"
+  description = "Required. Resource group name that holds VM, VM NIC, and related resources"
+  type        = string
 }
 
 variable "resource_group_vnet" {
-  description = "Resource group name for the VM's virtual network"
+  description = "Optional. Resource group name for the VM's virtual network, otherwise, it will default to the resource_group_name var above for the VNET's RG"
   type        = string
+  default     = null
 }
 
 variable "virtual_network_name" {

@@ -12,35 +12,31 @@ resource "tls_private_key" "rsa" {
 #----------------------------------------------------------
 data "azurerm_client_config" "current" {}
 
-data "azurerm_resource_group" "rg" {
-  name = var.resource_group_name
-}
-
-data "azurerm_resource_group" "vnet_rg" {
-  name = var.resource_group_vnet
-}
+# data "azurerm_resource_group" "vnet_rg" {
+#   name = var.resource_group_vnet
+# }
 
 data "azurerm_virtual_network" "vnet" {
   name                = var.virtual_network_name
-  resource_group_name = data.azurerm_resource_group.vnet_rg.name
+  resource_group_name = var.resource_group_vnet != null ? var.resource_group_vnet : var.resource_group_name
 }
 
 data "azurerm_subnet" "snet" {
   name                 = var.subnet_name
   virtual_network_name = data.azurerm_virtual_network.vnet.name
-  resource_group_name  = data.azurerm_resource_group.vnet_rg.name
+  resource_group_name  = var.resource_group_vnet != null ? var.resource_group_vnet : var.resource_group_name
 }
 
 data "azurerm_log_analytics_workspace" "logws" {
   count               = var.log_analytics_workspace_name != null ? 1 : 0
   name                = var.log_analytics_workspace_name
-  resource_group_name = data.azurerm_resource_group.rg.name
+  resource_group_name = var.resource_group_name
 }
 
 data "azurerm_storage_account" "storeacc" {
   count               = var.vm_storage_account != null ? 1 : 0
   name                = var.vm_storage_account
-  resource_group_name = data.azurerm_resource_group.rg.name
+  resource_group_name = var.resource_group_name
 }
 
 resource "random_string" "str" {
@@ -52,19 +48,21 @@ resource "random_string" "str" {
   }
 }
 
+## WARNING: DO NOT ENABLE BELOW FEATURE WITHOUT A SECURITY EXCEPTION APPROVED BY INFOSEC. DO NOT REMOVE THIS WARNING. ##
 #-----------------------------------
-# Public IP for Virtual Machine
+# Public IP for Virtual Machine  
 #-----------------------------------
-resource "azurerm_public_ip" "pip" {
-  count               = var.enable_feature[var.enable_public_ip_address] ? 1 : 0
-  name                = "pip-vm-${local.virtual_machine_name}-${var.rg_location}"
-  location            = var.rg_location
-  resource_group_name = data.azurerm_resource_group.rg.name
-  allocation_method   = "Static"
-  sku                 = "Standard"
-  domain_name_label   = format("%s%s", replace(local.virtual_machine_name, "/[[:^alnum:]]/", ""), random_string.str.result)
-  tags                = merge({ "ResourceName" = lower("pip-vm-${local.virtual_machine_name}-${var.rg_location}") }, var.tags, )
-}
+# resource "azurerm_public_ip" "pip" {
+#   count               = var.enable_feature[var.enable_public_ip_address] ? 1 : 0
+#   name                = "pip-vm-${local.virtual_machine_name}-${var.rg_location}"
+#   location            = var.rg_location
+#   resource_group_name = var.resource_group_name
+#   allocation_method   = "Static"
+#   sku                 = "Standard"
+#   domain_name_label   = format("%s%s", replace(local.virtual_machine_name, "/[[:^alnum:]]/", ""), random_string.str.result)
+#   tags                = merge({ "ResourceName" = lower("pip-vm-${local.virtual_machine_name}-${var.rg_location}") }, var.tags, )
+# }
+## WARNING: DO NOT ENABLE ABOVE FEATURE WITHOUT A SECURITY EXCEPTION APPROVED BY INFOSEC. DO NOT REMOVE THIS WARNING. ##
 
 #---------------------------------------
 # Network Interface for Virtual Machine
@@ -72,26 +70,27 @@ resource "azurerm_public_ip" "pip" {
 resource "azurerm_network_interface" "nic" {
   count                         = 1
   name                          = "nic-${local.virtual_machine_name}"
-  resource_group_name           = data.azurerm_resource_group.rg.name
+  resource_group_name           = var.resource_group_name
   location                      = var.rg_location
   dns_servers                   = var.dns_servers
   enable_ip_forwarding          = var.enable_ip_forwarding
   enable_accelerated_networking = var.enable_accelerated_networking
   tags                          = merge({ "ResourceName" = "nic-${replace(local.virtual_machine_name, "/[[:^alnum:]]/", "")}" }, var.tags, )
-  # tags                            = merge({ "ResourceName" = "nic-${replace(local.virtual_machine_name, "/[[:^alnum:]]/", "")}" }, var.tags, )
   ip_configuration {
     name                          = format("ipconfig-%s", lower(local.virtual_machine_name))
     primary                       = true
     subnet_id                     = data.azurerm_subnet.snet.id
     private_ip_address            = var.private_ip_address_allocation_type == "Static" ? concat(var.private_ip_address, [""]) : null
-    public_ip_address_id          = tobool(var.enable_feature[var.enable_public_ip_address]) ? element(concat(azurerm_public_ip.pip.*.id, [""]), count.index) : null
     private_ip_address_allocation = var.private_ip_address_allocation_type
+    public_ip_address             = null
+    # WARNING: DO NOT ENABLE BELOW OPTION WITHOUT A SECURITY EXCEPTION APPROVED BY INFOSEC
+    # public_ip_address_id          = tobool(var.enable_feature[var.enable_public_ip_address]) ? element(concat(azurerm_public_ip.pip.*.id, [""]), count.index) : null
   }
 }
 resource "azurerm_availability_set" "aset" {
   count                        = tobool(var.enable_feature[var.enable_av_set]) ? 1 : 0
   name                         = "avail-${local.virtual_machine_name}-${var.rg_location}"
-  resource_group_name          = data.azurerm_resource_group.rg.name
+  resource_group_name          = var.resource_group_name
   location                     = var.rg_location
   platform_fault_domain_count  = 2
   platform_update_domain_count = 2
@@ -106,7 +105,7 @@ resource "azurerm_linux_virtual_machine" "linuxvm" {
   depends_on                      = [azurerm_disk_encryption_set.des, azurerm_key_vault_access_policy.desKvPolicy]
   count                           = local.os_type == "linux" ? 1 : 0
   name                            = local.virtual_machine_name
-  resource_group_name             = data.azurerm_resource_group.rg.name
+  resource_group_name             = var.resource_group_name
   location                        = var.rg_location
   size                            = var.virtual_machine_size
   admin_username                  = var.admin_username
@@ -248,36 +247,6 @@ resource "azapi_resource" "dce_association_linux" {
     }
   })
 }
-# resource "azurerm_template_deployment" "ama_linux_template" {
-#   count               = local.os_type == "linux" ? 1 : 0
-#   name                = "${random_string.str.result}-ama-linux-deployment"
-#   depends_on          = [azurerm_linux_virtual_machine.linuxvm]
-#   resource_group_name = data.azurerm_resource_group.rg.name
-#   template_body       = file("${path.module}/ama_linuxvm_template.json",)
-#   deployment_mode     = "Incremental"
-
-#   parameters = {
-#     vmName                 = local.virtual_machine_name
-#     location               = var.rg_location
-#     associationName        = "dcr_association_linux"
-#     dataCollectionRuleId   = var.data_collection_rule
-#     dataCollectionEndpointId = var.data_collection_endpoint
-#     vmScope = azurerm_linux_virtual_machine.linuxvm[count.index].id
-#   }
-# }
-
-# resource "azurerm_template_deployment" "ada_windows_template" {
-#   count               = local.os_type == "linux" ? 1 : 0
-#   name                = "${random_string.str.result}-ada-win-deployment"
-#   resource_group_name = data.azurerm_resource_group.rg.name
-#   template_body       = file("${path.module}/ada_linuxvm_template.json",)
-#   deployment_mode     = "Incremental"
-#   depends_on          = [azurerm_linux_virtual_machine.linuxvm]
-
-#   parameters = {
-#     vmName                 = local.virtual_machine_name
-#   }
-# }
 
 #---------------------------------------
 # Windows Virtual machine
@@ -287,7 +256,7 @@ resource "azurerm_windows_virtual_machine" "winvm" {
   count                      = local.os_type == "windows" ? 1 : 0
   name                       = local.virtual_machine_name
   computer_name              = local.virtual_machine_name
-  resource_group_name        = data.azurerm_resource_group.rg.name
+  resource_group_name        = var.resource_group_name
   location                   = var.rg_location
   size                       = var.virtual_machine_size
   admin_username             = var.admin_username
@@ -400,9 +369,10 @@ resource "azapi_resource" "dce_association_windows" {
 # Virtual Machine Data Disks
 #---------------------------------------
 resource "azurerm_managed_disk" "data_disk" {
+  depends_on             = [azurerm_disk_encryption_set.des, azurerm_key_vault_access_policy.desKvPolicy]
   for_each               = local.vm_data_disks
   name                   = "${local.virtual_machine_name}_DataDisk_${each.value.idx}"
-  resource_group_name    = data.azurerm_resource_group.rg.name
+  resource_group_name    = var.resource_group_name
   location               = var.rg_location
   storage_account_type   = lookup(each.value.data_disk, "storage_account_type", "StandardSSD_LRS")
   create_option          = "Empty"
@@ -430,7 +400,7 @@ resource "azurerm_virtual_machine_data_disk_attachment" "data_disk" {
 resource "azurerm_disk_encryption_set" "des" {
   depends_on                = [azurerm_key_vault_key.cmk]
   name                      = "des_${local.virtual_machine_name}"
-  resource_group_name       = data.azurerm_resource_group.rg.name
+  resource_group_name       = var.des_resource_group_name != null ? var.des_resource_group_name : var.resource_group_name
   location                  = var.rg_location
   key_vault_key_id          = azurerm_key_vault_key.cmk.versionless_id
   encryption_type           = "EncryptionAtRestWithCustomerKey"
