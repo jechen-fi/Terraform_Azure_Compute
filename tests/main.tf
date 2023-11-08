@@ -19,7 +19,7 @@ module "virtual-machine" {
   admin_password           = local.admin_password
   tags                     = local.tags
   kv_id                    = data.azurerm_key_vault.kv.id
-  identity = { type = "SystemAssigned" }
+  identity                 = { type = "SystemAssigned" }
 }
 
 

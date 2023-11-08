@@ -45,7 +45,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:
-        ref: features/vm_extension_enhancement
+        ref: 'features/Update_DES_RG'
         submodules: true
         token: ${{ secrets.GH_RUNNER_PAT }}
 
