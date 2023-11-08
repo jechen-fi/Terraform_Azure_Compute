@@ -44,9 +44,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:
-        ref: features/vm_extension_enhancement
-        submodules: true
-        token: ${{ secrets.GH_RUNNER_PAT }}
+        ref: features/Update_DES_RG
 
     - uses: Azure/login@v1
       with:
