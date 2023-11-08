@@ -2,17 +2,16 @@ name: CTD Azure Compute Module Continuous Test
 
 on:
   workflow_dispatch:
-  # push:
-  #   paths:     
-  #     - '**/tests/**'
-  #     - '!*.md'
-  #     - '!.gitignore'
-  #     - '!.github/workflows/**'
-  #   branches:
-  #     - main
-  #     - 'bugfix/*'
-  #     - 'features/*'
-  #     - 'feature/*'
+  push:
+    paths:     
+      - '**/tests/**'
+      - '!*.md'
+      - '!.gitignore'
+      - '!.github/workflows/**'
+    branches:
+      - 'bugfix/*'
+      - 'features/*'
+      - 'feature/*'
 
 jobs:
   clean:
