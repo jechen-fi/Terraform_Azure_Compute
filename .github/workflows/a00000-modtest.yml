@@ -44,7 +44,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:
-        ref: 'features/Update_DES_RG'
+        ref: 'Update_DES_RG'
 
     - uses: Azure/login@v1
       with:
