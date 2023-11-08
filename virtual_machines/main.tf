@@ -82,7 +82,7 @@ resource "azurerm_network_interface" "nic" {
     subnet_id                     = data.azurerm_subnet.snet.id
     private_ip_address            = var.private_ip_address_allocation_type == "Static" ? concat(var.private_ip_address, [""]) : null
     private_ip_address_allocation = var.private_ip_address_allocation_type
-    public_ip_address             = null
+    public_ip_address_id          = null
     # WARNING: DO NOT ENABLE BELOW OPTION WITHOUT A SECURITY EXCEPTION APPROVED BY INFOSEC
     # public_ip_address_id          = tobool(var.enable_feature[var.enable_public_ip_address]) ? element(concat(azurerm_public_ip.pip.*.id, [""]), count.index) : null
   }
