@@ -395,7 +395,7 @@ resource "azurerm_virtual_machine_data_disk_attachment" "data_disk" {
 resource "azurerm_disk_encryption_set" "des" {
   depends_on                = [azurerm_key_vault_key.cmk]
   name                      = "des_${local.virtual_machine_name}"
-  resource_group_name       = var.des_resource_group_name == null ? var.resource_group_name : var.des_resource_group_name
+  resource_group_name       = var.resource_group_name
   location                  = var.rg_location
   key_vault_key_id          = azurerm_key_vault_key.cmk.versionless_id
   encryption_type           = "EncryptionAtRestWithCustomerKey"
