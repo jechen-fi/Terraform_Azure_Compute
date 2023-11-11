@@ -419,7 +419,7 @@ resource "time_rotating" "cmk_expiration" {
 
 # Create Customer Manage Key to be used for encryption
 resource "azurerm_key_vault_key" "cmk" {
-  name            = "cmk-${local.virtual_machine_name}"
+  name            = var.cmk_name == "" ? "cmk-${local.virtual_machine_name}" : var.cmk_name
   key_vault_id    = var.kv_id
   key_type        = "RSA"
   key_size        = 2048
