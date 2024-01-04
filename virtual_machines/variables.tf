@@ -635,3 +635,7 @@ variable "data_collection_endpoint" {
   description = "Data Collection Endpoint to be associated with Virtual machine"
   type        = string
 }
+
+variable "key_size" {
+  default = "2048"
+}
