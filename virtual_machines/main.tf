@@ -413,9 +413,9 @@ resource "azurerm_disk_encryption_set" "des" {
 }
 
 # CMK Expiration
-# resource "time_rotating" "cmk_expiration" {
-#   rotation_days = 365
-# }
+resource "time_rotating" "cmk_expiration" {
+  rotation_days = 365
+}
 
 # Create Customer Manage Key to be used for encryption
 resource "azurerm_key_vault_key" "cmk" {
@@ -423,7 +423,7 @@ resource "azurerm_key_vault_key" "cmk" {
   key_vault_id    = var.kv_id
   key_type        = "RSA"
   key_size        = var.key_size
-  # expiration_date = time_rotating.cmk_expiration.rotation_rfc3339
+  expiration_date = time_rotating.cmk_expiration.rotation_rfc3339
   key_opts        = ["decrypt", "encrypt", "sign", "unwrapKey", "verify", "wrapKey", ]
   rotation_policy {
     automatic {
