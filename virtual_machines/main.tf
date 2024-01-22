@@ -447,42 +447,42 @@ resource "azurerm_key_vault_access_policy" "desKvPolicy" {
   ]
 }
 
-# Key Rotation Policy
-resource "azapi_update_resource" "cmk_rotate_policy" {
-  type      = "Microsoft.KeyVault/vaults/keys@2021-11-01-preview"
-  name      = azurerm_key_vault_key.cmk.name
-  parent_id = azurerm_key_vault_key.cmk.key_vault_id
+# # Key Rotation Policy
+# resource "azapi_update_resource" "cmk_rotate_policy" {
+#   type      = "Microsoft.KeyVault/vaults/keys@2021-11-01-preview"
+#   name      = azurerm_key_vault_key.cmk.name
+#   parent_id = azurerm_key_vault_key.cmk.key_vault_id
 
-  body = jsonencode({
-    properties = {
-      rotationPolicy = {
-        lifetimeActions = [
-          {
-            action = {
-              type = "Rotate"
-            }
-            trigger = {
-              timeAfterCreate  = "P180D"
-              timeBeforeExpiry = null
-            }
-          },
-          {
-            action = {
-              type = "Notify"
-            }
-            trigger = {
-              timeAfterCreate  = null
-              timeBeforeExpiry = "P20D"
-            }
-          }
-        ],
-        attributes = {
-          expiryTime = "P2Y"
-        }
-      }
-    }
-  })
-}
+#   body = jsonencode({
+#     properties = {
+#       rotationPolicy = {
+#         lifetimeActions = [
+#           {
+#             action = {
+#               type = "Rotate"
+#             }
+#             trigger = {
+#               timeAfterCreate  = "P180D"
+#               timeBeforeExpiry = null
+#             }
+#           },
+#           {
+#             action = {
+#               type = "Notify"
+#             }
+#             trigger = {
+#               timeAfterCreate  = null
+#               timeBeforeExpiry = "P20D"
+#             }
+#           }
+#         ],
+#         attributes = {
+#           expiryTime = "P2Y"
+#         }
+#       }
+#     }
+#   })
+# }
 
 
 
