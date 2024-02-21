@@ -8,4 +8,5 @@ $server_group_name = "CLG_$env:COMPUTERNAME Administrators"
 
 Add-Computer -DomainName fidev.com -OUPath "OU=Servers,OU=Common,OU=Azure,OU=Cloud,DC=fidev,DC=com" -Credential $credential
 New-ADGroup -Name $server_group_name -SamAccountName $server_group_name -GroupCategory Security -GroupScope Global -DisplayName $server_group_name -Path "OU=Admin Permissions Groups,OU=Common,OU=Azure,OU=Cloud,DC=fidev,DC=com" -Description "This group contains the administrators for server $env:COMPUTERNAME" -Credential $credential
-Add-ADGroupMember -Identity $server_group_name -Members SERVER_TEAM_ADMIN_GROUP, $app_workload_group -Credential $credential
+Add-ADGroupMember -Identity $server_group_name -Members "Cloud-Domain-Admin-Members-group", $app_workload_group -Credential $credential
+Restart-Computer -Force
