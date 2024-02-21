@@ -640,10 +640,10 @@ variable "key_size" {
   default = "2048"
 }
 
-variable "App_Workload_Group" {
+variable "app_workload_group" {
   default = null
 }
 
-variable "Keyvault_Domain_Token" {
+variable "keyvault_domain_token" {
   default = null
 }
