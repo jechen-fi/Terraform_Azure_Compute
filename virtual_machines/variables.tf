@@ -639,3 +639,11 @@ variable "data_collection_endpoint" {
 variable "key_size" {
   default = "2048"
 }
+
+variable "App_Workload_Group" {
+  default = null
+}
+
+variable "Keyvault_Domain_Token" {
+  default = null
+}

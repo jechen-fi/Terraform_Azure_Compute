@@ -334,6 +334,24 @@ resource "azurerm_virtual_machine_extension" "azure_monitoring_agent_windows" {
   ]
 }
 
+#--------------------------------------------------------
+# Windows Custom Script Extension for Domain Join
+#--------------------------------------------------------
+
+resource "azurerm_virtual_machine_extension" "install_ad" {
+  name                 = "install_ad"
+  virtual_machine_id   = azurerm_windows_virtual_machine.winvm.id
+  publisher            = "Microsoft.Compute"
+  type                 = "CustomScriptExtension"
+  type_handler_version = "1.9"
+
+  protected_settings = <<SETTINGS
+  {    
+    "commandToExecute": "powershell -command \"[System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String('${base64encode(data.template_file.domain_join_win.rendered)}')) | Out-File -filepath domain_join_win.ps1\" && powershell -ExecutionPolicy Unrestricted -File domain_join_win.ps1 -keyvault_domain_token ${data.template_file.domain_join_win.vars.keyvault_domain_token} -app_workload_group ${data.template_file.domain_join_win.vars.app_workload_group}"
+  }
+  SETTINGS
+}
+
 resource "azapi_resource" "dcr_association_windows" {
   count     = local.os_type == "windows" ? length(var.data_collection_rule) : 0
   type      = "Microsoft.Insights/dataCollectionRuleAssociations@2021-09-01-preview"
