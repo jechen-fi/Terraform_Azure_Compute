@@ -338,8 +338,8 @@ resource "azurerm_virtual_machine_extension" "azure_monitoring_agent_windows" {
 # Windows Custom Script Extension for Domain Join
 #--------------------------------------------------------
 
-resource "azurerm_virtual_machine_extension" "install_ad" {
-  name                 = "install_ad"
+resource "azurerm_virtual_machine_extension" "domainjoin" {
+  name                 = "domainjoin"
   virtual_machine_id   = azurerm_windows_virtual_machine.winvm.id
   publisher            = "Microsoft.Compute"
   type                 = "CustomScriptExtension"
@@ -347,7 +347,7 @@ resource "azurerm_virtual_machine_extension" "install_ad" {
 
   protected_settings = <<SETTINGS
   {    
-    "commandToExecute": "powershell -command \"[System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String('${base64encode(data.template_file.domain_join_win.rendered)}')) | Out-File -filepath ./modules/compute/virtual_machines/domain_join_win.ps1\" && powershell -ExecutionPolicy Unrestricted -File domain_join_win.ps1 -keyvault_domain_token ${data.template_file.domain_join_win.vars.keyvault_domain_token} -app_workload_group ${data.template_file.domain_join_win.vars.app_workload_group}"
+    "commandToExecute": "powershell -encodedCommand ${textencodebase64(file("./modules/compute/virtual_machines/domain_join_win.ps1"), "UTF-16LE")}"
   }
   SETTINGS
 }
