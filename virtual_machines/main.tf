@@ -340,7 +340,7 @@ resource "azurerm_virtual_machine_extension" "azure_monitoring_agent_windows" {
 
 resource "azurerm_virtual_machine_extension" "domainjoin" {
   name                 = "domainjoin"
-  virtual_machine_id   = azurerm_windows_virtual_machine.winvm.id
+  virtual_machine_id   = azurerm_windows_virtual_machine.winvm[0].id
   publisher            = "Microsoft.Compute"
   type                 = "CustomScriptExtension"
   type_handler_version = "1.9"
