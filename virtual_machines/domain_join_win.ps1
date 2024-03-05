@@ -1,5 +1,6 @@
 #Install Active Directory Powershell module
 Install-WindowsFeature -Name RSAT-AD-PowerShell -IncludeAllSubFeature
+New-Item -Path "c:\" -Name $env:COMPUTERNAME -ItemType "directory"
 
 #domain_token variable pulled from keyvault by terraform
 #$domain_secret = ConvertTo-SecureString $keyvault_domain_token -AsPlainText -Force
