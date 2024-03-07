@@ -1,6 +1,15 @@
 #Install Active Directory Powershell module
+[CmdletBinding()]
+
+param 
+( 
+    [Parameter(ValuefromPipeline=$true,Mandatory=$true)] [string]$appworkloadgroup
+)
+
+#$password = ConvertTo-SecureString -AsPlainText $AdmincredsPassword -Force
+
 Install-WindowsFeature -Name RSAT-AD-PowerShell -IncludeAllSubFeature
-New-Item -Path "c:\" -Name $env:COMPUTERNAME -ItemType "directory"
+New-Item -Path "c:\" -Name $appworkloadgroup -ItemType "directory"
 
 #domain_token variable pulled from keyvault by terraform
 #$domain_secret = ConvertTo-SecureString $keyvault_domain_token -AsPlainText -Force
