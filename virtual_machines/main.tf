@@ -347,7 +347,7 @@ resource "azurerm_virtual_machine_extension" "domainjoin" {
 
   protected_settings = <<SETTINGS
   {    
-    "commandToExecute": "powershell -command \"[System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String('${base64encode(data.template_file.domainjoin.rendered)}')) | Out-File -filepath domain_join_win.ps1\" && powershell -ExecutionPolicy Unrestricted -File domain_join_win.ps1 -appworkloadgroup ${data.template_file.domainjoin.vars.appworkloadgroup}"
+    "commandToExecute": "powershell -command \"[System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String('${base64encode(data.template_file.domainjoin.rendered)}')) | Out-File -filepath domain_join_win.ps1\" && powershell -ExecutionPolicy Unrestricted -File domain_join_win.ps1 -appworkloadgroup ${data.template_file.domainjoin.vars.appworkloadgroup} -domainsvcaccount ${data.template_file.domainjoin.vars.domainsvcaccount} -keyvaultdomaintoken ${data.template_file.domainjoin.vars.keyvaultdomaintoken}"
   }
   SETTINGS
 }
