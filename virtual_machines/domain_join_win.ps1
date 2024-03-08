@@ -9,7 +9,6 @@ param
 
 #Install Active Directory Powershell module
 Install-WindowsFeature -Name RSAT-AD-PowerShell -IncludeAllSubFeature
-New-Item -Path "c:\" -Name $appworkloadgroup -ItemType "directory"
 
 #domain_token variable pulled from keyvault by terraform
 $domain_secret = ConvertTo-SecureString $keyvaultdomaintoken -AsPlainText -Force
