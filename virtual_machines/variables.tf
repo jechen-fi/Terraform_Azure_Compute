@@ -647,3 +647,7 @@ variable "app_workload_group" {
 variable "keyvault_domain_token" {
   default = null
 }
+
+variable "domain_svc_account" {
+  default = null
+}
