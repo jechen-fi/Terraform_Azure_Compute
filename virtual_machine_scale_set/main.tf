@@ -360,7 +360,7 @@ resource "azapi_resource" "dce_association_linux" {
   count     = local.os_type == "linux" ? 1 : 0
   type      = "Microsoft.Insights/dataCollectionRuleAssociations@2021-09-01-preview"
   name      = "configurationAccessEndpoint"
-  parent_id = azurerm_linux_virtual_machine_scale_set.linux_vms[count.index].id
+  parent_id = azurerm_linux_virtual_machine_scale_set.linux_vmss[count.index].id
   body = jsonencode({
     properties = {
       dataCollectionEndpointId = var.data_collection_endpoint
