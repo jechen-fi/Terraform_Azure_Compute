@@ -16,19 +16,15 @@ data "azurerm_resource_group" "rg" {
   name = var.resource_group_name
 }
 
-data "azurerm_resource_group" "vnet_rg" {
-  name = var.resource_group_vnet
-}
-
 data "azurerm_virtual_network" "vnet" {
   name                = var.virtual_network_name
-  resource_group_name = data.azurerm_resource_group.rg.name
+  resource_group_name = var.resource_group_vnet == null ? var.resource_group_name : var.resource_group_vnet
 }
 
 data "azurerm_subnet" "snet" {
   name                 = var.subnet_name
   virtual_network_name = data.azurerm_virtual_network.vnet.name
-  resource_group_name  = data.azurerm_resource_group.rg.name
+  resource_group_name  = var.resource_group_vnet != null ? var.resource_group_vnet : var.resource_group_name
 }
 
 data "azurerm_log_analytics_workspace" "logws" {
@@ -644,7 +640,7 @@ resource "azurerm_disk_encryption_set" "des" {
   name                      = "des_${local.virtual_machine_name}"
   resource_group_name       = data.azurerm_resource_group.rg.name
   location                  = var.rg_location
-  key_vault_key_id          = azurerm_key_vault_key.cmk.id
+  key_vault_key_id          = azurerm_key_vault_key.cmk.versionless_id
   encryption_type           = "EncryptionAtRestWithCustomerKey"
   auto_key_rotation_enabled = true
 
