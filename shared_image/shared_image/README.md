@@ -7,7 +7,7 @@ Terraform generalized module to add a shared image
 | Name (providers)   | Version            |
 |--------------------|--------------------|
 | azurerm            | >= 3.100.0         |
-| terraform          | >= 0.15.0 |
+| terraform          | >= 1.1.7 |
 
 
 ## Inputs / Variables
@@ -59,12 +59,14 @@ terraform {
       version = ">= 3.100.0"
     }
   }
-  required_version = ">= 0.15.0"
+  required_version = ">= 1.1.7"
 }
+
 provider "azurerm" {
   features {}
 }
-#############################version.tf####################################
+
+#############################versions.tf####################################
 ##############################main.tf######################################
 data "azurerm_resource_group" "rg" {
     name = "a00000-namespace-ctd"
@@ -85,17 +87,19 @@ resource "azurerm_image" "vm" {
 
 module "shared_image" {
   # github repo ==> github.com/FisherInvestments/Terraform_Azure_Compute/    folder ==> ./shared_image/shared_image
-  source                 = "./modules/shared_image/shared_image"
+  source              = "./modules/shared_image/shared_image"
   name                = "example-image"
   gallery_name        = data.azurerm_shared_image_gallery.shrd_img_gallery.name
   resource_group_name = data.azurerm_resource_group.rg.name
   location            = data.azurerm_resource_group.rg.location
   os_type             = "Linux"
+
   identifier {
     publisher = "PublisherName"
     offer     = "OfferName"
     sku       = "ExampleSku"
   }
+
   tags = {
     applicationName  = "Cloud Infrastructure Shared Image" 
     environment      = "Development"
@@ -108,6 +112,7 @@ module "shared_image" {
     supportOwner     = "~CloudInfrastructure@fi.com"
   }
 }
+
 ##############################main.tf######################################
 ```
 

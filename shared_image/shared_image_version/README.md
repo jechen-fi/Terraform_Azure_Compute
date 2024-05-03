@@ -28,12 +28,13 @@ Terraform generalized module to add a shared image version
 | Name              | Description                              |
 |-------------------|------------------------------------------|
 | ID | ID of the Shared Image Version |
+| shrd_img_version | Output configuration of the Shared Image Version |
 
 ## Dependencies
 
 | Module Name       | Description of module and why it is required | Link to module's repo |
 |-------------------|----------------------------------------------|:---------------------:|
-| Azure Shared Image              | Name of the Shared Image & Shared Image Gallery are required to created a shared image version            | [azurerm_shared_image_gallery](https://github.com/FisherInvestments/Terraform_Azure_Compute/tree/main/shared_image/shared_image) |
+| Azure Shared Image              | Details of the Shared Image & Image are required to created a shared image version            | [azurerm_shared_image](https://github.com/FisherInvestments/Terraform_Azure_Compute/tree/main/shared_image/shared_image) |
 
 
 ## Example call to module
@@ -49,7 +50,7 @@ terraform {
       version = ">= 3.100.0"
     }
   }
-  required_version = ">= 0.15.0"
+  required_version = ">= 1.1.7"
 }
 
 provider "azurerm" {
@@ -79,11 +80,13 @@ module "shared_image_version" {
   resource_group_name = data.azurerm_shared_image.existing.resource_group_name
   location            = data.azurerm_shared_image.existing.location 
   managed_image_id    = azurerm_image.image.id
+
   target_region {
     name                   = data.azurerm_shared_image.shrd_img.location
     regional_replica_count = 5
     storage_account_type   = "Standard_LRS"
   }
+
   tags = {
     applicationName  = "Cloud Infrastructure Shared Image Version"
     environment      = "Development"
@@ -96,6 +99,7 @@ module "shared_image_version" {
     supportOwner     = "~CloudInfrastructure@fi.com"
   }
 }
+
 ##############################main.tf######################################
 ```
 

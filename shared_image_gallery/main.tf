@@ -3,7 +3,7 @@ resource "azurerm_shared_image_gallery" "shrd_img_gallery" {
   resource_group_name = var.resource_group_name
   location            = var.location
   tags                = var.tags
-  description         = try(var.shared_image_gallery_config.description, null)
+  description         = try(var.description, null)
 
   dynamic "sharing" {
     for_each = var.sharing != null ? var.sharing : []
@@ -22,4 +22,3 @@ resource "azurerm_shared_image_gallery" "shrd_img_gallery" {
     }
   }
 }
-

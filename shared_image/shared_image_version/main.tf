@@ -5,6 +5,7 @@ resource "azurerm_shared_image_version" "shrd_img_version" {
   resource_group_name = var.resource_group_name
   location            = var.location
   managed_image_id    = var.managed_image_id
+  tags                = var.tags
 
   target_region {
     name                        = var.target_region.name
@@ -21,5 +22,4 @@ resource "azurerm_shared_image_version" "shrd_img_version" {
   deletion_of_replicated_locations_enabled = try(var.shared_image_version_config.deletion_of_replicated_locations_enabled, null)
   replication_mode                         = try(var.shared_image_version_config.replication_mode, null)
   storage_account_id                       = try(var.shared_image_version_config.storage_account_id, null)
-  tags                                     = var.tags
 }

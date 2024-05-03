@@ -7,6 +7,8 @@ resource "azurerm_image" "image" {
   source_virtual_machine_id = var.source_virtual_machine_id
   hyper_v_generation        = var.hyper_v_generation
   zone_resilient            = var.zone_resilient
+  tags                      = var.tags
+
   dynamic "os_disk" {
     for_each = var.os_disk != null ? var.os_disk : []
 
@@ -31,9 +33,7 @@ resource "azurerm_image" "image" {
       caching         = data_disk.value.caching
       size_gb         = data_disk.value.size_gb
     }
-
-  }
-  tags = var.tags
+  }  
 }
 
 
@@ -44,6 +44,7 @@ resource "azurerm_shared_image" "shrd_img" {
   resource_group_name = var.resource_group_name
   location            = var.location
   os_type             = var.os_type
+  tags                = var.tags
 
   identifier {
     offer     = var.identifier.offer
@@ -59,6 +60,7 @@ resource "azurerm_shared_image" "shrd_img" {
       product   = purchase_plan.value.product
     }
   }
+    
   hyper_v_generation                  = try(var.shared_image_config.hyper_v_generation, "V1")
   description                         = try(var.shared_image_config.description, null)
   disk_types_not_allowed              = try(var.shared_image_config.disk_types_not_allowed, null)
@@ -76,6 +78,5 @@ resource "azurerm_shared_image" "shrd_img" {
   trusted_launch_enabled              = try(var.shared_image_config.trusted_launch_enabled, null)
   confidential_vm_supported           = try(var.shared_image_config.confidential_vm_supported, null)
   confidential_vm_enabled             = try(var.shared_image_config.confidential_vm_enabled, null)
-  accelerated_network_support_enabled = try(var.shared_image_config.accelerated_network_support_enabled, null)
-  tags                                = var.tags
+  accelerated_network_support_enabled = try(var.shared_image_config.accelerated_network_support_enabled, null)  
 }

@@ -15,11 +15,12 @@ variable "tags" {
   default     = null
 }
 
-variable "shared_image_gallery_config" {
-  description = "(Optional) Configuration of the shared image gallery"
+variable "description" {
+  description = "(Optional) A description for this Shared Image Gallery"
   default     = {}
 }
 
 variable "sharing" {
-  default = null
+  description = "variable for sharing block"
+  default     = null
 }

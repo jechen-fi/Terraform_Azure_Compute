@@ -17,6 +17,7 @@ Terraform generalized module to add a shared image galley
 | name | Specifies the name of the Shared Image Gallery. | `string` | `None`  | yes | no |
 | resource_group_name | The name of the resource group in which to create the Shared Image Gallery. | `string` | `None`  | yes | no |
 | location | Specifies the supported Azure location where the resource exists. | `string` | `None`  | yes | no |
+| description| A description for this Shared Image Gallery. | `string` | `None`  | no | no |
 | sharing | A `sharing` configuration block of the shared image gallery: <br><br> --> `description` - Description for the Shared Image Gallery. <br><br> --> `sharing` -  A sharing block supports the following: <br><br> -> permission - (Required) The permission of the Shared Image Gallery when sharing. Possible values are Community, Groups and Private. <br><br> -> community_gallery - (Optional) A community_gallery supports the following :<br>* eula - (Required) The End User Licence Agreement for the Shared Image Gallery.<br>* prefix - (Required) Prefix of the community public name for the Shared Image Gallery.<br>* publisher_email - (Required) Email of the publisher for the Shared Image Gallery.<br>* publisher_uri - (Required) URI of the publisher for the Shared Image Gallery.<br><br>`Note`: `community_gallery` must be set when `permission` is set to `Community`.| `map` | `{}`  | no | no |
 | tags | Tags to be assigned to the shared image gallery resource in Azure. | `object` or `map` | `null` | yes | no |
 
@@ -24,6 +25,7 @@ Terraform generalized module to add a shared image galley
 | Name              | Description                              |
 |-------------------|------------------------------------------|
 | ID | ID of the Shared Image Gallery |
+| shrd_img_gallery | Output configuration of the Shared Image Gallery |
 
 ## Dependencies
 
@@ -45,13 +47,14 @@ terraform {
       version = ">= 3.100.0"
     }
   }
-  required_version = ">= 0.15.0"
+  required_version = ">= 1.1.7"
 }
 
 provider "azurerm" {
   features {}
 }
-#############################version.tf####################################
+
+#############################versions.tf####################################
 ##############################main.tf######################################
 data "azurerm_resource_group" "rg" {
     name = "a00000-namespace-ctd"
@@ -59,11 +62,12 @@ data "azurerm_resource_group" "rg" {
 
 module "shared_image_gallery" {
   # github repo ==> github.com/FisherInvestments/Terraform_Azure_Compute/    folder ==> ./shared_image_gallery
-  source                 = "./modules/shared_image_gallery
+  source              = "./modules/shared_image_gallery
   name                = "example_image_gallery"
   resource_group_name = data.azurerm_resource_group.rg.name
   location            = data.azurerm_resource_group.rg.location
   description         = "Shared images and things."
+
   tags = {
     applicationName  = "Cloud Infrastructure Shared Image Gallery"
     environment      = "Development"
@@ -76,6 +80,7 @@ module "shared_image_gallery" {
     supportOwner     = "~CloudInfrastructure@fi.com"
   }
 }
+
 ##############################main.tf######################################
 ```
 

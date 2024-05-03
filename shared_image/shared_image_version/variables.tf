@@ -19,18 +19,7 @@ variable "location" {
 }
 
 variable "target_region" {
-  description = "(Required) configuration of the shared image version target region"
-  default     = {}
-}
-
-variable "shared_image_version_config" {
-  description = "(Optional) Configuration of the shared image version"
-  default     = {}
-}
-
-variable "source_virtual_machine_id" {
-  description = "(Required) The Virtual Machine ID from which to create the image."
-  default     = null
+  description = "(Required) configuration of the shared image version target region"  
 }
 
 variable "tags" {
@@ -39,7 +28,12 @@ variable "tags" {
 }
 
 variable "managed_image_id" {
-  description = "(Optional) The ID of the Managed Image or Virtual Machine ID which should be used for this Shared Image Version."
+  description = "(Required) The ID of the Managed Image or Virtual Machine ID which should be used for this Shared Image Version."
+}
+
+variable "shared_image_version_config" {
+  description = "(Optional) Configuration of the shared image version"
+  default     = {}
 }
 
 

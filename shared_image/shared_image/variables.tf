@@ -1,10 +1,10 @@
 variable "deploy_image" {
-  description = "Create a custom virtual machine image that can be used to create virtual machines."
+  description = "Whether to create a custom virtual machine image that can be used to create virtual machines."
   default     = false
 }
 
 variable "image_name" {
-  description = "Specifies the name of the image."
+  description = "Specifies the name of the image to be created."
   default     = null
 }
 
@@ -22,18 +22,25 @@ variable "source_virtual_machine_id" {
 }
 
 variable "os_disk" {
-  default = null
+  description = "(Optional) variable for os_disk block"
+  default     = null
 }
+
 variable "data_disk" {
-  default = null
+  description = "(Optional) variable for data_disk block"
+  default     = null
 }
+
 variable "purchase_plan" {
+  description = "(Optional) variable for purchase plan block"
   default = null
 }
+
 variable "hyper_v_generation" {
   description = "The HyperVGenerationType of the VirtualMachine created from the image as V1, V2. Defaults to V1."
   default     = "V1"
 }
+
 variable "zone_resilient" {
   description = "Specifies whether zone resiliency should be enabled? Defaults to false"
   default     = false
@@ -48,20 +55,19 @@ variable "gallery_name" {
 }
 
 variable "identifier" {
-  description = "(Required) Identifier config of the shared image"
-  default     = {}
+  description = "(Required) Identifier config of the shared image"  
 }
 
 variable "os_type" {
   description = "(Required) The type of Operating System present in this Shared Image. Possible values are Linux and Windows."
 }
 
-variable "shared_image_config" {
-  description = "(Optional) Configuration of the shared image."
-  default     = {}
-}
-
 variable "tags" {
   description = "(Optional) map of the tags associated with the resource."
   default     = null
+}
+
+variable "shared_image_config" {
+  description = "(Optional) Configuration of the shared image."
+  default     = {}
 }
