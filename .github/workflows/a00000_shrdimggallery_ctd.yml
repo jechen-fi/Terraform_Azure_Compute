@@ -1,0 +1,148 @@
+name: CTD Shared Image Module Test
+
+on:
+  workflow_dispatch:
+  push:
+    paths:     
+      - '**/tests/shared_image/**'
+      - '!*.md'
+      - '!.gitignore'
+      - '.github/workflows/**'
+    branches:
+      - 'bugfix/*'
+      - 'features/*'
+      - 'feature/*'
+
+jobs:
+  clean:
+    name: git cleanup
+    runs-on: [self-hosted, terraform, rhel8, dev]
+    steps:
+    - name: Ensure prior run Cleanup
+      continue-on-error: true
+      run: |
+        echo rm -rf ${{ github.workspace }}/*
+        echo rm -rf ${{ github.workspace }}/*.*
+        rm -rf ${{ github.workspace }}/*
+        rm -rf ${{ github.workspace }}/*.*
+  test:
+    name: CTD Module ongoing test
+    needs: clean
+    environment: CTD
+    runs-on: [self-hosted, terraform, rhel8, dev]
+    env:
+      global_env_name: dev
+      build_name: ctd
+      app_id: a00000
+      funct_name: shrdimggallery
+      working_directory: tests/shared_image
+    defaults:
+      run:
+        working-directory: "${{ env.working_directory }}"
+    
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        ref: 'features/build-sharedimage-module'
+        token: ${{ secrets.GH_RUNNER_PAT }}
+
+    - uses: Azure/login@v1
+      with:
+        creds: '{"clientId":"${{ secrets.NAMESPACE_CLIENT_ID }}","clientSecret":"${{ secrets.NAMESPACE_CLIENT_CRED }}","subscriptionId":"${{ secrets.MGMT_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.TENANT_ID }}"}'
+ 
+     # Get Infra Build Secrets
+    - name: Ensure KV secrets accessible
+      uses: Azure/get-keyvault-secrets@v1
+      with:
+        keyvault: "core-automatekvtf-dev"
+        secrets: "gh-runner-pat,core-tfstatesakey2-dev"
+      id: kvsecrets
+
+    - name: Ensure environment variables are set
+      id: envvars
+      run: |
+        echo "Ensuring Environment Variables are set."
+        echo "ARM_CLIENT_ID=${{ secrets.NAMESPACE_CLIENT_ID }}" >> $GITHUB_ENV
+        echo "ARM_CLIENT_SECRET=${{ secrets.NAMESPACE_CLIENT_CRED }}" >> $GITHUB_ENV
+        echo "ARM_SUBSCRIPTION_ID=${{ secrets.CORETESTDEV_SUBSCRIPTION_ID }}" >> $GITHUB_ENV
+        echo "ARM_TENANT_ID=${{ secrets.TENANT_ID }}" >> $GITHUB_ENV
+        echo "ARM_ACCESS_KEY=${{ steps.kvsecrets.outputs.core-tfstatesakey2-dev }}" >> $GITHUB_ENV
+    
+    - uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: 1.1.7
+        terraform_wrapper: false
+
+    - name: Validate Terraform initialization
+      id: terraform_init
+      run: |
+        terraform version
+        terraform init \
+         -backend-config="resource_group_name=core-automationrg-dev" \
+         -backend-config="storage_account_name=coretfautomationdev" \
+         -backend-config="container_name=tf-statefiles-dev" \
+         -backend-config="subscription_id=${{ secrets.MGMT_SUBSCRIPTION_ID }}" \
+         -backend-config="key=${{ env.app_id }}-${{ env.funct_name }}-${{ env.build_name }}.terraform.tfstate" && history -c
+    
+    - name: Ensure Terraform workspace created or selected
+      id: terraform_workspace
+      run: |
+        terraform workspace new ${{ env.app_id }}-${{ env.funct_name }}-${{ env.build_name }} || terraform workspace select ${{ env.app_id }}-${{ env.funct_name }}-${{ env.build_name }}
+  
+    - name: Validate Terraform code
+      id: terraform_validate
+      run: |
+        terraform validate 
+      
+    - name: Ensure Terraform Plan
+      id: terraform_plan
+      run: |
+        printf "\nJOB STATUS: TERRAFORM PLAN NOW STARTING\n----------------------------------------\n"
+        terraform plan && history -c
+    
+    - name: Ensure Delay for Terraform destroy
+      id: ensure_delay_apply
+      run: |
+        sleep 90
+    
+    - name: Ensure Terraform Apply
+      id: terraform_apply
+      run: |
+        printf "\nJOB STATUS: TERRAFORM APPLY NOW STARTING\n----------------------------------------\n"
+        terraform apply -auto-approve && history -c
+
+    - name: Ensure Terraform Re-Apply
+      id: terraform_reapply
+      run: |
+        printf "\nJOB STATUS: TERRAFORM APPLY NOW STARTING\n----------------------------------------\n"
+        terraform apply -auto-approve && history -c
+
+    - name: Ensure Delay for Terraform destroy
+      id: ensure_delay
+      run: |
+        sleep 90
+    - name: Ensure Terraform Plan Destroy
+      id: terraform_destroy_plan
+      run: |
+        printf "\nJOB STATUS: TERRAFORM PLAN NOW STARTING\n----------------------------------------\n"
+        terraform plan -destroy && history -c
+    
+    - name: Ensure Terraform Destroy
+      id: terraform_destroy
+      run: |
+        printf "\nJOB STATUS: TERRAFORM APPLY NOW STARTING\n----------------------------------------\n"
+        terraform destroy -auto-approve && history -c
+       
+    - name: Ensure Azure Credentials Cleanup
+      id: resource_plan_cleanup
+      continue-on-error: true
+      if: always()
+      run: |
+          rm -rf *.tf
+          rm -rf .terraform/
+          rm -rf ../.terraform/
+          rm -rf ${{ github.workspace }}/.git/
+          rm -f ${{ github.workspace }}/.gitmodules
+          az logout
+          az cache purge
+          az account clear
