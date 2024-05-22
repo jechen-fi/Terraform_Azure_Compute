@@ -10,7 +10,7 @@ resource "azurerm_image" "image" {
   tags                      = var.tags
 
   dynamic "os_disk" {
-    for_each = var.os_disk != null ? var.os_disk : []
+    for_each = var.os_disk != null ? var.os_disk : null
 
     content {
       os_type                = os_disk.value.os_type
