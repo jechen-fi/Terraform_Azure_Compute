@@ -21,7 +21,7 @@ variable "storage_account_name" {
 variable "resource_group_vnet" {}
 variable "log_analytics_workspace_name" {}
 variable "enable_public_ip_address" {
-  default     = false
+  default = false
 }
 
 variable "enable_feature" {

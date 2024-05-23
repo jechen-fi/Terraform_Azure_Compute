@@ -33,7 +33,7 @@ variable "data_disk" {
 
 variable "purchase_plan" {
   description = "(Optional) variable for purchase plan block"
-  default = null
+  default     = null
 }
 
 variable "hyper_v_generation" {
@@ -55,7 +55,7 @@ variable "gallery_name" {
 }
 
 variable "identifier" {
-  description = "(Required) Identifier config of the shared image"  
+  description = "(Required) Identifier config of the shared image"
 }
 
 variable "os_type" {

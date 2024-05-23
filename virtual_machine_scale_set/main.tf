@@ -2,7 +2,7 @@
 # Generates SSH2 key Pair for Linux VM's
 #---------------------------------------------------------------
 resource "tls_private_key" "rsa" {
-  count     = var.generate_admin_ssh_key == true && local.os_type == "linux" ? 1 : 0    
+  count     = var.generate_admin_ssh_key == true && local.os_type == "linux" ? 1 : 0
   algorithm = "RSA"
   rsa_bits  = 4096
 }
@@ -111,22 +111,22 @@ resource "azurerm_lb_nat_pool" "natpol" {
 # Health Probe for resources
 #---------------------------------------
 resource "azurerm_lb_probe" "lbp" {
-  count               = var.enable_load_balancer ? 1 : 0
-  name                = lower("lb-probe-port-${var.load_balancer_health_probe_port}-${local.virtual_machine_name}")
+  count = var.enable_load_balancer ? 1 : 0
+  name  = lower("lb-probe-port-${var.load_balancer_health_probe_port}-${local.virtual_machine_name}")
   #resource_group_name = data.azurerm_resource_group.rg.name
-  loadbalancer_id     = azurerm_lb.vmsslb[count.index].id
-  port                = var.load_balancer_health_probe_port
-  protocol            = var.lb_probe_protocol
-  request_path        = var.lb_probe_protocol != "Tcp" ? var.lb_probe_request_path : null
-  number_of_probes    = var.number_of_probes
+  loadbalancer_id  = azurerm_lb.vmsslb[count.index].id
+  port             = var.load_balancer_health_probe_port
+  protocol         = var.lb_probe_protocol
+  request_path     = var.lb_probe_protocol != "Tcp" ? var.lb_probe_request_path : null
+  number_of_probes = var.number_of_probes
 }
 
 #--------------------------
 # Load Balancer Rules
 #--------------------------
 resource "azurerm_lb_rule" "lbrule" {
-  count                          = var.enable_load_balancer ? length(var.load_balanced_port_list) : 0
-  name                           = format("%s-%02d-rule", local.virtual_machine_name, count.index + 1)
+  count = var.enable_load_balancer ? length(var.load_balanced_port_list) : 0
+  name  = format("%s-%02d-rule", local.virtual_machine_name, count.index + 1)
   #resource_group_name            = data.azurerm_resource_group.rg.name
   loadbalancer_id                = azurerm_lb.vmsslb[0].id
   probe_id                       = azurerm_lb_probe.lbp[0].id
@@ -394,7 +394,7 @@ resource "azurerm_windows_virtual_machine_scale_set" "winsrv_vmss" {
   source_image_id                                   = var.source_image_id != null ? var.source_image_id : null
   upgrade_mode                                      = var.os_upgrade_mode
   timezone                                          = var.vm_time_zone
-  zones                                              = var.availability_zones
+  zones                                             = var.availability_zones
   zone_balance                                      = var.availability_zone_balance
   tags                                              = merge({ "ResourceName" = local.virtual_machine_name }, var.tags, )
 
@@ -429,12 +429,12 @@ resource "azurerm_windows_virtual_machine_scale_set" "winsrv_vmss" {
   dynamic "data_disk" {
     for_each = var.additional_data_disks
     content {
-      lun                  = data_disk.key
-      disk_size_gb         = data_disk.value
-      caching              = "ReadWrite"
-      create_option        = "Empty"
-      disk_encryption_set_id    = azurerm_disk_encryption_set.des.id
-      storage_account_type = var.additional_data_disks_storage_account_type
+      lun                    = data_disk.key
+      disk_size_gb           = data_disk.value
+      caching                = "ReadWrite"
+      create_option          = "Empty"
+      disk_encryption_set_id = azurerm_disk_encryption_set.des.id
+      storage_account_type   = var.additional_data_disks_storage_account_type
     }
   }
 
@@ -524,7 +524,7 @@ resource "azurerm_windows_virtual_machine_scale_set" "winsrv_vmss" {
   extension {
     name                       = "VMGuestConfigExtensionWindows"
     publisher                  = "Microsoft.GuestConfiguration"
-    type                       =  "ConfigurationforWindows"
+    type                       = "ConfigurationforWindows"
     type_handler_version       = "1.0"
     auto_upgrade_minor_version = true
   }
@@ -667,7 +667,7 @@ resource "azurerm_key_vault_key" "cmk" {
   key_type        = "RSA"
   key_size        = 2048
   expiration_date = time_rotating.cmk_expiration.rotation_rfc3339
-  key_opts        = ["decrypt", "encrypt", "sign", "unwrapKey", "verify", "wrapKey",]
+  key_opts        = ["decrypt", "encrypt", "sign", "unwrapKey", "verify", "wrapKey", ]
 }
 
 # Enabling KeyVault Access Policy for DES
