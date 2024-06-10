@@ -1,0 +1,217 @@
+location: westus3
+
+tags:
+  applicationName: Infrastructure Management Shared Services
+  costCenter: 5005110006
+  applicationOwner: "~cloudinfrastructure@fi.com"
+  environment: CTD
+  businessUnit: IT Infrastructure Engineering
+  applicationTier: Tier 0
+  disasterRecovery: Missing Critical
+  serviceClass: Gold
+  dataClass: Restricted
+  supportOwner: "~cloudinfrastructure@fi.com"
+  region: r01
+
+naming:
+  cloudprefix: AVA
+  locationcode: WUS3
+  envlabel: CTD
+  rgsuffix: rg
+  resourcelabels:
+    # Override default labels by adding the appropriate label and value below
+    label_override_placeholder: SEE_README_FOR_OVERRIDE_NAMES
+  vmnameprefix: vm
+  # force_uppercase: true
+
+vnets:
+  mgmt_vnet:
+      enabled: true
+      reuse: true
+      name: "a00000-network-ctd"
+      rg_name: "a00000-namespace-ctd"
+      subnets:
+        vmdeploy_subnet:
+          name: a00000-app1-ctd
+          enabled: true
+          reuse: true
+
+availability_sets:
+  avset1:
+    enabled: true
+    naming_convention:
+      name_mask: "{name}"
+    name: "test-avaset"
+
+keyvaults:
+  keyvault1:
+    enabled: true
+    reuse: true
+    name: a00000-servckv1wus3-ctd
+    rg_name: a00000-namespace-ctd
+
+kv_key:
+  cmk_key:
+    enabled: true
+    name: "teststcmk01"
+    key_type: RSA
+    key_opts: ["decrypt", "encrypt", "sign", "unwrapKey", "verify", "wrapKey"]
+    key_size: 2048
+    expiration_date: 2024-08-28T21:55:11Z
+
+keyvault_access_policies:
+  accpolicyvm:
+    enabled: true
+    key_permissions: ["Get", "WrapKey", "UnwrapKey", "Create", "List", "Restore", "Recover", "Purge", "Encrypt", "Decrypt", "Sign", "Verify", "Rotate", "GetRotationPolicy", "SetRotationPolicy"]
+    secret_permissions: ["Get"]
+
+disk_encryption_set:
+  cmk_des:
+    naming_convention:
+      name_mask: "{name}"
+    name: "test-desade01r01-d"
+    enabled: true
+    keyvault_key: "keyvault1"
+    key_vault_key_key: "cmk_key"
+    enable_keyvault_access_policy: true
+
+virtual_machines:
+  vm_linux:
+    os_type: linux
+    enabled: true
+    #provision_vm_agent: true
+    #keyvault_key: "keyvault1"
+    create_sshkeys: false
+    # boot_diagnostics_storage_account_key: "stmgmtnsgWUS301"
+    # backup:
+    #   vault_key: "rsv1"
+    #   policy_key: "vmPolicy1"
+
+    network_interfaces:
+      nic0:
+        vm_setting_key: "linux"
+        vnet_key: "mgmt_vnet"
+        subnet_key: "vmdeploy_subnet"
+        primary: true
+        naming_convention:
+          name_mask: "{name}"
+        name: "test-lin"
+        enable_accelerated_networking: false
+        enable_ip_forwarding: false
+        private_ip_address_allocation: "Dynamic"
+
+    virtual_machine_settings:
+      linux:
+        naming_convention:
+          name_mask: "{name}"
+        name: "linxvm-test-01"
+        size: "Standard_B2s_v2"
+        availability_set_key: "avset1"
+        #enable_automatic_updates: true
+        # zone: "1"
+        #admin_username: "vmosadmin"
+        ## If disable_password_authentication: true, admin usr/pwd functionality is disabled and SSH keys are created in the KV specified in keyvault_key or will reference provided SSH key if one is provided via public_key_pem_file attribute
+        disable_password_authentication: false
+        network_interface_keys: ["nic0"]
+
+        os_disk:
+          naming_convention:
+            postfix: "01"
+          caching: "ReadWrite"
+          storage_account_type: "Standard_LRS"
+          disk_size_gb: 128
+          # write_accelerator_enabled: false
+          disk_encryption_set_key: "cmk_des"
+
+        identity:
+          type: "SystemAssigned"
+
+        source_image_reference:
+          # These will be using RHEL8 or Windows 2019 as of today
+          publisher: "RedHat"
+          offer: "RHEL"
+          sku: "8-lvm-gen2"
+          version: "latest"
+
+    data_disks:
+      data1:
+        vm_setting_key: "linux"
+        naming_convention:
+          name_mask: "{name}"
+        name: "linvm-test-01-DataDisk"
+        storage_account_type: "Standard_LRS"
+        create_option: "Empty"
+        disk_size_gb: "10"
+        lun: 0     
+        disk_encryption_set_key: "cmk_des"
+
+  vm_windows:
+    os_type: windows
+    enabled: true
+    # provision_vm_agent: true
+    # keyvault_key: "kvcompute01r01"
+    # boot_diagnostics_storage_account_key: "stmgmtnsgWUS301"
+    # backup:
+    #   vault_key: "rsv1"
+    #   policy_key: "vmPolicy1"
+
+    network_interfaces:
+      nic0:
+        vm_setting_key: "windows"
+        vnet_key: "mgmt_vnet"
+        subnet_key: "vmdeploy_subnet"
+        primary: true
+        naming_convention:
+          name_mask: "{name}"
+        name: "test-win"
+        enable_accelerated_networking: false
+        enable_ip_forwarding: false
+        private_ip_address_allocation: "Dynamic"
+
+    virtual_machine_settings:
+      windows:
+        naming_convention:
+          name_mask: "{name}"
+        name: "winvm-test-01"
+        size: "Standard_B2s_v2"
+        availability_set_key: "avset1"
+        #enable_automatic_updates: true
+        # zone: "1"
+        # admin_username: "vmosadmin" # Use either this attribute or vars
+        # admin_password: # Use either vars or SSH keys
+        ## If disable_password_authentication: true, admin usr/pwd functionality is disabled and SSH keys are created in the KV specified in keyvault_key or will reference provided SSH key if one is provided via public_key_pem_file attribute
+        disable_password_authentication: false
+        network_interface_keys: ["nic0"]
+
+        os_disk:
+          naming_convention:
+            postfix: "01"
+          caching: "ReadWrite"
+          storage_account_type: "Standard_LRS"
+          disk_size_gb: 128
+          # write_accelerator_enabled: false
+          disk_encryption_set_key: "cmk_des"
+
+        identity:
+          type: "SystemAssigned"
+
+        source_image_reference:
+          publisher: "MicrosoftWindowsServer"
+          offer: "WindowsServer"
+          sku: "2019-Datacenter-gensecond"
+          version: "latest"
+
+    data_disks:
+      data1:
+        vm_setting_key: "windows"
+        naming_convention:
+          name_mask: "{name}"
+        name: "winvm-test-01-DataDisk"
+        storage_account_type: "Standard_LRS"
+        create_option: "Empty"
+        disk_size_gb: 10
+        # zone: "1"
+        lun: 0
+        disk_encryption_set_key: "cmk_des"         
+
+  

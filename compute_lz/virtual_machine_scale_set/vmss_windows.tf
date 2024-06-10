@@ -8,7 +8,7 @@ locals {
 }
 
 module "resource_naming_windows_vm_name" {
-  source   = "../../resource_naming"
+  source   = "../../../resource_naming"
   for_each = local.os_type == "windows" ? var.settings.vmss_settings : {}
 
   global_settings = var.global_settings
@@ -18,7 +18,7 @@ module "resource_naming_windows_vm_name" {
   name            = try(each.value.name, null)
 }
 module "resource_naming_windows_computer_name" {
-  source   = "../../resource_naming"
+  source   = "../../../resource_naming"
   for_each = local.os_type == "windows" ? var.settings.vmss_settings : {}
 
   global_settings = var.global_settings
@@ -28,7 +28,7 @@ module "resource_naming_windows_computer_name" {
   name            = try(each.value.computer_name_prefix, each.value.name)
 }
 module "resource_naming_windows_nic" {
-  source   = "../../resource_naming"
+  source   = "../../../resource_naming"
   for_each = local.os_type == "windows" ? var.settings.network_interfaces : {}
 
   global_settings = var.global_settings

@@ -9,7 +9,7 @@ locals {
 }
 
 module "resource_naming_linux_vm_name" {
-  source   = "../../resource_naming"
+  source   = "../../../resource_naming"
   for_each = local.os_type == "linux" ? var.settings.virtual_machine_settings : {}
 
   global_settings    = var.global_settings
@@ -22,7 +22,7 @@ module "resource_naming_linux_vm_name" {
 }
 
 module "resource_naming_linux_computer_name" {
-  source   = "../../resource_naming"
+  source   = "../../../resource_naming"
   for_each = local.os_type == "linux" ? var.settings.virtual_machine_settings : {}
 
   global_settings    = var.global_settings
@@ -35,7 +35,7 @@ module "resource_naming_linux_computer_name" {
 }
 
 module "resource_naming_linux_os_disk_name" {
-  source   = "../../resource_naming"
+  source   = "../../../resource_naming"
   for_each = local.os_type == "linux" ? var.settings.virtual_machine_settings : {}
 
   global_settings = var.global_settings

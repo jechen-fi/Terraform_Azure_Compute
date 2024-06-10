@@ -1,0 +1,13 @@
+[submodule "tests/compute_lz/modules/compute"]
+	path = tests/compute_lz/modules/compute
+	url = https://github.com/FisherInvestments/Terraform_Azure_Compute.git
+[submodule "tests/compute_lz/modules/resource_naming"]
+	path = tests/compute_lz/modules/resource_naming
+	url = https://github.com/FisherInvestments/Terraform_Azure_ResourceNames.git
+
+[submodule "tests/compute_lz/modules/networking"]
+	path = tests/compute_lz/modules/networking
+	url = https://github.com/FisherInvestments/Terraform_Azure_Network.git
+[submodule "tests/compute_lz/modules/keyvault"]
+	path = tests/compute_lz/modules/keyvault
+	url = https://github.com/FisherInvestments/Terraform_Azure_KeyVault.git
