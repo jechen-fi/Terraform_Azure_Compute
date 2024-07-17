@@ -6,6 +6,8 @@
 
 exec >> /etc/adlogs/script.log
 
+domain=""
+
 echo "domain_acct is : ${domain_acct}"
 echo "app_group is : ${app_group}"
 echo "wf_env is : ${wf_env}"
