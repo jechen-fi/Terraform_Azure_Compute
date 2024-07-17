@@ -366,6 +366,7 @@ resource "azurerm_virtual_machine_extension" "azure_monitoring_agent_windows" {
 #--------------------------------------------------------
 
 resource "azurerm_virtual_machine_extension" "domainjoin" {
+  count                = local.os_type == "windows" ? 1 : 0
   name                 = "domainjoin"
   virtual_machine_id   = azurerm_windows_virtual_machine.winvm[0].id
   publisher            = "Microsoft.Compute"

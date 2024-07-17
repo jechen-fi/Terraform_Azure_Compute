@@ -10,7 +10,7 @@ resource "azurerm_image" "image" {
   tags                      = var.tags
 
   dynamic "os_disk" {
-    for_each = var.os_disk != null ? var.os_disk : []
+    for_each = var.os_disk != null ? var.os_disk : null
 
     content {
       os_type                = os_disk.value.os_type
@@ -33,7 +33,7 @@ resource "azurerm_image" "image" {
       caching         = data_disk.value.caching
       size_gb         = data_disk.value.size_gb
     }
-  }  
+  }
 }
 
 
@@ -60,7 +60,7 @@ resource "azurerm_shared_image" "shrd_img" {
       product   = purchase_plan.value.product
     }
   }
-    
+
   hyper_v_generation                  = try(var.shared_image_config.hyper_v_generation, "V1")
   description                         = try(var.shared_image_config.description, null)
   disk_types_not_allowed              = try(var.shared_image_config.disk_types_not_allowed, null)
@@ -78,5 +78,5 @@ resource "azurerm_shared_image" "shrd_img" {
   trusted_launch_enabled              = try(var.shared_image_config.trusted_launch_enabled, null)
   confidential_vm_supported           = try(var.shared_image_config.confidential_vm_supported, null)
   confidential_vm_enabled             = try(var.shared_image_config.confidential_vm_enabled, null)
-  accelerated_network_support_enabled = try(var.shared_image_config.accelerated_network_support_enabled, null)  
+  accelerated_network_support_enabled = try(var.shared_image_config.accelerated_network_support_enabled, null)
 }

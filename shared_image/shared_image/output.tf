@@ -14,3 +14,7 @@ output "shrd_img_id" {
 output "shrd_img" {
   value = azurerm_shared_image.shrd_img
 }
+
+output "location" {
+  value = var.location
+}

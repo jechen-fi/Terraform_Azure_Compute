@@ -4,7 +4,7 @@ locals {
 }
 
 module "resource_naming" {
-  source = "../../resource_naming"
+  source = "../../../resource_naming"
 
   global_settings = var.global_settings
   settings        = var.availability_set

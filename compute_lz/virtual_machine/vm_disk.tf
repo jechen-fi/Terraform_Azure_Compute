@@ -3,7 +3,7 @@ locals {
 }
 
 module "resource_naming_datadisk_name" {
-  source   = "../../resource_naming"
+  source   = "../../../resource_naming"
   for_each = lookup(var.settings, "data_disks", {})
 
   global_settings = var.global_settings

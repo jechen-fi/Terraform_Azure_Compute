@@ -1,17 +1,19 @@
 name: CTD Azure Compute Module Continuous Test
 
-on:
-  workflow_dispatch:
-  push:
-    paths:     
-      - '**/tests/**'
-      - '!*.md'
-      - '!.gitignore'
-      - '!.github/workflows/**'
-    branches:
-      - 'bugfix/*'
-      - 'features/*'
-      - 'feature/*'
+on: workflow_dispatch
+
+# on:
+#   workflow_dispatch:
+#   push:
+#     paths:     
+#       - '**/tests/**'
+#       - '!*.md'
+#       - '!.gitignore'
+#       - '!.github/workflows/**'
+#     branches:
+#       - 'bugfix/*'
+#       - 'features/*'
+#       - 'feature/*'
 
 jobs:
   clean:
@@ -94,40 +96,40 @@ jobs:
       run: |
         terraform validate 
       
-    - name: Ensure Terraform Plan
-      id: terraform_plan
-      run: |
-        printf "\nJOB STATUS: TERRAFORM PLAN NOW STARTING\n----------------------------------------\n"
-        terraform plan && history -c
+    # - name: Ensure Terraform Plan
+    #   id: terraform_plan
+    #   run: |
+    #     printf "\nJOB STATUS: TERRAFORM PLAN NOW STARTING\n----------------------------------------\n"
+    #     terraform plan && history -c
     
-    - name: Ensure Terraform Apply
-      id: terraform_apply
-      run: |
-        printf "\nJOB STATUS: TERRAFORM APPLY NOW STARTING\n----------------------------------------\n"
-        terraform apply -auto-approve && history -c
+    # - name: Ensure Terraform Apply
+    #   id: terraform_apply
+    #   run: |
+    #     printf "\nJOB STATUS: TERRAFORM APPLY NOW STARTING\n----------------------------------------\n"
+    #     terraform apply -auto-approve && history -c
 
-    - name: Ensure Terraform Re-Apply
-      id: terraform_reapply
-      run: |
-        printf "\nJOB STATUS: TERRAFORM APPLY NOW STARTING\n----------------------------------------\n"
-        terraform apply -auto-approve && history -c
+    # - name: Ensure Terraform Re-Apply
+    #   id: terraform_reapply
+    #   run: |
+    #     printf "\nJOB STATUS: TERRAFORM APPLY NOW STARTING\n----------------------------------------\n"
+    #     terraform apply -auto-approve && history -c
 
-    - name: Ensure Delay for Terraform destroy
-      id: ensure_delay
-      run: |
-        sleep 90
+    # - name: Ensure Delay for Terraform destroy
+    #   id: ensure_delay
+    #   run: |
+    #     sleep 90
 
-    - name: Ensure Terraform Plan Destroy
-      id: terraform_destroy_plan
-      run: |
-        printf "\nJOB STATUS: TERRAFORM PLAN NOW STARTING\n----------------------------------------\n"
-        terraform plan -destroy && history -c
+    # - name: Ensure Terraform Plan Destroy
+    #   id: terraform_destroy_plan
+    #   run: |
+    #     printf "\nJOB STATUS: TERRAFORM PLAN NOW STARTING\n----------------------------------------\n"
+    #     terraform plan -destroy && history -c
     
-    - name: Ensure Terraform Destroy
-      id: terraform_destroy
-      run: |
-        printf "\nJOB STATUS: TERRAFORM APPLY NOW STARTING\n----------------------------------------\n"
-        terraform destroy -auto-approve && history -c
+    # - name: Ensure Terraform Destroy
+    #   id: terraform_destroy
+    #   run: |
+    #     printf "\nJOB STATUS: TERRAFORM APPLY NOW STARTING\n----------------------------------------\n"
+    #     terraform destroy -auto-approve && history -c
        
     - name: Ensure Azure Credentials Cleanup
       id: resource_plan_cleanup

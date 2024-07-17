@@ -19,7 +19,7 @@ variable "location" {
 }
 
 variable "target_region" {
-  description = "(Required) configuration of the shared image version target region"  
+  description = "(Required) configuration of the shared image version target region"
 }
 
 variable "tags" {

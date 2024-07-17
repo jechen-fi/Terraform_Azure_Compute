@@ -10,7 +10,7 @@ locals {
 }
 
 module "resource_naming_legacy_vm_name" {
-  source   = "../../resource_naming"
+  source   = "../../../resource_naming"
   for_each = local.os_type == "legacy" ? var.settings.virtual_machine_settings : {}
 
   global_settings = var.global_settings
@@ -22,7 +22,7 @@ module "resource_naming_legacy_vm_name" {
 }
 
 module "resource_naming_legacy_computer_name" {
-  source   = "../../resource_naming"
+  source   = "../../../resource_naming"
   for_each = local.os_type == "legacy" ? var.settings.virtual_machine_settings : {}
 
   global_settings = var.global_settings
@@ -33,7 +33,7 @@ module "resource_naming_legacy_computer_name" {
 }
 
 module "resource_naming_legacy_osdisk_name" {
-  source   = "../../resource_naming"
+  source   = "../../../resource_naming"
   for_each = local.os_type == "legacy" ? var.settings.virtual_machine_settings : {}
 
   global_settings = var.global_settings
@@ -45,7 +45,7 @@ module "resource_naming_legacy_osdisk_name" {
 }
 
 module "resource_naming_legacy_datadisk_name" {
-  source   = "../../resource_naming"
+  source   = "../../../resource_naming"
   for_each = local.os_type == "legacy" ? lookup(var.settings, "storage_data_disks", {}) : {}
 
   global_settings = var.global_settings

@@ -17,7 +17,7 @@ variable "tags" {
 
 variable "description" {
   description = "(Optional) A description for this Shared Image Gallery"
-  default     = {}
+  default     = ""
 }
 
 variable "sharing" {

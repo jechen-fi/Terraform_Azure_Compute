@@ -19,7 +19,7 @@ locals {
 }
 
 module "resource_naming" {
-  source   = "../../resource_naming"
+  source   = "../../../resource_naming"
   for_each = var.settings.network_interfaces
 
   global_settings = var.global_settings
