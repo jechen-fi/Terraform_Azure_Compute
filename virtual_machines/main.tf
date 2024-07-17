@@ -238,6 +238,7 @@ resource "azurerm_virtual_machine_extension" "domainjoin_linux" {
           domain_secret="${var.keyvault_domain_token}" 
           app_group="${var.app_workload_group}" 
           wf_env="${var.application_env}"
+          domain="${domain}"
         }))}"
   }
   SETTINGS
