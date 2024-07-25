@@ -22,7 +22,7 @@ else
     echo "environment and domain not determined"
 fi
 
-echo "domain reported: ${domain}"
+echo "domain reported: $${domain}"
 
 
 #
