@@ -13,7 +13,7 @@
 #filter for fi or fidev and set var
 if [[ "${wf_env}" == "dev" ]] || [[ "${wf_env}" == "sit" ]]; then
 domain="FIDEV"
-elif [[ "${wf_env}" == "qa" ]] || [[ "$Pwf_env}" == "prd" ]]; then
+elif [[ "${wf_env}" == "qa" ]] || [[ "${wf_env}" == "prd" ]]; then
 domain="FI"
 else
     echo "environment and domain not determined"
@@ -32,17 +32,6 @@ echo "domain reported $${domain}"
 
 # vmname=$(hostname)
 # vmgroup="clg_$${vmname} administrators"
-
-
-# #filter for fi or fidev and set var
-# if [ "$wf_env" == "dev" ] || [ "$wf_env" == "sit" ]; then
-# domain="FIDEV"
-# elif [ "$wf_env" == "qa" ] || [ "$wf_env" == "prd" ] || [ "$wf_env" == "d" ] || [ "$wf_env" == "s" ] || [ "$wf_env" == "u" ] || [ "$wf_env" == "p" ]; then
-# domain="FI"
-# else
-#     echo "environment and domain not determined" && exit
-# fi
-
 # DOMAIN="$${domain}.COM"
 # MACHINENAME="$${vmname}.$${DOMAIN}"
 
