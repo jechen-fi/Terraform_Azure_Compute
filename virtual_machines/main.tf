@@ -234,9 +234,7 @@ resource "azurerm_virtual_machine_extension" "domainjoin_linux" {
   protected_settings = <<SETTINGS
   {    
     "script": "${base64encode(templatefile("./modules/compute/virtual_machines/domain_join_linux.sh", {
-          domain_acct="${var.domain_svc_account}" 
           domain_secret="${var.keyvault_domain_token}" 
-          app_group="${var.app_workload_group}" 
           wf_env="${var.application_env}"
         }))}"
   }
