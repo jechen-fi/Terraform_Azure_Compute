@@ -8,10 +8,10 @@ exec >> /etc/adlogs/script.log
 
 domain=""
 
-echo "domain_acct is : ${domain_acct}"
-echo "app_group is : ${app_group}"
-echo "wf_env is : ${wf_env}"
-echo "domain_secret passed in as : ${domain_secret}"
+echo "domain_acct is  ${domain_acct}"
+echo "app_group is  ${app_group}"
+echo "wf_env is  ${wf_env}"
+echo "domain_secret passed in as  ${domain_secret}"
 
 #filter for fi or fidev and set var
 if [[ "$wf_env" == *"dev"* ]] || [[ "$wf_env" == *"sit"* ]]; then
@@ -22,7 +22,7 @@ else
     echo "environment and domain not determined"
 fi
 
-echo "domain reported: $${domain}"
+echo "domain reported $${domain}"
 
 
 #
