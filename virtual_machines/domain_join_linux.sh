@@ -4,19 +4,16 @@
 # TEST SCRIPT VARS FROM TF
 #
 
-exec >> /etc/adlogs/script.log
 
-domain=""
-
-echo "domain_acct is  ${domain_acct}"
-echo "app_group is  ${app_group}"
-echo "wf_env is  ${wf_env}"
-echo "domain_secret passed in as  ${domain_secret}"
+# echo "domain_acct is  ${domain_acct}"
+# echo "app_group is  ${app_group}"
+# echo "wf_env is  ${wf_env}"
+# echo "domain_secret passed in as  ${domain_secret}"
 
 #filter for fi or fidev and set var
-if [[ "$wf_env" == *"dev"* ]] || [[ "$wf_env" == *"sit"* ]]; then
+if [[ "${wf_env}" == "dev" ]] || [[ "${wf_env}" == "sit" ]]; then
 domain="FIDEV"
-elif [[ "$wf_env" == *"qa"* ]] || [[ "$wf_env" == *"prd"* ]] || [[ "$wf_env" == "d" ]] || [[ "$wf_env" == "s" ]] || [[ "$wf_env" == "u" ]] || [[ "$wf_env" == "p" ]]; then
+elif [[ "${wf_env}" == "qa" ]] || [[ "$Pwf_env}" == "prd" ]]; then
 domain="FI"
 else
     echo "environment and domain not determined"
