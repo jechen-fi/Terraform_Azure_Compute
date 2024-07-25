@@ -77,6 +77,8 @@ realm permit -g "$${vmgroup}@$${DOMAIN}"
 #add group to sudoers
 echo ""$${sudoers}@$${DOMAIN}" ALL=(ALL) ALL" | sudo EDITOR='tee -a' visudo -f /etc/sudoers.d/sudo-access-ad-users
 chmod 440 /etc/sudoers.d/sudo-access-ad-users
+
+echo "Please have users request access to $${vmgroup} in $${DOMAIN}"
  
 #restart
 reboot
