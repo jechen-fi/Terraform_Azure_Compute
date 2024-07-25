@@ -32,13 +32,9 @@ echo "domain reported: $${domain}"
 # #install required packages
 # yum install -y sssd sssd-client sssd-tools oddjob-mkhomedir samba-common-tools oddjob krb5-workstation authselect-compat adcli realmd
 
-# #store secrets from kv for domain user
-# domain_acct=${1}
-# domain_secret=${2}
-# app_group=${3}
-# wf_env=${4}
+
 # vmname=$(hostname)
-# vmgroup="clg_${vmname} administrators"
+# vmgroup="clg_$${vmname} administrators"
 
 
 # #filter for fi or fidev and set var
@@ -50,11 +46,11 @@ echo "domain reported: $${domain}"
 #     echo "environment and domain not determined" && exit
 # fi
 
-# DOMAIN="${domain}.COM"
-# MACHINENAME="${vmname}.${DOMAIN}"
+# DOMAIN="$${domain}.COM"
+# MACHINENAME="$${vmname}.$${DOMAIN}"
 
 # #Set hostname
-# hostnamectl set-hostname $MACHINENAME
+# hostnamectl set-hostname $$MACHINENAME
 
 # #Configure SSSD
 # echo "Configuring SSSD..."
@@ -62,15 +58,15 @@ echo "domain reported: $${domain}"
 # [sssd]
 # services = nss, pam
 # config_file_version = 2
-# domains = $DOMAIN
+# domains = $$DOMAIN
 # dyndns_update = true
 # dyndns_refresh_interval = 43200
 # dyndns_update_ptr = true
 # dyndns_ttl = 3600
  
-# [domain/$DOMAIN]
-# ad_domain = $DOMAIN
-# krb5_realm = $DOMAIN
+# [domain/$$DOMAIN]
+# ad_domain = $$DOMAIN
+# krb5_realm = $$DOMAIN
 # realmd_tags = manages-system joined-with-adcli
 # cache_credentials = True
 # id_provider = ad
@@ -88,21 +84,21 @@ echo "domain reported: $${domain}"
 # systemctl enable sssd
 
 # #join domain
-# realm join --user="${domain_acct}" "${DOMAIN}" --computer-ou="OU=Linux Servers,OU=Common,OU=Azure,OU=Cloud,DC=${domain},DC=COM" --verbose
+# realm join --user="${domain_acct}" "$${DOMAIN}" --computer-ou="OU=Linux Servers,OU=Common,OU=Azure,OU=Cloud,DC=$${domain},DC=COM" --verbose
 
 # #create host group from passed in variable
 
-# adcli create-group "${vmgroup}" --domain="${DOMAIN}" --domain-ou="OU=Admin Permissions Groups,OU=Common,OU=Azure,OU=Cloud,DC=${domain},DC=com" \
+# adcli create-group "$${vmgroup}" --domain="$${DOMAIN}" --domain-ou="OU=Admin Permissions Groups,OU=Common,OU=Azure,OU=Cloud,DC=$${domain},DC=com" \
 # --login-user="${domain_acct}" --stdin-password="${domain_secret}"
 
 # #populate group with clg account passed in from variable
-# adcli add-member --domain="${DOMAIN}" "${vmgroup}" "${app_group}" --login-user="${domain_acct}" --stdin-password="${domain_secret}"
+# adcli add-member --domain="$${DOMAIN}" "$${vmgroup}" "${app_group}" --login-user="${domain_acct}" --stdin-password="${domain_secret}"
 
 # #add group to permit login
  
-# realm permit -g "${vmgroup}@${DOMAIN}"
+# realm permit -g "$${vmgroup}@$${DOMAIN}"
 
-# echo ""${vmgroup}@${DOMAIN}" ALL=(ALL) ALL" | sudo EDITOR='tee -a' visudo -f /etc/sudoers.d/sudo-access-ad-users
+# echo ""$${vmgroup}@$${DOMAIN}" ALL=(ALL) ALL" | sudo EDITOR='tee -a' visudo -f /etc/sudoers.d/sudo-access-ad-users
 # chmod 440 /etc/sudoers.d/sudo-access-ad-users
  
 # #restart
