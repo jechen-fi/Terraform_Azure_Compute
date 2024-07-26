@@ -188,6 +188,7 @@ resource "azurerm_linux_virtual_machine" "linuxvm" {
     }
   }
 }
+
 #---------------------------------------
 # Linux VM Guest Configuration Extension
 #---------------------------------------
@@ -216,6 +217,30 @@ resource "azurerm_virtual_machine_extension" "azure_monitoring_agent_linux" {
     azurerm_linux_virtual_machine.linuxvm
   ]
 }
+
+
+#---------------------------------------
+# Linux VM Domain Join Custom Script Extension
+#---------------------------------------
+resource "azurerm_virtual_machine_extension" "domainjoin_linux" {
+  depends_on = [ azurerm_virtual_machine_extension.vm_guest_config_linux ]
+  count                 = local.os_type == "linux" ? 1 : 0
+  name                 = "domainjoin_lnx"
+  virtual_machine_id   = azurerm_linux_virtual_machine.linuxvm[count.index].id
+  publisher            = "Microsoft.Azure.Extensions"
+  type                 = "CustomScript"
+  type_handler_version = "2.1"
+
+  protected_settings = <<SETTINGS
+  {    
+    "script": "${base64encode(templatefile("./modules/compute/virtual_machines/domain_join_linux.sh", {
+          domain_secret="${var.keyvault_domain_token}" 
+          wf_env="${var.application_env}"
+        }))}"
+  }
+  SETTINGS
+}
+
 
 resource "azapi_resource" "dcr_association_linux" {
   count     = local.os_type == "linux" ? length(var.data_collection_rule) : 0
