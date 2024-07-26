@@ -44,9 +44,9 @@ dyndns_refresh_interval = 43200
 dyndns_update_ptr = true
 dyndns_ttl = 3600
  
-[domain/$$DOMAIN]
-ad_domain = $$DOMAIN
-krb5_realm = $$DOMAIN
+[domain/$${DOMAIN}]
+ad_domain = $${DOMAIN}
+krb5_realm = $${DOMAIN}
 realmd_tags = manages-system joined-with-adcli
 cache_credentials = True
 id_provider = ad
@@ -79,6 +79,3 @@ echo ""$${sudoers}@$${DOMAIN}" ALL=(ALL) ALL" | sudo EDITOR='tee -a' visudo -f /
 chmod 440 /etc/sudoers.d/sudo-access-ad-users
 
 echo "Please have users request access to $${vmgroup} in $${DOMAIN}"
- 
-#restart
-reboot
