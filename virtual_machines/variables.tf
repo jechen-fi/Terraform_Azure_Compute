@@ -567,10 +567,10 @@ variable "source_image_os_type" {
 }
 
 
-variable "license_type" {
-  description = "Specifies the type of on-premise license which should be used for this Virtual Machine. Possible values are None, Windows_Client and Windows_Server."
-  default     = "None"
-}
+# variable "license_type" {
+#   description = "Specifies the type of on-premise license which should be used for this Virtual Machine. Possible values are None, Windows_Client and Windows_Server."
+#   default     = "Windows_Server"
+# }
 
 variable "nsg_diag_logs" {
   description = "NSG Monitoring Category details for Azure Diagnostic setting"
