@@ -60,6 +60,10 @@ variable "virtual_machine_name" {
   description = "Virtual machine name provided by user or root main.tf that calls module"
   default     = null
 }
+variable "computer_name" {
+  description = "Virtual machine name provided by the user that gets truncated to 15 chars"
+  default     = null
+}
 
 variable "virtual_machine_name_prepend" {
   description = "Prepend to the VM's hostname - a string that follows the [app-function] name convention without the [-env] portion at the end, which will be added in module"
