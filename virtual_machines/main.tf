@@ -275,7 +275,7 @@ resource "azurerm_windows_virtual_machine" "winvm" {
   depends_on                 = [azurerm_disk_encryption_set.des, azurerm_key_vault_access_policy.desKvPolicy]
   count                      = local.os_type == "windows" ? 1 : 0
   name                       = local.virtual_machine_name
-  computer_name              = local.computer_name
+  computer_name              = var.computer_name
   resource_group_name        = var.resource_group_name
   location                   = var.rg_location
   size                       = var.virtual_machine_size
